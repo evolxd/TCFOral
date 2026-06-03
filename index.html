@@ -996,13 +996,13 @@ async function speakText(text, player = audio) {
 }
 
 function safeFileName(text) {
-  return text
+  const cleaned = text
     .normalize("NFD")
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-zA-Z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "")
-    .slice(0, 64)
-    .toLowerCase() || "audio";
+    .toLowerCase();
+  return cleaned.slice(0, 64).replace(/^-+|-+$/g, "") || "audio";
 }
 
 function legacyDownloadedFileName(text) {
