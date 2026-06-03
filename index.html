@@ -195,6 +195,48 @@ h2 { margin: 0; font-size: 20px; }
   margin: 0;
   padding-bottom: 2px;
 }
+.analysis {
+  margin-top: 12px;
+  border-top: 1px solid var(--line);
+  padding-top: 10px;
+}
+.analysis summary {
+  cursor: pointer;
+  color: #314d36;
+  font-weight: 650;
+  font-size: 15px;
+}
+.analysis-list {
+  display: grid;
+  gap: 9px;
+  margin-top: 10px;
+}
+.analysis-item {
+  background: #f7f8f4;
+  border: 1px solid #e0e5dc;
+  border-radius: 8px;
+  padding: 9px 10px;
+}
+.analysis-fr {
+  font-size: 15px;
+  line-height: 1.35;
+  margin-bottom: 5px;
+}
+.analysis-notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+}
+.note {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  background: #edf2ea;
+  color: #46544b;
+  padding: 2px 8px;
+  font-size: 12px;
+  line-height: 1.35;
+}
 .actions {
   display: flex;
   flex-wrap: wrap;
@@ -830,6 +872,48 @@ function renderBilingual(item) {
   }).join("")}</div>`;
 }
 
+function analyzeSentence(line, item) {
+  const text = line.toLowerCase();
+  const notes = [];
+  const add = note => {
+    if (!notes.includes(note)) notes.push(note);
+  };
+  if (/ce qui|ce que|ce dont/.test(text)) add("强调结构：把抽象重点提前，后面再解释");
+  if (/ce n['’]est pas seulement|pas seulement/.test(text) && /mais aussi|mais de|mais que/.test(text)) add("C1 对比：不是只说 A，而是扩展到 B");
+  if (/à la fois/.test(text)) add("并列升级：à la fois A et B，一句话放两个维度");
+  if (/tout en/.test(text)) add("同步动作：主线不变，同时补充另一个目标");
+  if (/afin de|pour que|de sorte que/.test(text)) add("目的表达：说明为什么这样问/这样做");
+  if (/même si|bien que|malgré/.test(text)) add("让步：承认困难，但不削弱立场");
+  if (/à condition de|si je devais|j'aimerais|je voudrais|pourriez-vous|serait-il possible/.test(text)) add("条件/礼貌：语气成熟，不显得生硬");
+  if (/selon moi|à mes yeux|je dirais que|pour moi|il me semble/.test(text)) add("立场标记：先限定观点，避免绝对化");
+  if (/notamment|en particulier|surtout|par exemple/.test(text)) add("具体化：从抽象观点落到例子或细节");
+  if (/en fonction de|dans la mesure où|cela dépend|contexte/.test(text)) add("条件化思维：答案有余地，像 C1 论证");
+  if (/permet|permettre|donne|aide à/.test(text)) add("结果链：A permet de B，适合解释价值");
+  if (/équilibre|nuance|précision|autonomie|adaptation|responsabilité|cohésion/.test(text)) add("高级名词：用抽象名词提升表达层次");
+  if (/d['’]une part|d['’]autre part|en revanche|cependant|ainsi|en somme|pour conclure/.test(text)) add("连接词：负责推进逻辑，不只是装饰");
+  if (!notes.length) {
+    if (item.type === "tache2") add("提问骨架：背景 + 具体信息 + 目的");
+    else if (item.type === "tache3") add("论证骨架：立场 + 理由 + 限定");
+    else add("表达骨架：事实 + 评价 + 个人目标");
+  }
+  return notes.slice(0, 3);
+}
+
+function renderAnalysis(item) {
+  const lines = splitFrench(item.fr);
+  return `<details class="analysis">
+    <summary>高级拆解 / 记忆规律</summary>
+    <div class="analysis-list">
+      ${lines.map(line => `
+        <div class="analysis-item">
+          <div class="analysis-fr">${escapeHtml(line)}</div>
+          <div class="analysis-notes">${analyzeSentence(line, item).map(note => `<span class="note">${escapeHtml(note)}</span>`).join("")}</div>
+        </div>
+      `).join("")}
+    </div>
+  </details>`;
+}
+
 function renderCards() {
   const q = searchEl.value.trim().toLowerCase();
   const data = templates.filter(item => {
@@ -854,6 +938,7 @@ function renderCards() {
       <h2>${item.title}</h2>
       <p class="cn">${item.cn}</p>
       <div class="fr" id="text-${index}">${renderBilingual(item)}</div>
+      ${renderAnalysis(item)}
       <div class="actions">
         <button class="primary" data-speak="${index}">朗读</button>
         <button data-copy="${index}">复制</button>
