@@ -8,16 +8,17 @@
 <title>TCF 法语口语 C1 背诵模板库</title>
 <style>
 :root {
-  --ink: #17201b;
-  --muted: #5b665f;
-  --line: #d9dfd8;
-  --paper: #fbfaf6;
+  --ink: #18201d;
+  --muted: #64706a;
+  --line: #dde3df;
+  --paper: #f7f8f5;
   --panel: #ffffff;
-  --sage: #5d745f;
+  --sage: #42634b;
   --brick: #a84c3d;
   --gold: #b8842d;
-  --blue: #2e638f;
-  --shadow: 0 12px 34px rgba(35, 44, 38, .10);
+  --blue: #315f86;
+  --soft: #eef3ee;
+  --shadow: 0 10px 26px rgba(25, 36, 31, .07);
 }
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
@@ -26,16 +27,16 @@ body {
   font-family: Inter, "Segoe UI", "Microsoft YaHei", Arial, sans-serif;
   background: var(--paper);
   color: var(--ink);
-  line-height: 1.55;
+  line-height: 1.5;
 }
 button, input, select, textarea { font: inherit; }
 button {
   border: 1px solid var(--line);
   background: var(--panel);
   color: var(--ink);
-  border-radius: 8px;
+  border-radius: 7px;
   min-height: 38px;
-  padding: 8px 11px;
+  padding: 8px 12px;
   cursor: pointer;
 }
 button:hover { border-color: var(--sage); }
@@ -48,28 +49,28 @@ a { color: var(--blue); }
 .app {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 268px minmax(0, 1fr);
+  grid-template-columns: 258px minmax(0, 1fr);
 }
 .rail {
   position: sticky;
   top: 0;
   height: 100vh;
-  padding: 22px 18px;
+  padding: 24px 18px;
   border-right: 1px solid var(--line);
-  background: #f4f2ec;
+  background: #f2f4f0;
   overflow: auto;
 }
 .brand {
-  font-weight: 760;
-  font-size: 22px;
-  line-height: 1.15;
-  margin: 0 0 8px;
+  font-weight: 720;
+  font-size: 19px;
+  line-height: 1.22;
+  margin: 0 0 9px;
 }
 .sub { color: var(--muted); font-size: 13px; margin: 0 0 18px; }
 .search {
   width: 100%;
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 7px;
   padding: 10px 11px;
   background: white;
 }
@@ -83,7 +84,7 @@ a { color: var(--blue); }
 }
 .filter-btn.active {
   border-color: var(--sage);
-  background: #e8eee6;
+  background: var(--soft);
   color: #243d29;
 }
 .count {
@@ -91,7 +92,7 @@ a { color: var(--blue); }
   font-size: 12px;
 }
 .main {
-  padding: 26px clamp(18px, 3vw, 38px) 48px;
+  padding: 28px clamp(20px, 3vw, 44px) 48px;
   min-width: 0;
 }
 .topbar {
@@ -103,30 +104,50 @@ a { color: var(--blue); }
 }
 h1 {
   margin: 0;
-  font-size: 18px;
+  font-size: 24px;
   line-height: 1.25;
   max-width: 920px;
-  font-weight: 650;
+  font-weight: 680;
 }
 .lede {
-  margin: 4px 0 0;
+  margin: 7px 0 0;
   max-width: 820px;
   color: var(--muted);
-  font-size: 13px;
+  font-size: 14px;
 }
 .statline {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
-  margin: 18px 0 26px;
+  margin: 20px 0 26px;
+}
+.level-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--line);
+  border-radius: 7px;
+  background: white;
+  padding: 6px 8px;
+}
+.level-switch label {
+  color: var(--muted);
+  font-size: 13px;
+}
+.level-switch select {
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  font-weight: 650;
+  outline: none;
 }
 .stat {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 8px;
-  padding: 12px;
+  border-radius: 7px;
+  padding: 12px 14px;
 }
-.stat b { display: block; font-size: 20px; }
+.stat b { display: block; font-size: 19px; line-height: 1.2; }
 .stat span { color: var(--muted); font-size: 12px; }
 .section-title {
   margin: 28px 0 12px;
@@ -135,7 +156,7 @@ h1 {
   justify-content: space-between;
   gap: 12px;
 }
-h2 { margin: 0; font-size: 20px; }
+h2 { margin: 0; font-size: 19px; }
 .grid {
   display: grid;
   gap: 12px;
@@ -143,9 +164,9 @@ h2 { margin: 0; font-size: 20px; }
 .card {
   background: var(--panel);
   border: 1px solid var(--line);
-  border-radius: 8px;
+  border-radius: 7px;
   box-shadow: var(--shadow);
-  padding: 14px;
+  padding: 18px 20px;
 }
 .meta {
   display: flex;
@@ -168,7 +189,7 @@ h2 { margin: 0; font-size: 20px; }
 .pill.blue { background: #e4edf5; color: #244e72; }
 .cn {
   color: var(--muted);
-  margin: 6px 0 8px;
+  margin: 7px 0 12px;
   font-size: 14px;
 }
 .fr {
@@ -196,25 +217,74 @@ h2 { margin: 0; font-size: 20px; }
   padding-bottom: 2px;
 }
 .analysis {
-  margin-top: 12px;
-  border-top: 1px solid var(--line);
-  padding-top: 10px;
+  margin-top: 16px;
+  border: 1px solid #dfe7df;
+  border-radius: 7px;
+  background: #fbfcfa;
+  overflow: hidden;
 }
 .analysis summary {
+  list-style: none;
   cursor: pointer;
-  color: #314d36;
-  font-weight: 650;
-  font-size: 15px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 11px 12px;
+  color: #26382b;
+  user-select: none;
 }
+.analysis summary::-webkit-details-marker { display: none; }
+.analysis-title {
+  display: block;
+  font-weight: 680;
+  font-size: 14px;
+  line-height: 1.25;
+}
+.analysis-help {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.3;
+  margin-top: 2px;
+}
+.analysis-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  min-width: 0;
+}
+.analysis-toggle {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #cfd9cf;
+  border-radius: 999px;
+  background: white;
+  color: #3d5843;
+  padding: 4px 10px;
+  font-size: 12px;
+  white-space: nowrap;
+}
+.analysis-toggle::after {
+  content: "⌄";
+  font-size: 14px;
+  line-height: 1;
+}
+.analysis[open] .analysis-toggle::after { content: "⌃"; }
+.analysis .when-open { display: none; }
+.analysis[open] .when-open { display: inline; }
+.analysis[open] .when-closed { display: none; }
 .analysis-list {
   display: grid;
   gap: 9px;
-  margin-top: 10px;
+  padding: 0 12px 12px;
 }
 .analysis-item {
-  background: #f7f8f4;
+  background: #f8faf7;
   border: 1px solid #e0e5dc;
-  border-radius: 8px;
+  border-radius: 7px;
   padding: 9px 10px;
 }
 .analysis-fr {
@@ -230,12 +300,22 @@ h2 { margin: 0; font-size: 20px; }
 .note {
   display: inline-flex;
   align-items: center;
+  gap: 6px;
   border-radius: 999px;
   background: #edf2ea;
   color: #46544b;
   padding: 2px 8px;
   font-size: 12px;
   line-height: 1.35;
+}
+.note-phrase {
+  color: #26382b;
+  font-weight: 680;
+}
+.note-phrase::after {
+  content: "·";
+  color: #92a197;
+  margin-left: 6px;
 }
 .actions {
   display: flex;
@@ -368,8 +448,11 @@ h2 { margin: 0; font-size: 20px; }
   }
   .filters { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .topbar { display: block; }
+  .level-switch { margin-top: 12px; width: 100%; justify-content: space-between; }
   .statline { grid-template-columns: 1fr; }
   .main { padding: 20px 14px 32px; }
+  .analysis summary { align-items: center; }
+  .analysis-toggle { margin-top: 1px; }
 }
 </style>
 </head>
@@ -378,48 +461,56 @@ h2 { margin: 0; font-size: 20px; }
 <div class="settings-backdrop" id="settingsBackdrop"></div>
 <div class="app">
   <aside class="rail">
-    <p class="brand">TCF Oral C1<br>背诵模板库</p>
-    <p class="sub">基于你给的 tâche 2 / tâche 3 题库，重写为更高级、可替换、可直接训练发音的版本。</p>
-    <input id="search" class="search" placeholder="搜索：主题、中文、法语表达">
+    <p class="brand">TCF Canada Oral<br>C1 Practice</p>
+    <p class="sub">面向口语考试的句型材料、逐句音频与结构提示。</p>
+    <input id="search" class="search" placeholder="搜索主题、场景或表达">
     <div class="filters" id="filters"></div>
-    <p class="small">建议练法：先背“骨架”，再把括号里的关键词替换成题目内容。C1 的关键不是堆难词，而是论证层次和自然衔接。</p>
+    <p class="small">训练顺序：先熟悉句子骨架，再替换主题词；朗读时保持清晰、稳定、自然的节奏。</p>
   </aside>
 
   <main class="main">
     <div class="topbar">
       <div>
-        <h1>把 TCF 口语答案升级成 C1：有立场、有层次、有余地。</h1>
-        <p class="lede">Tâche 2 训练“礼貌询问 + 追问 + 确认”，Tâche 3 训练“让步 + 论证 + 例子 + 总结”。每张卡都可以复制、朗读、保存到真人 TTS。</p>
+        <h1>TCF Canada 口语训练</h1>
+        <p class="lede">按考试任务整理常用场景、观点表达和可迁移句型，适合反复朗读、跟读和替换练习。</p>
+      </div>
+      <div class="level-switch">
+        <label for="levelSelect">当前难度</label>
+        <select id="levelSelect">
+          <option value="a2">A2 稳定版</option>
+          <option value="b2" selected>B2 过线版</option>
+          <option value="c1">C1 提升版</option>
+        </select>
       </div>
     </div>
     <div class="statline">
-      <div class="stat"><b id="visibleCount">0</b><span>当前可见模板</span></div>
-      <div class="stat"><b>2' / 4'30</b><span>Tâche 2 / Tâche 3 目标时长</span></div>
-      <div class="stat"><b>C1</b><span>连接词、语域、论证密度</span></div>
+      <div class="stat"><b id="visibleCount">0</b><span>当前材料</span></div>
+      <div class="stat"><b>2' / 4'30</b><span>Tâche 2 / Tâche 3</span></div>
+      <div class="stat"><b>C1</b><span>结构、语域、衔接</span></div>
     </div>
 
     <section>
       <div class="section-title">
-        <h2>模板卡片</h2>
-        <button id="resetBtn">清空筛选</button>
+        <h2>训练材料</h2>
+        <button id="resetBtn">重置筛选</button>
       </div>
       <div class="grid" id="cards"></div>
     </section>
   </main>
 
-  <aside class="side" id="settingsPanel" aria-label="真人 TTS 设置">
+  <aside class="side" id="settingsPanel" aria-label="音频设置">
     <div class="settings-head">
-      <h2>真人 TTS 绑定</h2>
+      <h2>音频设置</h2>
       <button class="icon-btn" id="settingsClose" aria-label="关闭设置">×</button>
     </div>
-    <div class="notice">API key 只适合你本机练习。不要把填了 key 的网页发给别人，也不要部署到公网。</div>
+    <div class="notice">API key 仅用于本机练习。公开分享网页时，请不要包含任何私人 key。</div>
 
     <div class="field">
       <label for="provider">服务商</label>
       <select id="provider">
-        <option value="elevenlabs">ElevenLabs 推荐：法语自然度更强</option>
-        <option value="openai">OpenAI TTS 备用：接口简单</option>
-        <option value="browser">浏览器自带语音：免费预览</option>
+        <option value="elevenlabs">ElevenLabs：自然语音</option>
+        <option value="openai">OpenAI TTS：备用接口</option>
+        <option value="browser">浏览器语音：免费预览</option>
       </select>
     </div>
     <div class="field api-field">
@@ -445,19 +536,19 @@ h2 { margin: 0; font-size: 20px; }
       </select>
     </div>
     <div class="actions">
-      <button class="primary" id="saveTts">保存绑定</button>
+      <button class="primary" id="saveTts">保存设置</button>
       <button id="testTts">测试朗读</button>
     </div>
     <audio id="audio" controls style="width:100%; margin-top:12px"></audio>
 
-    <h2 style="margin-top:24px">怎么付费开通</h2>
+    <h2 style="margin-top:24px">API 开通说明</h2>
     <ol class="steps">
       <li>ElevenLabs：打开 <a href="https://elevenlabs.io/pricing" target="_blank" rel="noopener">pricing</a>，注册并选择含 API credits 的套餐。</li>
       <li>进入 <a href="https://elevenlabs.io/app/settings/api-keys" target="_blank" rel="noopener">API Keys</a>，新建 key；进入 <a href="https://elevenlabs.io/app/voice-library" target="_blank" rel="noopener">Voice Library</a> 选一个法语自然的声音，复制 voice_id。</li>
       <li>回到本页，把 key 和 voice_id 填入，点“保存绑定”。</li>
       <li>OpenAI：打开 <a href="https://platform.openai.com/settings/organization/billing/overview" target="_blank" rel="noopener">Billing</a> 绑定银行卡，再到 <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener">API Keys</a> 创建 key。OpenAI API 与 ChatGPT Plus 分开计费。</li>
     </ol>
-    <p class="small">如果浏览器因为 CORS 阻止直接请求 API，用卡片里的“复制”按钮，把文本粘到 ElevenLabs/OpenAI 控制台生成 mp3；这是最稳的备选方式。</p>
+    <p class="small">如果浏览器限制直接请求 API，可复制文本到语音平台控制台生成 mp3，再放入 audio 文件夹。</p>
   </aside>
 </div>
 
@@ -468,7 +559,7 @@ const templates = [
     theme: "Présentation",
     level: "C1",
     title: "Présentation personnelle élégante",
-    cn: "用于开场自我介绍：自然、成熟，不像小学生句子。",
+    cn: "开场自我介绍：简洁说明身份、地点和学习目标。",
     fr: "Bonjour, je m'appelle Patrick.\n\nJe viens de Chine et je vis actuellement au Canada.\n\nSur le plan professionnel, je m'intéresse beaucoup aux domaines qui demandent à la fois de la communication, de l'organisation et une bonne capacité d'adaptation.\n\nDans ma vie quotidienne, j'aime apprendre les langues, découvrir de nouvelles cultures et améliorer progressivement ma manière de m'exprimer en français.\n\nAujourd'hui, mon objectif est de parler avec plus de précision, de fluidité et de naturel.",
     zh: ["您好，我叫 Patrick。", "我来自中国，目前生活在加拿大。", "在职业方面，我对既需要沟通、组织能力，又需要适应能力的领域很感兴趣。", "在日常生活中，我喜欢学习语言、了解新的文化，并逐步提高自己的法语表达方式。", "现在，我的目标是说得更准确、更流利、更自然。"]
   },
@@ -477,7 +568,7 @@ const templates = [
     theme: "Études et travail",
     level: "C1",
     title: "Études, travail, projet",
-    cn: "回答学习、工作、未来计划。重点是说出方向感。",
+    cn: "学习、工作与未来计划：突出经历变化和中期目标。",
     fr: "J'ai un parcours assez évolutif, car j'essaie toujours d'apprendre de nouvelles compétences au lieu de rester dans une seule zone de confort.\n\nCe qui m'intéresse dans le travail, c'est la possibilité de résoudre des problèmes concrets et de progresser grâce à l'expérience.\n\nÀ moyen terme, j'aimerais construire un projet plus stable au Canada, tout en continuant à améliorer mon français, car la langue est pour moi un outil d'intégration et d'autonomie.",
     zh: ["我的经历是不断变化和发展的，因为我一直努力学习新能力，而不是停留在单一舒适区。", "工作中让我感兴趣的是解决实际问题，并通过经验不断进步。", "从中期来看，我希望在加拿大建立一个更稳定的发展计划，同时继续提高法语，因为语言对我来说是融入和独立生活的工具。"]
   },
@@ -486,7 +577,7 @@ const templates = [
     theme: "Ville et logement",
     level: "C1",
     title: "Ville, quartier, logement",
-    cn: "回答住在哪里、喜欢城市还是乡村、生活环境。",
+    cn: "居住环境与城市生活：说明偏好、原因和生活条件。",
     fr: "J'habite dans un environnement plutôt calme, ce qui me convient bien parce que j'ai besoin d'un certain équilibre entre efficacité et qualité de vie.\n\nCe que j'apprécie dans une ville, ce n'est pas seulement la présence de services, mais aussi la facilité de se déplacer, la sécurité et la diversité des activités.\n\nPour moi, un bon lieu de vie doit permettre à la fois de travailler sérieusement et de se reposer correctement.",
     zh: ["我住在一个相对安静的环境里，这很适合我，因为我需要在效率和生活质量之间保持平衡。", "我欣赏一座城市的地方，不只是服务设施齐全，也包括交通便利、安全以及活动多样。", "对我来说，一个好的居住地应该既能让人认真工作，也能让人好好休息。"]
   },
@@ -495,7 +586,7 @@ const templates = [
     theme: "Loisirs",
     level: "C1",
     title: "Loisirs et personnalité",
-    cn: "回答兴趣爱好，不要只说 j'aime le sport，要说出性格。",
+    cn: "兴趣与性格：把爱好和个人习惯联系起来。",
     fr: "Pendant mon temps libre, j'aime surtout les activités qui me permettent de me concentrer et de progresser régulièrement.\n\nPar exemple, l'apprentissage du français m'intéresse parce qu'il demande de la mémoire, de l'écoute et une vraie discipline personnelle.\n\nJ'aime aussi les moments plus simples, comme marcher, écouter des contenus en français ou organiser mes idées, car cela m'aide à garder un rythme de vie plus équilibré.",
     zh: ["空闲时间里，我尤其喜欢那些能让我集中注意力并持续进步的活动。", "例如，我对学习法语感兴趣，因为它需要记忆、听力和真正的自律。", "我也喜欢一些更简单的时刻，比如散步、听法语内容或整理自己的想法，因为这能帮助我保持更平衡的生活节奏。"]
   },
@@ -504,7 +595,7 @@ const templates = [
     theme: "Canada",
     level: "C1",
     title: "Pourquoi le Canada / le français",
-    cn: "回答为什么学法语、为什么加拿大。",
+    cn: "法语与加拿大：说明语言学习的实际意义。",
     fr: "J'apprends le français parce que je ne veux pas seulement communiquer de manière fonctionnelle, mais aussi mieux comprendre la société dans laquelle je vis.\n\nAu Canada, le français représente à la fois une compétence pratique et une porte d'entrée vers une autre culture.\n\nMême si l'apprentissage demande beaucoup d'efforts, je trouve que chaque progrès donne plus de confiance et plus de liberté dans la vie quotidienne.",
     zh: ["我学习法语，是因为我不只想进行功能性的沟通，也想更好地理解我生活的社会。", "在加拿大，法语既是一种实用能力，也是一扇进入另一种文化的门。", "虽然学习需要很多努力，但我觉得每一点进步都会给日常生活带来更多信心和自由。"]
   },
@@ -513,7 +604,7 @@ const templates = [
     theme: "Questions fréquentes",
     level: "C1",
     title: "Réponses courtes prêtes à sortir",
-    cn: "tâche 1 高频短答：用于快速反应。",
+    cn: "Tâche 1 高频短答：用于建立稳定反应。",
     fr: "Je préfère travailler en équipe lorsque les rôles sont clairs, car cela permet d'avancer plus efficacement.\n\nJe suis plutôt quelqu'un de persévérant : quand un objectif est important, je peux accepter une progression lente mais régulière.\n\nLe week-end, j'essaie de trouver un équilibre entre repos, tâches personnelles et activités qui me font progresser.\n\nSi je devais choisir une qualité importante, je dirais l'adaptabilité, parce qu'elle permet de mieux réagir aux situations nouvelles.",
     zh: ["如果分工清楚，我更喜欢团队合作，因为这样可以更有效地推进事情。", "我属于比较坚持的人：当一个目标很重要时，我能接受缓慢但稳定的进步。", "周末我会努力在休息、个人事务和能让我进步的活动之间找到平衡。", "如果要选择一个重要品质，我会说是适应能力，因为它能让人更好地应对新情况。"]
   },
@@ -522,7 +613,7 @@ const templates = [
     theme: "通用开场",
     level: "C1",
     title: "礼貌进入情境",
-    cn: "用于任何 tâche 2：先定位身份，再说明你想了解细节。",
+    cn: "Tâche 2 通用开场：先说明来意，再进入具体问题。",
     fr: "Bonjour, merci de prendre quelques minutes pour me renseigner. Comme je viens d'arriver et que je ne connais pas encore très bien le fonctionnement ici, j'aimerais vous poser quelques questions précises afin de prendre une décision éclairée."
   },
   {
@@ -530,7 +621,7 @@ const templates = [
     theme: "住房/合租",
     level: "C1",
     title: "合租/租房核心问题",
-    cn: "题库高频：找公寓、合租、搬家、邻居、房屋规则。",
+    cn: "住房场景：面积、费用、设施和居住规则。",
     fr: "Pour commencer, pourriez-vous me décrire le logement de manière assez concrète : sa superficie, l'état général, les meubles déjà disponibles et surtout l'ambiance de l'immeuble ou de la colocation ?\n\nJ'aimerais aussi savoir ce qui est compris dans le loyer, notamment l'électricité, Internet, le chauffage et les éventuels frais supplémentaires, afin d'éviter toute mauvaise surprise."
   },
   {
@@ -538,7 +629,7 @@ const templates = [
     theme: "活动/课程",
     level: "C1",
     title: "课程、协会、文化活动",
-    cn: "适合音乐课、烹饪课、体育俱乐部、志愿者、文化中心。",
+    cn: "课程与活动：时间安排、参与对象和课程结构。",
     fr: "Avant de m'inscrire, j'aurais besoin de comprendre le déroulement concret de l'activité : la fréquence des séances, le niveau attendu, le nombre de participants et le profil du public.\n\nEst-ce qu'il s'agit plutôt d'une activité conviviale pour découvrir, ou d'un programme structuré avec un vrai suivi et des objectifs progressifs ?"
   },
   {
@@ -546,7 +637,7 @@ const templates = [
     theme: "旅行/交通",
     level: "C1",
     title: "旅游、交通、租车",
-    cn: "适合旅行社、公共交通、周末出游、租车、保险。",
+    cn: "旅行与交通：预算、路线、保险和取消条件。",
     fr: "Pour organiser ce déplacement correctement, pourriez-vous m'indiquer les options les plus pratiques en fonction du budget, de la durée du trajet et du niveau de confort ?\n\nJe voudrais également connaître les conditions à respecter : documents nécessaires, assurance, politique d'annulation et éventuels frais cachés."
   },
   {
@@ -554,7 +645,7 @@ const templates = [
     theme: "服务/餐厅/酒店",
     level: "C1",
     title: "预约与服务细节",
-    cn: "适合餐厅订位、酒店入住、医疗预约、办公室咨询。",
+    cn: "服务预约：时间、费用、变更和注意事项。",
     fr: "J'aimerais vérifier quelques aspects pratiques avant de confirmer : les horaires disponibles, les tarifs exacts, les moyens de paiement acceptés et la procédure en cas de modification ou d'annulation.\n\nPar ailleurs, y a-t-il des recommandations particulières à connaître pour que tout se passe dans les meilleures conditions ?"
   },
   {
@@ -562,15 +653,15 @@ const templates = [
     theme: "送礼/照看",
     level: "C1",
     title: "照看孩子/宠物与送礼",
-    cn: "适合 babysitting、宠物照看、生日礼物、婚礼礼物。",
+    cn: "照看与送礼：习惯、偏好、限制和应急联系。",
     fr: "Pour être sûr de faire les choses correctement, pourriez-vous me préciser ses habitudes, ses préférences et ce qu'il vaut mieux éviter ?\n\nJe préfère poser ces questions à l'avance, car un détail qui paraît secondaire peut parfois changer complètement l'organisation ou le choix du cadeau."
   },
   {
     type: "tache2",
-    theme: "高分追问",
+    theme: "确认追问",
     level: "C1",
     title: "追问与确认",
-    cn: "当考官回答很短时，用这些问题把互动拉长。",
+    cn: "追问与确认：用于澄清条件并延续互动。",
     fr: "Quand vous dites que c'est flexible, est-ce que cela signifie que je peux choisir librement les horaires, ou seulement modifier certains créneaux ?\n\nSi je comprends bien, l'avantage principal est la simplicité, mais il faut quand même faire attention aux conditions. Est-ce bien cela ?"
   },
   {
@@ -578,7 +669,7 @@ const templates = [
     theme: "自然收尾",
     level: "C1",
     title: "结束对话",
-    cn: "收尾要体现你听懂了，并做出下一步决定。",
+    cn: "对话收尾：确认信息并说明下一步。",
     fr: "Merci, vos explications sont très claires. Je vais comparer ces informations avec mes contraintes personnelles, mais à première vue cette solution me paraît tout à fait envisageable. Je vous recontacterai rapidement si j'ai besoin d'une confirmation."
   },
   {
@@ -586,7 +677,7 @@ const templates = [
     theme: "通用结构",
     level: "C1",
     title: "四段式万能论证",
-    cn: "先承认复杂性，再给立场。C1 感来自 nuance。",
+    cn: "观点表达框架：先界定问题，再提出有条件的立场。",
     fr: "La question mérite, à mon sens, une réponse nuancée, car elle touche à la fois aux choix individuels et à l'organisation de la société.\n\nJe serais plutôt favorable à cette idée, à condition de ne pas la présenter comme une solution miracle. D'une part, elle permet de répondre à un besoin réel ; d'autre part, elle peut produire des effets pervers si elle est appliquée sans accompagnement.\n\nPar exemple, dans le domaine de [thème], on voit bien que les intentions sont souvent positives, mais que les résultats dépendent beaucoup du contexte social, économique et culturel.\n\nAinsi, je dirais que l'enjeu n'est pas seulement de dire oui ou non, mais de trouver un équilibre entre efficacité, justice et responsabilité."
   },
   {
@@ -650,7 +741,7 @@ const templates = [
     theme: "Classic questions",
     level: "C1",
     title: "Tâche 2 : questions de base à mémoriser",
-    cn: "经典提醒问题：任何服务、报名、预约、活动都能用。背成条件反射。",
+    cn: "基础提问：适用于服务、报名、预约和活动咨询。",
     fr: "Pourriez-vous me dire comment cela se déroule concrètement ?\n\nQuels sont les horaires disponibles, et faut-il réserver à l'avance ?\n\nCombien cela coûte-t-il exactement, et y a-t-il des frais supplémentaires à prévoir ?\n\nQuels documents dois-je fournir pour l'inscription ou la réservation ?\n\nEst-ce que je peux modifier ou annuler ma réservation si mon emploi du temps change ?"
   },
   {
@@ -690,7 +781,7 @@ const templates = [
     theme: "Gifts and care",
     level: "C1",
     title: "Cadeau, enfant, animal",
-    cn: "送礼、照看孩子、照看宠物时，问得越具体越像真实对话。",
+    cn: "送礼与照看：用具体问题形成真实互动。",
     fr: "Quelles sont ses habitudes quotidiennes, notamment pour les repas, le sommeil et les loisirs ?\n\nY a-t-il quelque chose qu'il aime particulièrement ou, au contraire, qu'il vaut mieux éviter ?\n\nEn cas de problème ou d'imprévu, qui dois-je contacter en priorité ?\n\nPour un cadeau, préférez-vous quelque chose d'utile, de personnel ou plutôt une petite attention symbolique ?\n\nY a-t-il une contrainte importante à respecter, par exemple une allergie, un budget ou une préférence familiale ?"
   },
   {
@@ -698,7 +789,7 @@ const templates = [
     theme: "Follow-up",
     level: "C1",
     title: "Relances intelligentes",
-    cn: "考官回答太短时用这些追问，既自然又能延长互动。",
+    cn: "互动追问：用于确认理解、比较选项和延续对话。",
     fr: "Quand vous dites que c'est possible, est-ce une possibilité exceptionnelle ou une pratique habituelle ?\n\nPour être sûr d'avoir bien compris, cela signifie donc que je dois d'abord faire la réservation, puis apporter les documents le jour même ?\n\nEt dans la pratique, quelle solution les gens choisissent-ils le plus souvent ?\n\nY a-t-il un inconvénient auquel je devrais faire attention avant de prendre ma décision ?\n\nSi vous étiez à ma place, quelle option choisiriez-vous, et pourquoi ?"
   },
   {
@@ -706,7 +797,7 @@ const templates = [
     theme: "Tache 3 examiner prompts",
     level: "C1",
     title: "Questions d'opinion a transformer en reflexe",
-    cn: "tâche 3 常见题干也要背：听到题就立刻进入论证结构。",
+    cn: "Tâche 3 常见题干：用于快速进入论证结构。",
     fr: "Que pensez-vous de cette évolution dans la société actuelle ?\n\nÀ votre avis, les avantages l'emportent-ils sur les inconvénients ?\n\nPensez-vous que l'État, les familles ou les individus doivent assumer la responsabilité principale ?\n\nEst-ce une question de liberté personnelle ou d'intérêt collectif ?\n\nDans quelle mesure cette solution peut-elle vraiment fonctionner dans la vie quotidienne ?"
   },
   {
@@ -714,7 +805,7 @@ const templates = [
     theme: "Tache 2 transformation",
     level: "C1",
     title: "Transformer une intention simple",
-    cn: "把“我想了解一下”变成多种真实口语动作。",
+    cn: "信息咨询：从简单提问扩展到确认和追问。",
     fr: "Je voudrais avoir des informations.\n\nAvant de prendre une décision, j'aurais besoin de comprendre le déroulement concret.\n\nPourriez-vous me donner une idée assez précise de la manière dont cela se passe en pratique ?\n\nDans les faits, comment cela se déroule-t-il le plus souvent ?\n\nDonc, si je comprends bien, je dois d'abord réserver, puis confirmer les détails, c'est bien cela ?"
   },
   {
@@ -722,7 +813,7 @@ const templates = [
     theme: "Nuance",
     level: "C1",
     title: "Transformer avantages / inconvénients",
-    cn: "把“有优点也有缺点”说出 C1 层次。",
+    cn: "优缺点表达：加入条件、限制和实施角度。",
     fr: "Cette solution a des avantages et des inconvénients.\n\nJe reconnais que cette solution peut être attractive, mais elle présente aussi des limites importantes.\n\nÀ mon sens, la vraie question n'est pas de savoir si elle est utile, mais si elle convient à tous les publics.\n\nSans accompagnement, elle risque même d'accentuer certaines inégalités.\n\nAinsi, l'enjeu n'est pas de l'accepter ou de la rejeter en bloc, mais d'en examiner les conditions de mise en œuvre."
   },
   {
@@ -730,7 +821,7 @@ const templates = [
     theme: "Technologie",
     level: "C1",
     title: "Transformer une idee banale sur la technologie",
-    cn: "把“科技很方便”变成可用于 tâche 3 的论证链。",
+    cn: "科技话题：从便利性扩展到注意力和判断力。",
     fr: "La technologie est pratique.\n\nLa technologie améliore l'efficacité et transforme notre rapport à l'information.\n\nCependant, si son usage n'est pas maîtrisé, elle peut affaiblir l'attention et l'esprit critique.\n\nPar exemple, les réseaux sociaux rendent la communication plus rapide, mais ils exposent aussi les utilisateurs à une information fragmentée.\n\nLa vraie question n'est donc pas d'utiliser ou non la technologie, mais de savoir comment garder une forme de contrôle."
   },
   {
@@ -738,7 +829,7 @@ const templates = [
     theme: "Éducation",
     level: "C1",
     title: "Transformer une idée banale sur l'école",
-    cn: "把“学校很重要”升级成社会论证。",
+    cn: "教育话题：从个人经验扩展到社会功能。",
     fr: "L'école est importante.\n\nL'école reste l'un des principaux moyens de réduire les inégalités de départ.\n\nCela dit, elle ne peut pas, à elle seule, réparer toutes les injustices sociales.\n\nSi l'on insiste uniquement sur les notes, on risque d'oublier le rôle de l'éducation dans la formation du jugement et de la personnalité.\n\nL'objectif devrait donc être de trouver un équilibre entre savoirs, compétences et conscience citoyenne."
   },
   {
@@ -746,7 +837,7 @@ const templates = [
     theme: "Price questions",
     level: "C1",
     title: "Transformer une question sur le prix",
-    cn: "把“多少钱”变成自然、礼貌、可追问的价格询问。",
+    cn: "价格询问：确认总价、附加费用和预算选项。",
     fr: "Combien ça coûte ?\n\nPourriez-vous m'indiquer le coût total approximatif ?\n\nCe tarif comprend-il tous les services, ou faut-il prévoir des frais supplémentaires ?\n\nSi mon budget est limité, quelle formule me conseilleriez-vous ?\n\nDonc, le montant final à payer serait bien celui-ci, sans frais cachés ?"
   },
   {
@@ -754,7 +845,7 @@ const templates = [
     theme: "Agreement",
     level: "C1",
     title: "Transformer je suis d'accord",
-    cn: "把“我同意”变成有保留、有判断的成熟表达。",
+    cn: "同意表达：加入条件、保留和现实限制。",
     fr: "Je suis d'accord.\n\nJe partage globalement ce point de vue, mais j'y ajouterais une condition.\n\nCette idée me semble pertinente, même s'il ne faut pas sous-estimer la complexité du réel.\n\nElle est convaincante en théorie, mais elle peut se heurter à des difficultés dans la pratique.\n\nJe dirais donc qu'il ne s'agit pas d'une réponse absolue, mais d'une question d'équilibre."
   },
   {
@@ -762,7 +853,7 @@ const templates = [
     theme: "连接词",
     level: "C1",
     title: "C1 连接词替换表",
-    cn: "把简单连接词换成更自然的高分表达。",
+    cn: "连接词替换：用于让步、论证和总结。",
     fr: "Pour nuancer : cela étant dit ; encore faut-il préciser que ; il serait réducteur de penser que.\n\nPour argumenter : ce qui me paraît déterminant, c'est que ; il ne faut pas perdre de vue que ; cette idée se vérifie notamment lorsque.\n\nPour conclure : en définitive ; tout l'enjeu consiste à ; la réponse dépend moins de A que de B."
   }
 ];
@@ -770,11 +861,11 @@ const templates = [
 const categoryLabels = {
   all: "全部",
   tache1: "Tâche 1 自我介绍",
-  tache2: "Tâche 2 互动提问",
-  tache3: "Tâche 3 观点论证",
-  questions: "经典提问背诵",
-  variations: "变形训练",
-  connecteurs: "C1 连接词"
+  tache2: "Tâche 2 互动问答",
+  tache3: "Tâche 3 观点表达",
+  questions: "常用问题",
+  variations: "替换练习",
+  connecteurs: "连接表达"
 };
 
 const zhLines = [
@@ -802,12 +893,12 @@ const zhLines = [
   ["他的日常习惯是什么，尤其是吃饭、睡眠和娱乐方面？", "有没有他特别喜欢的东西，或者相反，最好避免的东西？", "如果出现问题或意外，我应该优先联系谁？", "关于礼物，您更希望实用、个人化，还是一种象征性的心意？", "有没有重要限制需要遵守，比如过敏、预算或家庭偏好？"],
   ["当您说这是可以的，这是特殊情况，还是通常都可以这样做？", "为了确认我理解正确，这是否意味着我需要先预约，然后当天带文件？", "在实际操作中，人们最常选择哪种方案？", "在做决定之前，有没有我应该注意的缺点？", "如果您站在我的位置，您会选择哪个选项？为什么？"],
   ["您怎么看当今社会中的这种变化？", "在您看来，优点是否大于缺点？", "您认为国家、家庭还是个人应该承担主要责任？", "这是个人自由的问题，还是公共利益的问题？", "这种解决办法在日常生活中到底能在多大程度上发挥作用？"],
-  ["基础句：我想了解具体安排。", "更高级：在决定之前，我需要弄清楚实际流程。", "更礼貌：您能不能给我介绍一下实际情况？", "追问版：在实际操作中，通常是怎么进行的？", "确认版：所以如果我理解正确，我需要先预约，然后再确认细节，是这样吗？"],
+  ["基础句：我想了解具体安排。", "扩展版：在决定之前，我需要弄清楚实际流程。", "礼貌版：您能不能给我介绍一下实际情况？", "追问版：在实际操作中，通常是怎么进行的？", "确认版：所以如果我理解正确，我需要先预约，然后再确认细节，是这样吗？"],
   ["基础句：这个方案有优点和缺点。", "让步版：我承认这个方案有一定吸引力，但它也有明显限制。", "更 C1：问题不在于它是否有用，而在于它是否适合所有人。", "反方版：如果缺少配套措施，这个方案甚至可能加剧不平等。", "总结版：所以关键不是简单赞成或反对，而是看实施条件。"],
   ["基础句：科技很方便。", "抽象版：科技提高了效率，也改变了人们与信息的关系。", "风险版：但如果使用不加控制，它也会削弱注意力和判断力。", "例子版：比如，社交网络让沟通更快，却也让人更容易被碎片信息牵着走。", "平衡版：因此，真正的问题不是是否使用科技，而是如何保持主动权。"],
   ["基础句：学校很重要。", "社会版：学校是社会减少机会不平等的重要工具。", "限制版：不过，学校不能单独解决所有社会问题。", "深化版：如果只强调成绩，教育就会失去培养判断力和人格的作用。", "总结版：因此，教育的目标应当是知识、能力和公民意识的平衡。"],
   ["基础句：我想知道价格。", "自然版：您能告诉我总费用大概是多少吗？", "精确版：这个价格包含所有服务吗，还是还有额外费用？", "比较版：如果我预算有限，您会推荐哪种选择？", "确认版：所以最终我要支付的是这个金额，不会再有隐藏费用，对吗？"],
-  ["基础句：我同意。", "C1 版：我总体上赞同这个观点，但我会加一个条件。", "谨慎版：这个观点有道理，不过不能忽视现实中的复杂性。", "转折版：它在理论上很有说服力，但在实践中可能遇到困难。", "成熟版：我更愿意说，这不是一个绝对答案，而是一个需要平衡的问题。"],
+  ["基础句：我同意。", "条件版：我总体上赞同这个观点，但我会加一个条件。", "谨慎版：这个观点有道理，不过不能忽视现实中的复杂性。", "转折版：它在理论上很有说服力，但在实践中可能遇到困难。", "收束版：我更愿意说，这不是一个绝对答案，而是一个需要平衡的问题。"],
   ["用于表达让步：话虽如此；还需要说明的是；认为……会过于简单。", "用于展开论证：我认为决定性的地方在于；不能忽视的是；这一观点尤其在……时可以得到验证。", "用于总结：归根结底；真正的关键在于；答案与其说取决于 A，不如说取决于 B。"]
 ];
 
@@ -815,13 +906,195 @@ templates.forEach((item, index) => {
   item.zh = item.zh || zhLines[index - 6] || [];
 });
 
+const levelLabels = {
+  a2: "A2 稳定版",
+  b2: "B2 过线版",
+  c1: "C1 提升版"
+};
+
+function lines(fr, zh) {
+  return { fr: fr.join("\n\n"), zh };
+}
+
+function variantFor(item, level) {
+  if (level === "c1") return { fr: item.fr, zh: item.zh || [], label: "C1 提升版" };
+  const title = item.title.toLowerCase();
+  const theme = item.theme.toLowerCase();
+  const type = item.type;
+  if (level === "a2") return a2Variant(type, title, theme);
+  return b2Variant(type, title, theme);
+}
+
+function a2Variant(type, title, theme) {
+  if (type === "tache1") {
+    if (title.includes("travail")) return lines([
+      "J'ai étudié et travaillé dans plusieurs domaines.",
+      "J'aime apprendre de nouvelles choses.",
+      "Au Canada, je voudrais avoir un projet plus stable.",
+      "Pour cela, j'améliore mon français petit à petit."
+    ], ["我有过学习和工作的经历。", "我喜欢学习新东西。", "在加拿大，我想有一个更稳定的计划。", "因此，我在一点点提高法语。"]);
+    if (title.includes("ville")) return lines([
+      "J'habite dans un quartier assez calme.",
+      "J'aime cet endroit parce qu'il est pratique.",
+      "Il y a des transports, des magasins et des services.",
+      "Pour moi, c'est important d'avoir une vie simple et équilibrée."
+    ], ["我住在一个比较安静的社区。", "我喜欢这里，因为生活方便。", "这里有交通、商店和服务。", "对我来说，简单平衡的生活很重要。"]);
+    if (title.includes("loisirs")) return lines([
+      "Pendant mon temps libre, j'aime apprendre le français.",
+      "J'aime aussi marcher et écouter des vidéos en français.",
+      "Ces activités m'aident à me concentrer.",
+      "Elles me permettent de progresser régulièrement."
+    ], ["空闲时，我喜欢学法语。", "我也喜欢散步和听法语视频。", "这些活动帮助我集中注意力。", "它们让我稳定进步。"]);
+    if (title.includes("canada")) return lines([
+      "J'apprends le français parce que je vis au Canada.",
+      "Pour moi, c'est utile dans la vie quotidienne.",
+      "Le français m'aide à mieux comprendre les autres.",
+      "Je veux parler avec plus de confiance."
+    ], ["我学法语，因为我生活在加拿大。", "对我来说，它在日常生活中很有用。", "法语帮助我更好理解别人。", "我想更自信地说话。"]);
+    return lines([
+      "Bonjour, je m'appelle Patrick.",
+      "Je viens de Chine et je vis maintenant au Canada.",
+      "J'apprends le français pour mieux communiquer.",
+      "Mon objectif est de parler plus clairement et plus naturellement."
+    ], ["您好，我叫 Patrick。", "我来自中国，现在住在加拿大。", "我学习法语是为了更好沟通。", "我的目标是说得更清楚、更自然。"]);
+  }
+        if (type === "tache2" || type === "questions") {
+    return lines([
+      "Bonjour, je voudrais avoir quelques informations.",
+      "Pouvez-vous m'expliquer comment cela se passe ?",
+      "Combien cela coûte-t-il et faut-il réserver à l'avance ?",
+      "Merci, c'est clair. Je vais réfléchir et je vous recontacterai."
+    ], ["您好，我想了解一些信息。", "您能解释一下具体怎么进行吗？", "费用是多少，需要提前预约吗？", "谢谢，清楚了。我会考虑后再联系您。"]);
+  }
+  if (type === "tache3" || type === "variations") {
+    return lines([
+      "À mon avis, c'est une question importante.",
+      "Il y a des avantages, mais aussi des limites.",
+      "Donc, je pense qu'il faut trouver un équilibre."
+    ], ["我认为，这是一个重要问题。", "它有优点，但也有限制。", "所以，我认为需要找到平衡。"]);
+  }
+  return lines([
+    "D'abord ; ensuite ; enfin.",
+    "Par exemple ; parce que ; donc.",
+    "Je pense que ; à mon avis ; pour moi."
+  ], ["首先；然后；最后。", "例如；因为；所以。", "我认为；在我看来；对我来说。"]);
+}
+
+function b2Variant(type, title, theme) {
+  if (type === "tache1") {
+    if (title.includes("travail")) return lines([
+      "Mon parcours est assez varié, car j'ai toujours essayé d'apprendre de nouvelles compétences.",
+      "Dans le travail, j'aime surtout résoudre des problèmes concrets et voir mes progrès.",
+      "À moyen terme, je voudrais construire un projet plus stable au Canada.",
+      "C'est aussi pour cette raison que je continue à améliorer mon français."
+    ], ["我的经历比较多样，因为我一直尝试学习新能力。", "工作中，我尤其喜欢解决实际问题并看到自己的进步。", "从中期来看，我想在加拿大建立更稳定的发展计划。", "这也是我继续提高法语的原因。"]);
+    if (title.includes("ville")) return lines([
+      "J'habite dans un environnement plutôt calme, ce qui me convient bien.",
+      "J'apprécie une ville quand elle est à la fois pratique, sûre et agréable à vivre.",
+      "Pour moi, un bon quartier doit faciliter le travail, les déplacements et le repos.",
+      "C'est important de trouver un équilibre entre efficacité et qualité de vie."
+    ], ["我住在比较安静的环境里，这很适合我。", "我喜欢既方便、安全又适合生活的城市。", "对我来说，好的社区应该方便工作、出行和休息。", "在效率和生活质量之间找到平衡很重要。"]);
+    if (title.includes("loisirs")) return lines([
+      "Pendant mon temps libre, je préfère les activités qui me permettent de progresser régulièrement.",
+      "Par exemple, apprendre le français demande de la mémoire, de l'écoute et de la discipline.",
+      "J'aime aussi marcher ou écouter des contenus en français.",
+      "Ces habitudes m'aident à garder un rythme de vie plus équilibré."
+    ], ["空闲时，我更喜欢能让我持续进步的活动。", "例如，学法语需要记忆、听力和自律。", "我也喜欢散步或听法语内容。", "这些习惯帮助我保持更平衡的生活节奏。"]);
+    if (title.includes("canada")) return lines([
+      "J'apprends le français parce que je veux mieux communiquer dans la société où je vis.",
+      "Au Canada, le français est une compétence utile dans la vie quotidienne et professionnelle.",
+      "Il permet aussi de mieux comprendre une autre culture.",
+      "Même si c'est parfois difficile, chaque progrès me donne plus de confiance."
+    ], ["我学法语，因为我想在自己生活的社会里更好沟通。", "在加拿大，法语在日常和职业生活中都很有用。", "它也能帮助我更好理解另一种文化。", "虽然有时很难，但每一点进步都让我更有信心。"]);
+    return lines([
+      "Bonjour, je m'appelle Patrick et je viens de Chine.",
+      "Je vis actuellement au Canada, où j'essaie de m'adapter progressivement.",
+      "Sur le plan personnel et professionnel, je m'intéresse aux domaines qui demandent de la communication et de l'organisation.",
+      "Aujourd'hui, mon objectif est de parler français avec plus de clarté, de fluidité et de confiance."
+    ], ["您好，我叫 Patrick，来自中国。", "我现在住在加拿大，并在逐步适应这里。", "在个人和职业方面，我对需要沟通和组织能力的领域感兴趣。", "现在，我的目标是更清楚、更流利、更自信地说法语。"]);
+  }
+  if (type === "tache2") {
+    if (title.includes("logement") || title.includes("合租")) return lines([
+      "Pour commencer, pourriez-vous me décrire le logement de manière concrète ?",
+      "J'aimerais connaître la superficie, l'état général et les meubles disponibles.",
+      "Qu'est-ce qui est inclus dans le loyer : chauffage, électricité et Internet ?",
+      "Y a-t-il des règles particulières concernant le bruit, les invités ou les espaces communs ?"
+    ], ["首先，您能具体介绍一下住房吗？", "我想了解面积、整体状况和已有家具。", "租金里包含什么：暖气、电费和网络吗？", "关于噪音、访客或公共空间有什么特别规则吗？"]);
+    if (title.includes("课程") || title.includes("activité")) return lines([
+      "Avant de m'inscrire, j'aimerais comprendre le déroulement de l'activité.",
+      "À quel public s'adresse-t-elle et quel niveau faut-il avoir ?",
+      "Le programme est-il libre ou structuré avec des objectifs précis ?",
+      "Est-il possible de faire une séance d'essai avant de s'engager ?"
+    ], ["报名之前，我想了解活动流程。", "它面向什么人群，需要什么水平？", "课程是自由型，还是有明确目标的结构化安排？", "正式参加前可以试听一次吗？"]);
+    if (title.includes("交通") || title.includes("voyage")) return lines([
+      "Pour organiser ce déplacement, pourriez-vous m'indiquer les options les plus pratiques ?",
+      "Je voudrais comparer le prix, la durée du trajet et le niveau de confort.",
+      "Y a-t-il des documents, une assurance ou des conditions d'annulation à prévoir ?",
+      "Quelle option me conseilleriez-vous si mon budget est limité ?"
+    ], ["为了安排这次出行，您能告诉我最实用的选择吗？", "我想比较价格、时间和舒适度。", "需要准备文件、保险或取消条件吗？", "如果预算有限，您会推荐哪种选择？"]);
+    return lines([
+      "Bonjour, merci de prendre un moment pour me renseigner.",
+      "J'aimerais poser quelques questions précises avant de prendre ma décision.",
+      "Pourriez-vous m'expliquer comment cela se passe en pratique ?",
+      "Je voudrais aussi connaître le prix, les horaires et les conditions importantes.",
+      "Merci, vos explications m'aident à y voir plus clair."
+    ], ["您好，谢谢您抽时间给我信息。", "在做决定前，我想问几个具体问题。", "您能解释一下实际怎么进行吗？", "我也想了解价格、时间和重要条件。", "谢谢，您的解释让我更清楚。"]);
+  }
+  if (type === "tache3") {
+    if (title.includes("technologie") || title.includes("numérique")) return lines([
+      "La technologie apporte beaucoup d'avantages, car elle facilite l'accès à l'information.",
+      "Elle permet aussi de gagner du temps et de communiquer plus facilement.",
+      "Cependant, elle peut réduire l'attention et créer une dépendance.",
+      "À mon avis, le plus important est d'apprendre à l'utiliser comme un outil, sans perdre son esprit critique."
+    ], ["科技带来很多好处，因为它让获取信息更容易。", "它也能节省时间，让沟通更方便。", "但是，它可能削弱注意力并造成依赖。", "我认为最重要的是把它当工具使用，同时不失去批判思维。"]);
+    if (title.includes("école")) return lines([
+      "L'école joue un rôle essentiel, car elle donne des connaissances et des méthodes.",
+      "Elle peut aussi réduire certaines inégalités de départ.",
+      "Mais elle ne peut pas tout corriger seule.",
+      "Il faut donc trouver un équilibre entre les résultats scolaires, la confiance et l'esprit critique."
+    ], ["学校很重要，因为它提供知识和方法。", "它也能减少一些起点上的不平等。", "但学校不能单独解决所有问题。", "因此需要在成绩、信心和批判思维之间找到平衡。"]);
+    return lines([
+      "À mon avis, cette question est importante et elle mérite une réponse nuancée.",
+      "D'un côté, cette idée peut apporter des avantages concrets.",
+      "D'un autre côté, elle peut aussi créer des difficultés si elle est mal appliquée.",
+      "Par exemple, tout dépend du contexte et des personnes concernées.",
+      "Je pense donc qu'il faut chercher un équilibre plutôt qu'une réponse trop simple."
+    ], ["我认为这个问题很重要，需要有细致的回答。", "一方面，这个想法可以带来实际好处。", "另一方面，如果实施不好，也可能带来困难。", "例如，一切取决于背景和相关人群。", "所以我认为应该寻找平衡，而不是过于简单的答案。"]);
+  }
+  if (type === "questions") {
+    return lines([
+      "Pourriez-vous me dire comment cela se déroule concrètement ?",
+      "Quels sont les horaires disponibles et faut-il réserver à l'avance ?",
+      "Combien cela coûte-t-il au total ?",
+      "Y a-t-il des frais supplémentaires ou des documents à prévoir ?",
+      "Puis-je modifier ou annuler si mon emploi du temps change ?"
+    ], ["您能告诉我具体怎么进行吗？", "有哪些可选时间，需要提前预约吗？", "总费用是多少？", "有没有额外费用或需要准备的文件？", "如果时间改变，我可以修改或取消吗？"]);
+  }
+  if (type === "variations") {
+    return lines([
+      "Cette idée peut être utile, mais elle a aussi des limites.",
+      "À mon avis, il faut regarder les conditions concrètes.",
+      "Par exemple, elle ne fonctionne pas de la même manière pour tout le monde.",
+      "C'est pourquoi je préfère une solution équilibrée et progressive."
+    ], ["这个想法可能有用，但也有限制。", "我认为需要看具体条件。", "例如，它并不适用于所有人。", "所以我更倾向于平衡、渐进的方案。"]);
+  }
+  return lines([
+    "Pour nuancer : cela dit ; en même temps ; il faut aussi reconnaître que.",
+    "Pour argumenter : ce qui est important, c'est que ; par exemple ; cela montre que.",
+    "Pour conclure : en résumé ; pour cette raison ; il faut trouver un équilibre."
+  ], ["用于让步：话虽如此；同时；也要承认。", "用于论证：重要的是；例如；这说明。", "用于总结：总之；因此；需要找到平衡。"]);
+}
+
 let active = "all";
+let activeLevel = localStorage.getItem("tcf_level") || "b2";
 
 const cardsEl = document.querySelector("#cards");
 const filtersEl = document.querySelector("#filters");
 const searchEl = document.querySelector("#search");
 const visibleCount = document.querySelector("#visibleCount");
 const resetBtn = document.querySelector("#resetBtn");
+const levelSelect = document.querySelector("#levelSelect");
+levelSelect.value = activeLevel;
 
 function counts() {
   return templates.reduce((acc, item) => {
@@ -864,50 +1137,94 @@ function splitFrench(text) {
     });
 }
 
-function renderBilingual(item) {
-  const frLines = splitFrench(item.fr);
+function renderBilingual(content) {
+  const frLines = splitFrench(content.fr);
   return `<div class="sentence-list">${frLines.map((line, index) => {
-    const zh = item.zh[index] ? `<div class="sentence-zh">${escapeHtml(item.zh[index])}</div>` : "";
+    const zh = content.zh[index] ? `<div class="sentence-zh">${escapeHtml(content.zh[index])}</div>` : "";
     return `<div class="sentence-pair"><div class="sentence-fr">${escapeHtml(line)}</div>${zh}</div>`;
   }).join("")}</div>`;
 }
 
+const analysisRules = [
+  [/prendre une décision éclairée/i, "prendre une décision éclairée", "做出明智决定，Tâche 2 很实用"],
+  [/de manière (?:assez )?concrète/i, "de manière concrète", "要求对方说具体，不停留在泛泛介绍"],
+  [/déroulement concret/i, "le déroulement concret", "询问实际流程，比 comment ça marche 更正式"],
+  [/afin d[’']éviter toute mauvaise surprise/i, "afin d'éviter toute mauvaise surprise", "说明提问目的：避免后续意外"],
+  [/frais supplémentaires|frais cachés/i, "frais supplémentaires / cachés", "费用场景必背词块"],
+  [/ce qui .*?, c[’']est/i, "ce qui..., c'est...", "强调重点，把兴趣、问题或关键点提前"],
+  [/ce que .*?, ce n[’']est pas seulement/i, "ce que..., ce n'est pas seulement...", "先否定单一角度，再扩展论证"],
+  [/pas seulement .*?mais aussi/i, "pas seulement... mais aussi...", "双重角度，适合观点题"],
+  [/à la fois/i, "à la fois A et B", "并列两个维度，表达更有层次"],
+  [/tout en/i, "tout en + participe présent", "主线动作之外，同时补充另一目标"],
+  [/au lieu de/i, "au lieu de + infinitif", "表达替代关系：不是 A，而是 B"],
+  [/grâce à/i, "grâce à", "说明积极原因或进步来源"],
+  [/à moyen terme/i, "à moyen terme", "谈计划时比 plus tard 更稳定"],
+  [/à condition de/i, "à condition de", "有条件地表态，避免绝对化"],
+  [/à mon sens|à mes yeux|selon moi/i, "à mon sens / à mes yeux", "限定个人观点，语气更稳"],
+  [/il me semble/i, "il me semble que", "谨慎提出判断，适合 Tâche 3"],
+  [/je dirais que/i, "je dirais que", "给观点留余地，口语很自然"],
+  [/dans la mesure où/i, "dans la mesure où", "表示条件或原因，比 parce que 更书面"],
+  [/en fonction de/i, "en fonction de", "根据不同条件来判断"],
+  [/il ne s[’']agit pas/i, "il ne s'agit pas de...", "重新定义问题，论证感强"],
+  [/l[’']enjeu n[’']est pas/i, "l'enjeu n'est pas...", "指出真正关键，适合总结"],
+  [/encore faut-il/i, "encore faut-il que", "补充必要条件，典型 C1 让步"],
+  [/cela étant dit/i, "cela étant dit", "让步转折，比 mais 更稳"],
+  [/il serait réducteur de penser que/i, "il serait réducteur de penser que", "反驳过度简化观点"],
+  [/ne devrait pas être confondue? avec/i, "ne pas être confondu avec", "区分概念，适合抽象话题"],
+  [/se limite?r? pas à/i, "ne pas se limiter à", "避免单一化，扩展观点"],
+  [/se heurter à/i, "se heurter à", "表达现实阻力"],
+  [/sans accompagnement/i, "sans accompagnement", "指出缺少配套条件的风险"],
+  [/effets pervers/i, "des effets pervers", "政策/方案的反效果，高级但常用"],
+  [/mise en œuvre/i, "mise en œuvre", "实施、落地，观点题常用"],
+  [/esprit critique/i, "l'esprit critique", "教育/科技话题核心词"],
+  [/autonomie de jugement/i, "l'autonomie de jugement", "独立判断力，科技话题好用"],
+  [/qualité de vie/i, "la qualité de vie", "生活环境题核心词"],
+  [/zone de confort/i, "zone de confort", "经历/成长话题可背"],
+  [/capacité d[’']adaptation/i, "capacité d'adaptation", "自我介绍和工作话题核心词"],
+  [/porte d[’']entrée/i, "une porte d'entrée vers...", "把语言说成通往文化的入口"],
+  [/outil d[’']intégration et d[’']autonomie/i, "un outil d'intégration et d'autonomie", "移民/语言话题高价值词块"],
+  [/cadre commun/i, "un cadre commun", "社会融合话题核心词"],
+  [/cohésion/i, "la cohésion", "社会凝聚力，观点题常用"],
+  [/socialement acceptable/i, "socialement acceptable", "政策可接受性，环保/公共政策常用"],
+  [/marqueur social/i, "un marqueur social", "消费话题高级词"],
+  [/acte économique/i, "un acte économique", "把消费提升到社会分析层面"],
+  [/moyens de paiement acceptés/i, "les moyens de paiement acceptés", "服务咨询常用细节"],
+  [/procédure en cas de/i, "la procédure en cas de...", "询问变更/取消流程"],
+  [/à première vue/i, "à première vue", "先给初步判断，不把话说死"],
+  [/tout à fait envisageable/i, "tout à fait envisageable", "表示方案可考虑，收尾自然"]
+];
+
 function analyzeSentence(line, item) {
-  const text = line.toLowerCase();
   const notes = [];
-  const add = note => {
-    if (!notes.includes(note)) notes.push(note);
+  const add = (phrase, explain) => {
+    if (!notes.some(note => note.phrase === phrase)) notes.push({ phrase, explain });
   };
-  if (/ce qui|ce que|ce dont/.test(text)) add("强调结构：把抽象重点提前，后面再解释");
-  if (/ce n['’]est pas seulement|pas seulement/.test(text) && /mais aussi|mais de|mais que/.test(text)) add("C1 对比：不是只说 A，而是扩展到 B");
-  if (/à la fois/.test(text)) add("并列升级：à la fois A et B，一句话放两个维度");
-  if (/tout en/.test(text)) add("同步动作：主线不变，同时补充另一个目标");
-  if (/afin de|pour que|de sorte que/.test(text)) add("目的表达：说明为什么这样问/这样做");
-  if (/même si|bien que|malgré/.test(text)) add("让步：承认困难，但不削弱立场");
-  if (/à condition de|si je devais|j'aimerais|je voudrais|pourriez-vous|serait-il possible/.test(text)) add("条件/礼貌：语气成熟，不显得生硬");
-  if (/selon moi|à mes yeux|je dirais que|pour moi|il me semble/.test(text)) add("立场标记：先限定观点，避免绝对化");
-  if (/notamment|en particulier|surtout|par exemple/.test(text)) add("具体化：从抽象观点落到例子或细节");
-  if (/en fonction de|dans la mesure où|cela dépend|contexte/.test(text)) add("条件化思维：答案有余地，像 C1 论证");
-  if (/permet|permettre|donne|aide à/.test(text)) add("结果链：A permet de B，适合解释价值");
-  if (/équilibre|nuance|précision|autonomie|adaptation|responsabilité|cohésion/.test(text)) add("高级名词：用抽象名词提升表达层次");
-  if (/d['’]une part|d['’]autre part|en revanche|cependant|ainsi|en somme|pour conclure/.test(text)) add("连接词：负责推进逻辑，不只是装饰");
+  analysisRules.forEach(([regex, phrase, explain]) => {
+    if (regex.test(line)) add(phrase, explain);
+  });
   if (!notes.length) {
-    if (item.type === "tache2") add("提问骨架：背景 + 具体信息 + 目的");
-    else if (item.type === "tache3") add("论证骨架：立场 + 理由 + 限定");
-    else add("表达骨架：事实 + 评价 + 个人目标");
+    if (item.type === "tache2") add("提问骨架", "礼貌开场 + 具体信息 + 提问目的");
+    else if (item.type === "tache3") add("论证骨架", "立场 + 理由 + 条件限制");
+    else add("表达骨架", "事实 + 个人评价 + 后续目标");
   }
-  return notes.slice(0, 3);
+  return notes.slice(0, 4);
 }
 
-function renderAnalysis(item) {
-  const lines = splitFrench(item.fr);
+function renderAnalysis(item, content) {
+  const lines = splitFrench(content.fr);
   return `<details class="analysis">
-    <summary>高级拆解 / 记忆规律</summary>
+    <summary>
+      <span class="analysis-head">
+        <span class="analysis-title">结构提示</span>
+        <span class="analysis-help">帮助理解和记忆</span>
+      </span>
+      <span class="analysis-toggle"><span class="when-closed">展开</span><span class="when-open">收起</span></span>
+    </summary>
     <div class="analysis-list">
       ${lines.map(line => `
         <div class="analysis-item">
           <div class="analysis-fr">${escapeHtml(line)}</div>
-          <div class="analysis-notes">${analyzeSentence(line, item).map(note => `<span class="note">${escapeHtml(note)}</span>`).join("")}</div>
+          <div class="analysis-notes">${analyzeSentence(line, item).map(note => `<span class="note"><span class="note-phrase">${escapeHtml(note.phrase)}</span><span>${escapeHtml(note.explain)}</span></span>`).join("")}</div>
         </div>
       `).join("")}
     </div>
@@ -918,7 +1235,8 @@ function renderCards() {
   const q = searchEl.value.trim().toLowerCase();
   const data = templates.filter(item => {
     const typeOk = active === "all" || item.type === active;
-    const hay = `${item.theme} ${item.title} ${item.cn} ${item.fr} ${(item.zh || []).join(" ")}`.toLowerCase();
+    const content = variantFor(item, activeLevel);
+    const hay = `${item.theme} ${item.title} ${item.cn} ${content.fr} ${(content.zh || []).join(" ")}`.toLowerCase();
     return typeOk && (!q || hay.includes(q));
   });
   visibleCount.textContent = data.length;
@@ -928,17 +1246,18 @@ function renderCards() {
   }
   cardsEl.innerHTML = data.map(item => {
     const index = templates.indexOf(item);
+    const content = variantFor(item, activeLevel);
     return `
     <article class="card">
       <div class="meta">
         <span class="pill ${item.type === "tache3" ? "red" : item.type === "connecteurs" || item.type === "questions" || item.type === "variations" ? "gold" : "blue"}">${categoryLabels[item.type]}</span>
         <span class="pill">${item.theme}</span>
-        <span class="pill">${item.level}</span>
+        <span class="pill">${content.label}</span>
       </div>
       <h2>${item.title}</h2>
       <p class="cn">${item.cn}</p>
-      <div class="fr" id="text-${index}">${renderBilingual(item)}</div>
-      ${renderAnalysis(item)}
+      <div class="fr" id="text-${index}">${renderBilingual(content)}</div>
+      ${renderAnalysis(item, content)}
       <div class="actions">
         <button class="primary" data-speak="${index}">朗读</button>
         <button data-copy="${index}">复制</button>
@@ -1096,14 +1415,16 @@ function legacyDownloadedFileName(text) {
   return safeFileName(legacy);
 }
 
-function localAudioName(item, cardIndex, sentence, sentenceIndex) {
-  return `audio/${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${legacyDownloadedFileName(item.title)}-${String(sentenceIndex + 1).padStart(2, "0")}-${legacyDownloadedFileName(sentence)}.mp3?v=4`;
+function localAudioName(item, cardIndex, sentence, sentenceIndex, level = activeLevel) {
+  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${legacyDownloadedFileName(item.title)}-${String(sentenceIndex + 1).padStart(2, "0")}-${legacyDownloadedFileName(sentence)}.mp3?v=4`;
+  return level === "c1" ? `audio/${fileName}` : `audio/${level}/${fileName}`;
 }
 
-async function speakItem(item, cardIndex, player = audio) {
+async function speakItem(item, cardIndex, player = audio, level = activeLevel) {
   const target = usePlayer(player);
-  const lines = splitFrench(item.fr);
-  const urls = lines.map((line, index) => localAudioName(item, cardIndex, line, index));
+  const content = variantFor(item, level);
+  const lines = splitFrench(content.fr);
+  const urls = lines.map((line, index) => localAudioName(item, cardIndex, line, index, level));
   let current = 0;
   const hosted = location.hostname.includes("github.io");
   const playCurrent = () => {
@@ -1112,7 +1433,7 @@ async function speakItem(item, cardIndex, player = audio) {
       if (hosted && !cleanCredential(apiKey.value)) {
         alert(`第 ${current + 1} 句本地音频无法播放：${urls[current]}\n\n请确认这个文件已经上传到 GitHub 的 audio 文件夹，并等待 GitHub Pages 部署完成后 Ctrl+F5 强制刷新。`);
       } else {
-        speakText(item.fr, target);
+        speakText(content.fr, target);
       }
     });
   };
@@ -1148,14 +1469,16 @@ async function downloadSentenceAudios(item, button) {
     alert("浏览器自带语音不能生成 mp3。请切换 ElevenLabs 或 OpenAI。");
     return;
   }
-  const lines = splitFrench(item.fr);
+  const content = variantFor(item, activeLevel);
+  const lines = splitFrench(content.fr);
   const originalText = button.textContent;
   button.disabled = true;
   try {
     for (let index = 0; index < lines.length; index += 1) {
       button.textContent = `下载中 ${index + 1}/${lines.length}`;
       const blob = await getTtsBlob(lines[index]);
-      const name = `${item.type}-${safeFileName(item.title)}-${String(index + 1).padStart(2, "0")}-${safeFileName(lines[index])}.mp3`;
+      const prefix = activeLevel === "c1" ? "" : `${activeLevel}-`;
+      const name = `${prefix}${item.type}-${safeFileName(item.title)}-${String(index + 1).padStart(2, "0")}-${safeFileName(lines[index])}.mp3`;
       downloadBlob(blob, name);
       await sleep(650);
     }
@@ -1179,7 +1502,7 @@ cardsEl.addEventListener("click", async event => {
   const speakBtn = event.target.closest("[data-speak]");
   const downloadBtn = event.target.closest("[data-download]");
   if (copyBtn) {
-    await navigator.clipboard.writeText(templates[Number(copyBtn.dataset.copy)].fr);
+    await navigator.clipboard.writeText(variantFor(templates[Number(copyBtn.dataset.copy)], activeLevel).fr);
     copyBtn.textContent = "已复制";
     setTimeout(() => copyBtn.textContent = "复制", 900);
   }
@@ -1187,7 +1510,7 @@ cardsEl.addEventListener("click", async event => {
     try {
       const index = Number(speakBtn.dataset.speak);
       const player = cardsEl.querySelector(`[data-audio="${index}"]`) || audio;
-      await speakItem(templates[index], index, player);
+      await speakItem(templates[index], index, player, activeLevel);
     } catch (err) {
       alert("TTS 请求失败。可以先检查 key、voice_id、余额，或改用浏览器自带语音。错误：" + err.message.slice(0, 240));
     }
@@ -1204,6 +1527,12 @@ cardsEl.addEventListener("click", async event => {
 });
 
 searchEl.addEventListener("input", renderCards);
+levelSelect.addEventListener("change", () => {
+  activeLevel = levelSelect.value;
+  localStorage.setItem("tcf_level", activeLevel);
+  if (activePlayer) activePlayer.pause();
+  renderCards();
+});
 resetBtn.addEventListener("click", () => {
   active = "all";
   searchEl.value = "";
