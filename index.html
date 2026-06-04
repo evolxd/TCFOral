@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -287,24 +287,29 @@ h2 { margin: 0; font-size: 19px; }
   border-radius: 7px;
   padding: 9px 10px;
 }
+.analysis-item + .analysis-item {
+  margin-top: 8px;
+}
 .analysis-fr {
-  font-size: 15px;
+  color: #324139;
+  font-size: 14px;
   line-height: 1.35;
-  margin-bottom: 5px;
+  margin-bottom: 7px;
+  font-weight: 650;
 }
 .analysis-notes {
   display: flex;
   flex-wrap: wrap;
-  gap: 5px;
+  gap: 6px;
 }
 .note {
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  border-radius: 999px;
+  border-radius: 7px;
   background: #edf2ea;
   color: #46544b;
-  padding: 2px 8px;
+  padding: 5px 8px;
   font-size: 12px;
   line-height: 1.35;
 }
@@ -1192,6 +1197,19 @@ const analysisRules = [
   [/procédure en cas de/i, "la procédure en cas de...", "询问变更/取消流程"],
   [/à première vue/i, "à première vue", "先给初步判断，不把话说死"],
   [/tout à fait envisageable/i, "tout à fait envisageable", "表示方案可考虑，收尾自然"]
+  ,[/actuellement/i, "actuellement", "目前、现在；比 maintenant 更正式一点"]
+  ,[/progressivement/i, "progressivement", "逐步地；适合说学习和适应"]
+  ,[/concret|concrets|concrète/i, "concret / concrète", "具体的、实际的；口语考试高频"]
+  ,[/se déroule|déroule/i, "se dérouler", "进行、展开；问流程常用"]
+  ,[/disponible|disponibles/i, "disponible", "可用的、有空的；问时间/资源常用"]
+  ,[/à l'avance/i, "à l'avance", "提前；预约场景必背"]
+  ,[/prévoir/i, "prévoir", "预计、准备；问费用和材料常用"]
+  ,[/modifier ou annuler|modifier|annuler/i, "modifier / annuler", "修改/取消；预约场景常用"]
+  ,[/renseigner|me renseigner/i, "me renseigner", "向我提供信息；比 demander 更礼貌"]
+  ,[/compris dans|inclus dans/i, "compris / inclus dans", "包含在……里面；费用场景常用"]
+  ,[/s'engager/i, "s'engager", "承诺参加/报名一段时间"]
+  ,[/contraintes personnelles/i, "contraintes personnelles", "个人限制；解释选择时好用"]
+  ,[/à première vue/i, "à première vue", "初步看来；保留余地"]
 ];
 
 function analyzeSentence(line, item) {
@@ -1210,8 +1228,31 @@ function analyzeSentence(line, item) {
   return notes.slice(0, 4);
 }
 
+function cardStructureNote(item, content) {
+  if (item.type === "tache2" || item.type === "questions") {
+    return "礼貌开场 → 具体信息 → 条件/费用 → 确认下一步。先问流程，再问限制，最后确认决定。";
+  }
+  if (item.type === "tache3" || item.type === "variations") {
+    return "提出立场 → 承认复杂性 → 给理由或例子 → 回到平衡结论。重点是不要只说同意或不同意。";
+  }
+  if (item.type === "connecteurs") {
+    return "按功能记忆：让步、展开、总结。背的时候不要单背词，要连同后面的句子一起背。";
+  }
+  return "身份/事实 → 个人偏好 → 原因解释 → 目标收束。适合 Tâche 1 用稳定节奏回答。";
+}
+
+function cardVocabularyNotes(item, content) {
+  const notes = [];
+  splitFrench(content.fr).forEach(line => {
+    analyzeSentence(line, item).forEach(note => {
+      if (!notes.some(existing => existing.phrase === note.phrase)) notes.push(note);
+    });
+  });
+  return notes.slice(0, 10);
+}
+
 function renderAnalysis(item, content) {
-  const lines = splitFrench(content.fr);
+  const vocab = cardVocabularyNotes(item, content);
   return `<details class="analysis">
     <summary>
       <span class="analysis-head">
@@ -1221,12 +1262,14 @@ function renderAnalysis(item, content) {
       <span class="analysis-toggle"><span class="when-closed">展开</span><span class="when-open">收起</span></span>
     </summary>
     <div class="analysis-list">
-      ${lines.map(line => `
-        <div class="analysis-item">
-          <div class="analysis-fr">${escapeHtml(line)}</div>
-          <div class="analysis-notes">${analyzeSentence(line, item).map(note => `<span class="note"><span class="note-phrase">${escapeHtml(note.phrase)}</span><span>${escapeHtml(note.explain)}</span></span>`).join("")}</div>
-        </div>
-      `).join("")}
+      <div class="analysis-item">
+        <div class="analysis-fr">整段结构</div>
+        <div class="analysis-notes"><span class="note">${escapeHtml(cardStructureNote(item, content))}</span></div>
+      </div>
+      <div class="analysis-item">
+        <div class="analysis-fr">重点词汇和词块</div>
+        <div class="analysis-notes">${vocab.map(note => `<span class="note"><span class="note-phrase">${escapeHtml(note.phrase)}</span><span>${escapeHtml(note.explain)}</span></span>`).join("")}</div>
+      </div>
     </div>
   </details>`;
 }
@@ -1261,7 +1304,7 @@ function renderCards() {
       <div class="actions">
         <button class="primary" data-speak="${index}">朗读</button>
         <button data-copy="${index}">复制</button>
-        <a href="${googleTranslateUrl(item.fr)}" target="_blank" rel="noopener"><button>Google 发音</button></a>
+        <a href="${googleTranslateUrl(content.fr)}" target="_blank" rel="noopener"><button>Google 发音</button></a>
         <audio class="card-audio" data-audio="${index}" controls preload="metadata"></audio>
       </div>
     </article>
@@ -1416,7 +1459,9 @@ function legacyDownloadedFileName(text) {
 }
 
 function localAudioName(item, cardIndex, sentence, sentenceIndex, level = activeLevel) {
-  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${legacyDownloadedFileName(item.title)}-${String(sentenceIndex + 1).padStart(2, "0")}-${level === "c1" ? legacyDownloadedFileName(sentence) : safeFileName(sentence)}.mp3?v=6`;
+  const titleSlug = legacyDownloadedFileName(item.title);
+  const sentenceSlug = level === "c1" ? legacyDownloadedFileName(sentence) : safeFileName(sentence);
+  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=6`;
   return level === "c1" ? `audio/${fileName}` : `audio/${level}/${fileName}`;
 }
 
@@ -1562,4 +1607,3 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
 </script>
 </body>
 </html>
-
