@@ -1394,31 +1394,32 @@ function cardVocabularyNotes(item, content, level) {
   const add = (phrase, explain) => {
     if (!notes.some(existing => existing.phrase === phrase)) notes.push({ phrase, explain });
   };
-  curatedVocabularyNotes(item, level).forEach(note => add(note.phrase, note.explain));
   splitFrench(content.fr).forEach(line => {
     analyzeSentence(line, item).forEach(note => {
       add(note.phrase, note.explain);
     });
   });
-  if (item.type === "tache1") {
-    add("je m'intéresse à...", "我对……感兴趣；介绍自己时比 j'aime 更成熟");
-    add("mon objectif est de...", "我的目标是……；收尾稳定好用");
-    add("améliorer mon français", "提高法语；不要只说 apprendre le français");
-  }
-  if (item.type === "tache2" || item.type === "questions") {
-    add("Pourriez-vous... ?", "礼貌提问核心开头，比 Vous pouvez...? 更稳");
-    add("J'aimerais savoir...", "我想了解……；自然、礼貌、可反复用");
-    add("Y a-t-il... ?", "是否有……；问条件、费用、规则都能用");
-  }
-  if (item.type === "tache3" || item.type === "variations") {
-    add("À mon avis", "表达观点的安全开头");
-    add("D'un côté... d'un autre côté...", "一方面……另一方面……；B2 论证主力结构");
-    add("trouver un équilibre", "找到平衡；观点题万能收束");
-  }
-  if (item.type === "connecteurs") {
-    add("cela étant dit", "话虽如此；自然转折");
-    add("ce qui me paraît déterminant", "我认为决定性的地方；引出核心理由");
-    add("en définitive", "归根结底；总结开头");
+
+  const text = content.fr.toLowerCase();
+  const addIfInText = (phrase, explain, terms) => {
+    if (terms.some(term => text.includes(term.toLowerCase()))) add(phrase, explain);
+  };
+
+  addIfInText("je m'intéresse à...", "我对……感兴趣；介绍自己时比 j'aime 更成熟", ["je m'intéresse"]);
+  addIfInText("mon objectif est de...", "我的目标是……；收尾稳定好用", ["mon objectif est"]);
+  addIfInText("améliorer mon français", "提高法语；不要只说 apprendre le français", ["améliorer mon français"]);
+  addIfInText("Pourriez-vous... ?", "礼貌提问核心开头，比 Vous pouvez...? 更稳", ["pourriez-vous"]);
+  addIfInText("J'aimerais savoir...", "我想了解……；自然、礼貌、可反复用", ["j'aimerais savoir", "j'aimerais connaître"]);
+  addIfInText("Y a-t-il... ?", "是否有……；问条件、费用、规则都能用", ["y a-t-il"]);
+  addIfInText("À mon avis", "表达观点的安全开头", ["à mon avis"]);
+  addIfInText("D'un côté... d'un autre côté...", "一方面……另一方面……；B2 论证主力结构", ["d'un côté", "d'un autre côté"]);
+  addIfInText("trouver un équilibre", "找到平衡；观点题万能收束", ["trouver un équilibre"]);
+  addIfInText("cela étant dit", "话虽如此；自然转折", ["cela étant dit"]);
+  addIfInText("ce qui me paraît déterminant", "我认为决定性的地方；引出核心理由", ["ce qui me paraît déterminant"]);
+  addIfInText("en définitive", "归根结底；总结开头", ["en définitive"]);
+
+  if (!notes.length) {
+    curatedVocabularyNotes(item, level).forEach(note => add(note.phrase, note.explain));
   }
   return notes.slice(0, 12);
 }
