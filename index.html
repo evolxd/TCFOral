@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
@@ -1416,7 +1416,7 @@ function legacyDownloadedFileName(text) {
 }
 
 function localAudioName(item, cardIndex, sentence, sentenceIndex, level = activeLevel) {
-  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${legacyDownloadedFileName(item.title)}-${String(sentenceIndex + 1).padStart(2, "0")}-${legacyDownloadedFileName(sentence)}.mp3?v=4`;
+  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${legacyDownloadedFileName(item.title)}-${String(sentenceIndex + 1).padStart(2, "0")}-${level === "c1" ? legacyDownloadedFileName(sentence) : safeFileName(sentence)}.mp3?v=6`;
   return level === "c1" ? `audio/${fileName}` : `audio/${level}/${fileName}`;
 }
 
@@ -1562,3 +1562,4 @@ if ("serviceWorker" in navigator && location.protocol !== "file:") {
 </script>
 </body>
 </html>
+
