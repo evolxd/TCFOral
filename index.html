@@ -1263,129 +1263,210 @@ function analyzeSentence(line, item) {
   return notes.slice(0, 4);
 }
 
+function analysisKey(item) {
+  return `${item.type} ${item.theme} ${item.title}`
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 function cardStructureNote(item, content) {
-  if (item.type === "tache2" || item.type === "questions") {
-    return "礼貌开场 → 具体信息 → 条件/费用 → 确认下一步。先问流程，再问限制，最后确认决定。";
-  }
-  if (item.type === "tache3" || item.type === "variations") {
-    return "提出立场 → 承认复杂性 → 给理由或例子 → 回到平衡结论。重点是不要只说同意或不同意。";
-  }
-  if (item.type === "connecteurs") {
-    return "按功能记忆：让步、展开、总结。背的时候不要单背词，要连同后面的句子一起背。";
-  }
-  return "身份/事实 → 个人偏好 → 原因解释 → 目标收束。适合 Tâche 1 用稳定节奏回答。";
+  const key = analysisKey(item);
+  if (key.includes("presentation personnelle")) return "开场身份 → 所在地 → 职业兴趣 → 日常学习 → 口语目标。整段像一个成熟自我介绍，不急着堆经历。";
+  if (key.includes("etudes") || key.includes("travail")) return "经历变化 → 工作价值 → 中期计划 → 法语意义。重点是把“学法语”说成融入和自主能力。";
+  if (key.includes("ville") || key.includes("logement")) return "居住环境 → 城市标准 → 生活质量结论。先说个人需求，再说城市条件，逻辑很稳。";
+  if (key.includes("loisirs")) return "兴趣类型 → 具体例子 → 对生活节奏的作用。不是简单说喜欢，而是解释它怎样塑造自己。";
+  if (key.includes("canada") || key.includes("francais")) return "学习原因 → 加拿大语境 → 努力后的收益。把语言从工具提升到文化和生活自由。";
+  if (key.includes("reponses courtes")) return "每句独立回答一个高频问题：合作、性格、周末、品质。适合当口语反射材料。";
+  if (key.includes("entree") || key.includes("ouverture")) return "先感谢 → 说明自己不了解情况 → 提出具体问题 → 解释目的。Tâche 2 开场最稳。";
+  if (key.includes("colocation") || key.includes("immeuble")) return "先问房屋本身 → 再问费用包含 → 最后防止意外支出。租房场景要具体，不能只问价格。";
+  if (key.includes("cours") || key.includes("associations")) return "报名前确认流程 → 了解对象和水平 → 判断活动性质。重点是问出“适不适合我”。";
+  if (key.includes("voyage") || key.includes("transport")) return "先给选择标准 → 再问规则和风险。交通旅行题要同时覆盖预算、时间、保险和取消。";
+  if (key.includes("reservation") || key.includes("restaurant") || key.includes("hotel") || key.includes("service")) return "确认实用信息 → 追问变更规则 → 请求建议。服务题要问清费用、时间和临场注意事项。";
+  if (key.includes("cadeau") || key.includes("enfant") || key.includes("animal")) return "先问习惯偏好 → 再问禁忌 → 最后问突发情况。照看和送礼题最怕问得太空。";
+  if (key.includes("relances") || key.includes("confirmation")) return "抓住对方关键词 → 改写确认 → 继续追问实际做法。它训练的是互动感，不是背长答案。";
+  if (key.includes("fin") || key.includes("terminer")) return "感谢 → 评价信息清楚 → 说明自己会比较 → 保留再次联系。结束语要自然，不要突然停。";
+  if (key.includes("quatre") || key.includes("universel")) return "界定复杂性 → 有条件表态 → 举例解释 → 平衡收束。Tâche 3 的核心是“有立场但不绝对”。";
+  if (key.includes("integration") || key.includes("identite")) return "区分融合与抹除 → 解释共同规则 → 保留差异价值。文化题要避免单纯赞美多元。";
+  if (key.includes("ecole") || key.includes("education")) return "承认学校有限 → 强调集体作用 → 扩展到判断力和合作。教育题不要只谈成绩。";
+  if (key.includes("technologie") || key.includes("numerique")) return "先承认便利 → 指出现实风险 → 回到使用方式。科技题最适合做正反平衡。";
+  if (key.includes("ecologie") || key.includes("environnement")) return "反对简单二分 → 比较个人行动和政策条件 → 提出可接受转型。环保题要有现实感。";
+  if (key.includes("consommation") || key.includes("economie")) return "消费现象 → 社会心理 → 责任消费结论。把买东西说成社会行为，层次就出来了。";
+  if (key.includes("sante")) return "个人责任 → 社会条件 → 政策目标。健康题要避免把问题全推给个人。";
+  if (key.includes("famille")) return "家庭变化 → 新关系基础 → 利弊平衡。家庭题要能说传统，也能说现代变化。";
+  if (key.includes("opinion")) return "这是题干反射库：观点、利弊、责任、自由/集体、可行性。背问题是为了听懂考官方向。";
+  if (key.includes("intention simple")) return "简单意图 → 礼貌升级 → 具体流程 → 实际做法 → 确认理解。用于把短问句变成自然互动。";
+  if (key.includes("avantages") || key.includes("nuance")) return "承认优点 → 指出限制 → 转向条件 → 落到实施。训练 B2/C1 最重要的“有保留表达”。";
+  if (key.includes("price") || key.includes("prix")) return "问价格 → 问总价 → 问额外费用 → 请求预算方案 → 确认最终金额。费用题要避免只问 combien。";
+  if (key.includes("accord")) return "先总体同意 → 加条件 → 提醒复杂性 → 现实限制 → 平衡结论。比一句 je suis d'accord 高很多。";
+  if (key.includes("connecteurs")) return "按功能背：让步、论证、总结。每个连接词后面要连一个完整句子，才能在考场自动出来。";
+  if (item.type === "tache2" || item.type === "questions") return "礼貌开场 → 具体信息 → 条件限制 → 确认下一步。核心是让对话像真实咨询。";
+  if (item.type === "tache3" || item.type === "variations") return "立场 → 让步 → 理由 → 条件 → 结论。核心是表达成熟判断，不是喊口号。";
+  return "事实 → 偏好 → 原因 → 目标。短而稳定，适合 Tâche 1 建立第一印象。";
 }
 
 function curatedVocabularyNotes(item, level) {
-  const key = safeFileName(`${item.title} ${item.theme}`);
+  const key = analysisKey(item);
   const notes = [];
-  const add = (phrase, explain) => notes.push({ phrase, explain });
+  const add = (phrase, explain) => {
+    if (!notes.some(note => note.phrase === phrase)) notes.push({ phrase, explain });
+  };
 
-  if (key.includes("presentation")) {
-    add("je viens de...", "我来自……；自我介绍最稳定开头");
-    add("je vis actuellement...", "我目前住在……；比 j'habite 更适合正式介绍");
-    add("mon objectif est de...", "我的目标是……；用来收束自我介绍");
-  } else if (key.includes("travail") || key.includes("etudes")) {
-    add("mon parcours", "我的经历/路径；比 mon expérience 更有整体感");
-    add("compétences", "能力、技能；学习和工作题常用");
-    add("à moyen terme", "从中期来看；谈计划时很稳");
-  } else if (key.includes("ville") || key.includes("logement") || key.includes("quartier")) {
-    add("un environnement calme", "安静的环境；住房和城市题高频");
-    add("qualité de vie", "生活质量；把居住偏好说得更成熟");
-    add("les déplacements", "出行、通勤；城市便利性常用");
+  if (key.includes("presentation personnelle")) {
+    add("sur le plan professionnel", "在职业方面；比 directement 说 travail 更成熟。");
+    add("à la fois... et...", "同时具备两个维度；适合说能力、条件、利弊。");
+    add("capacité d'adaptation", "适应能力；加拿大生活、工作、学习都能迁移。");
+    add("ma manière de m'exprimer", "我的表达方式；比 mon français 更细。");
+  } else if (key.includes("etudes") || key.includes("travail")) {
+    add("un parcours assez évolutif", "不断变化发展的经历；适合解释背景不单一。");
+    add("au lieu de rester dans une zone de confort", "不待在舒适区；经历类话题很加分。");
+    add("résoudre des problèmes concrets", "解决实际问题；工作价值表达。");
+    add("un outil d'intégration et d'autonomie", "融入和自主的工具；法语学习的高级理由。");
+  } else if (key.includes("ville") || key.includes("quartier")) {
+    add("un certain équilibre", "某种平衡；表达偏好时很自然。");
+    add("qualité de vie", "生活质量；住房、城市、工作节奏都可用。");
+    add("la facilité de se déplacer", "出行便利；城市题核心标准。");
+    add("à la fois travailler... et se reposer...", "既能工作又能休息；结尾有生活逻辑。");
   } else if (key.includes("loisirs")) {
-    add("pendant mon temps libre", "在空闲时间；兴趣题标准开头");
-    add("me concentrer", "集中注意力；解释爱好的个人价值");
-    add("progresser régulièrement", "稳定进步；适合学习类爱好");
+    add("pendant mon temps libre", "空闲时间里；兴趣题稳定开头。");
+    add("me concentrer", "集中注意力；说明爱好带来的能力。");
+    add("une vraie discipline personnelle", "真正的自律；把学语言说得更有价值。");
+    add("garder un rythme de vie équilibré", "保持平衡生活节奏；生活方式题好结尾。");
   } else if (key.includes("canada") || key.includes("francais")) {
-    add("mieux communiquer", "更好沟通；语言学习核心目的");
-    add("vie quotidienne", "日常生活；加拿大生活题常用");
-    add("plus de confiance", "更多信心；学习进步的自然结果");
-  } else if (key.includes("questions-frequentes") || key.includes("reponses-courtes")) {
-    add("lorsque les rôles sont clairs", "当分工清楚时；团队合作题好用");
-    add("persévérant", "坚持的、有毅力的；性格题关键词");
-    add("adaptabilité", "适应能力；优点题很实用");
-  } else if (key.includes("poli") || key.includes("situation") || key.includes("entree")) {
-    add("merci de prendre un moment", "感谢对方抽时间；礼貌开场");
-    add("me renseigner", "给我信息；比 informer 更口语自然");
-    add("avant de prendre ma décision", "在做决定前；解释为什么要问");
+    add("communiquer de manière fonctionnelle", "功能性沟通；说得出生活需求。");
+    add("une porte d'entrée vers une autre culture", "通往另一种文化的入口；语言题高级表达。");
+    add("chaque progrès donne plus de confiance", "每一点进步都带来信心；学习类话题很自然。");
+    add("plus de liberté dans la vie quotidienne", "日常生活中更多自由；比 juste utile 更有层次。");
+  } else if (key.includes("reponses courtes")) {
+    add("lorsque les rôles sont clairs", "当分工清楚时；团队合作题高频条件。");
+    add("quelqu'un de persévérant", "一个有毅力的人；性格题好词。");
+    add("progression lente mais régulière", "缓慢但稳定的进步；适合学习和工作。");
+    add("l'adaptabilité", "适应能力；优点题非常实用。");
+  } else if (key.includes("entree") || key.includes("ouverture")) {
+    add("me renseigner", "向我说明情况；礼貌咨询常用。");
+    add("fonctionnement ici", "这里的运作方式；新到一个地方时很真实。");
+    add("questions précises", "具体问题；避免显得泛泛而问。");
+    add("prendre une décision éclairée", "做出明智决定；说明提问目的。");
   } else if (key.includes("colocation") || key.includes("immeuble")) {
-    add("ce qui est inclus", "包含哪些内容；租房费用必问");
-    add("l'ambiance de l'immeuble", "楼内氛围；比 voisinage 更具体");
-    add("espaces communs", "公共空间；合租场景必备");
-  } else if (key.includes("cours") || key.includes("associations") || key.includes("activite")) {
-    add("le déroulement de l'activité", "活动流程；报名咨询高频");
-    add("à quel public s'adresse...", "面向什么人群；课程活动题好用");
-    add("une séance d'essai", "试听/试课；非常实用");
-  } else if (key.includes("voyage") || key.includes("transport") || key.includes("voiture")) {
-    add("les options les plus pratiques", "最实用的选择；旅行交通题常用");
-    add("la durée du trajet", "路程时间；交通题必备");
-    add("conditions d'annulation", "取消条件；订票/租车/旅行必问");
-  } else if (key.includes("restaurant") || key.includes("hotel") || key.includes("rendez-vous") || key.includes("service")) {
-    add("me confirmer", "向我确认；预约场景很自然");
-    add("services compris dans le prix", "价格包含的服务；避免费用误解");
-    add("reporter le rendez-vous", "改期预约；医疗/服务场景常用");
+    add("de manière assez concrète", "比较具体地；要求对方别只说概况。");
+    add("l'ambiance de l'immeuble / de la colocation", "楼内/合租氛围；租房题很真实。");
+    add("ce qui est compris dans le loyer", "房租包含什么；费用题必须会问。");
+    add("afin d'éviter toute mauvaise surprise", "为了避免后续意外；解释追问目的。");
+  } else if (key.includes("cours") || key.includes("associations")) {
+    add("avant de m'inscrire", "报名之前；自然引入咨询。");
+    add("le déroulement concret", "具体流程；比 comment ça marche 更稳。");
+    add("le profil du public", "参与人群类型；课程活动题好用。");
+    add("un programme structuré avec un suivi", "有跟进的结构化课程；判断课程质量。");
+  } else if (key.includes("voyage") || key.includes("transport")) {
+    add("en fonction du budget", "根据预算；做选择时很常用。");
+    add("la durée du trajet", "路程时间；交通旅行题必备。");
+    add("le niveau de confort", "舒适程度；比 confortable 更具体。");
+    add("politique d'annulation / frais cachés", "取消政策/隐藏费用；旅行服务题很实用。");
+  } else if (key.includes("reservation") || key.includes("restaurant") || key.includes("hotel") || key.includes("service")) {
+    add("aspects pratiques", "实际细节；服务咨询开头很好。");
+    add("les moyens de paiement acceptés", "接受的付款方式；生活场景高频。");
+    add("en cas de modification ou d'annulation", "如需更改或取消；预约题必背。");
+    add("dans les meilleures conditions", "以最好的条件/状态进行；礼貌收尾。");
   } else if (key.includes("cadeau") || key.includes("enfant") || key.includes("animal")) {
-    add("ses habitudes quotidiennes", "日常习惯；照看场景核心");
-    add("ce qu'il vaut mieux éviter", "最好避免的事；问得很真实");
-    add("en cas d'imprévu", "遇到突发情况；照看/服务题实用");
-  } else if (key.includes("relances") || key.includes("confirmation") || key.includes("追问")) {
-    add("si je comprends bien", "如果我理解正确；确认信息必背");
-    add("dans la pratique", "实际操作中；把追问问得自然");
-    add("si vous étiez à ma place", "如果您是我；礼貌征求建议");
-  } else if (key.includes("opinion") || key.includes("questions-d-opinion")) {
-    add("Que pensez-vous de... ?", "您怎么看……；观点题题干核心");
-    add("les avantages l'emportent-ils...", "优点是否超过缺点；观点题常见问法");
-    add("dans quelle mesure", "在多大程度上；典型抽象提问");
-  } else if (key.includes("technologie") || key.includes("numerique")) {
-    add("l'accès à l'information", "获取信息；科技题核心词");
-    add("l'esprit critique", "批判思维；科技/教育题高频");
-    add("garder une forme de contrôle", "保持控制感；科技题好结论");
-  } else if (key.includes("ecole") || key.includes("egalite")) {
-    add("réduire les inégalités", "减少不平等；教育题核心表达");
-    add("les résultats scolaires", "学习成绩；比 les notes 更完整");
-    add("la formation du jugement", "判断力培养；教育题加分词块");
+    add("ce qu'il vaut mieux éviter", "最好避免什么；照看/送礼非常实用。");
+    add("à l'avance", "提前；预约、报名、照看都常用。");
+    add("un détail secondaire", "看似次要的细节；解释为什么要问清楚。");
+    add("changer complètement l'organisation", "彻底改变安排；强调细节重要。");
+  } else if (key.includes("relances") || key.includes("confirmation")) {
+    add("Quand vous dites que...", "当您说……时；抓住对方话继续追问。");
+    add("si je comprends bien", "如果我理解正确；确认理解必背。");
+    add("l'avantage principal", "主要优势；把信息总结出来。");
+    add("Est-ce bien cela ?", "是这样吗？礼貌确认，互动感很强。");
+  } else if (key.includes("fin") || key.includes("terminer")) {
+    add("vos explications sont très claires", "您的解释很清楚；自然感谢。");
+    add("mes contraintes personnelles", "我的个人限制；解释为什么还要比较。");
+    add("à première vue", "初步看来；不把话说死。");
+    add("tout à fait envisageable", "完全可以考虑；结束语成熟自然。");
+  } else if (key.includes("quatre") || key.includes("universel")) {
+    add("une réponse nuancée", "有层次的回答；Tâche 3 核心要求。");
+    add("à condition de ne pas...", "条件是不要……；避免绝对化。");
+    add("des effets pervers", "反效果；政策/方案讨论高级常用。");
+    add("l'enjeu n'est pas seulement...", "关键不只是……；总结时非常好用。");
   } else if (key.includes("integration") || key.includes("identite")) {
-    add("pays d'accueil", "接收国/所在国家；移民话题常用");
-    add("identité d'origine", "原有身份/文化身份；融合话题核心");
-    add("cadre commun", "共同框架；社会融合话题好用");
-  } else if (key.includes("ecologie")) {
-    add("responsabilité individuelle", "个人责任；环保题核心概念");
-    add("action politique", "政策行动；和个人行动形成对比");
-    add("socialement acceptable", "社会上可接受；政策讨论很有用");
-  } else if (key.includes("consommation")) {
-    add("pouvoir d'achat", "购买力；消费/经济题高频");
-    add("marqueur social", "社会标志；解释消费心理很高级");
-    add("consommation responsable", "负责任消费；环保和消费题通用");
+    add("ne pas être confondue avec", "不应与……混同；概念区分很高级。");
+    add("l'effacement de l'identité d'origine", "原有身份的抹除；文化融合核心。");
+    add("les codes du pays d'accueil", "接收国的规则/习惯；移民话题常用。");
+    add("un cadre commun", "共同框架；社会凝聚话题关键词。");
+  } else if (key.includes("ecole") || key.includes("education")) {
+    add("corriger toutes les inégalités", "纠正所有不平等；教育题核心表达。");
+    add("agir de manière collective", "以集体方式行动；提升到社会层面。");
+    add("transmettre des connaissances", "传授知识；教育题基本但重要。");
+    add("l'esprit critique", "批判思维；教育/科技题都可迁移。");
+  } else if (key.includes("technologie") || key.includes("numerique")) {
+    add("ambivalente", "具有双面性；科技题开头好词。");
+    add("facilite l'accès au savoir", "便利知识获取；科技优点表达。");
+    add("fragiliser l'attention", "削弱注意力；科技风险高级表达。");
+    add("un substitut à la réflexion", "思考的替代品；科技题结论很强。");
+  } else if (key.includes("ecologie") || key.includes("environnement")) {
+    add("opposition simpliste", "简单对立；反对二分法。");
+    add("responsabilité individuelle / action politique", "个人责任/政治行动；环保题核心对比。");
+    add("valeur éducative et symbolique", "教育和象征价值；说明个人行动有限但有意义。");
+    add("socialement acceptable", "社会可接受；公共政策话题好词。");
+  } else if (key.includes("consommation") || key.includes("economie")) {
+    add("un marqueur social", "社会标志；消费题高级词。");
+    add("un acte économique", "经济行为；把消费提升到分析层面。");
+    add("appartenir à un groupe", "归属于某个群体；解释消费心理。");
+    add("les désirs que la société fabrique", "社会制造出的欲望；非常有观点感。");
   } else if (key.includes("sante")) {
-    add("santé publique", "公共健康；健康政策题核心");
-    add("liberté individuelle", "个人自由；和公共利益形成对比");
-    add("intérêt collectif", "集体利益；观点题常用");
+    add("ne relève pas uniquement de...", "不只属于……；避免单一归因。");
+    add("culpabiliser les individus", "让个人背负罪责；健康政策题好词。");
+    add("conditions concrètes", "具体条件；把政策落到现实。");
+    add("rendre les bons choix plus accessibles", "让好的选择更容易实现；结论很稳。");
   } else if (key.includes("famille")) {
-    add("entraide", "互助；家庭题关键词");
-    add("relations plus libres", "更自由的关系；现代家庭话题好用");
-    add("modèle imposé", "被强加的模式；表达传统限制");
-  } else if (key.includes("prix")) {
-    add("coût total approximatif", "大概总费用；比 combien 更完整");
-    add("frais supplémentaires", "额外费用；价格题必背");
-    add("budget limité", "预算有限；自然引出推荐");
+    add("moins fondée sur l'obligation sociale", "不再主要建立在社会义务上；现代家庭分析。");
+    add("la négociation, l'affection et l'entraide", "协商、情感、互助；家庭题关键词组。");
+    add("un modèle imposé", "被强加的模式；谈传统限制。");
+    add("chercher sa place", "寻找自己的位置；家庭/社会关系都能用。");
+  } else if (key.includes("opinion")) {
+    add("Que pensez-vous de... ?", "您怎么看……；最常见观点题入口。");
+    add("les avantages l'emportent-ils sur les inconvénients", "利是否大于弊；观点题核心问法。");
+    add("assumer la responsabilité principale", "承担主要责任；责任归属题常用。");
+    add("dans quelle mesure", "在多大程度上；抽象题干高频。");
+  } else if (key.includes("intention simple")) {
+    add("avant de prendre une décision", "做决定之前；咨询题万能目的。");
+    add("une idée assez précise", "一个比较明确的概念；请求细节。");
+    add("en pratique / dans les faits", "实际操作中；追问真实情况。");
+    add("c'est bien cela ?", "是这样吗；确认理解并结束一轮互动。");
+  } else if (key.includes("avantages") || key.includes("nuance")) {
+    add("attractive", "有吸引力的；比 bien 更成熟。");
+    add("des limites importantes", "重要限制；利弊题必须会说。");
+    add("convient à tous les publics", "适合所有人群；提出适用条件。");
+    add("conditions de mise en œuvre", "实施条件；C1 方案分析关键词。");
+  } else if (key.includes("idee banale sur la technologie")) {
+    add("transforme notre rapport à l'information", "改变我们与信息的关系；科技题高级表达。");
+    add("si son usage n'est pas maîtrisé", "如果使用不受控制；风险条件。");
+    add("information fragmentée", "碎片化信息；社交网络题核心词。");
+    add("garder une forme de contrôle", "保持某种控制；成熟结论。");
+  } else if (key.includes("idee banale sur l'ecole")) {
+    add("inégalités de départ", "起点不平等；教育公平核心词。");
+    add("à elle seule", "仅凭它自己；表达能力边界。");
+    add("formation du jugement", "判断力培养；教育题加分表达。");
+    add("conscience citoyenne", "公民意识；教育社会功能高级词。");
+  } else if (key.includes("price") || key.includes("prix")) {
+    add("coût total approximatif", "大概总价；比 combien 更专业。");
+    add("frais supplémentaires", "额外费用；价格题必背。");
+    add("budget limité", "预算有限；自然请求推荐。");
+    add("sans frais cachés", "没有隐藏费用；确认最终金额。");
   } else if (key.includes("accord")) {
-    add("je partage globalement ce point de vue", "我总体赞同；比 je suis d'accord 更成熟");
-    add("j'y ajouterais une condition", "我会加一个条件；避免绝对同意");
-    add("se heurter à des difficultés", "遇到困难/阻力；现实限制表达");
-  } else {
-    add("à mon avis", "表达观点的安全开头");
-    add("par exemple", "举例过渡，口语最稳");
-    add("trouver un équilibre", "找到平衡；观点题常用结尾");
+    add("je partage globalement ce point de vue", "我总体赞同；比 je suis d'accord 更成熟。");
+    add("j'y ajouterais une condition", "我会补充一个条件；观点有余地。");
+    add("sous-estimer la complexité du réel", "低估现实复杂性；高级让步。");
+    add("se heurter à des difficultés", "遇到困难/阻力；现实限制表达。");
+  } else if (key.includes("connecteurs")) {
+    add("cela étant dit", "话虽如此；比 mais 更自然。");
+    add("encore faut-il préciser que", "还必须说明的是；C1 条件补充。");
+    add("ce qui me paraît déterminant", "我认为决定性的地方；引出关键理由。");
+    add("tout l'enjeu consiste à", "整个关键在于；总结句很好用。");
   }
 
-  if (level === "a2") {
-    add("parce que", "A2 保底原因连接词，必须说稳");
-  } else if (level === "b2") {
-    add("ce qui est important, c'est...", "B2 很好用的强调句型");
-  } else {
-    add("nuancé / nuancée", "有层次、有保留；C1 观点表达关键词");
-  }
+  if (level === "a2") add("短句优先", "A2 目标是说稳、说清，不追求复杂。");
+  if (level === "b2") add("连接 + 条件", "B2 重点是能解释原因、限制和结果。");
+  if (level === "c1") add("nuance", "C1 关键词：不绝对、有条件、有社会层次。");
   return notes;
 }
 
@@ -1394,34 +1475,12 @@ function cardVocabularyNotes(item, content, level) {
   const add = (phrase, explain) => {
     if (!notes.some(existing => existing.phrase === phrase)) notes.push({ phrase, explain });
   };
+
+  curatedVocabularyNotes(item, level).forEach(note => add(note.phrase, note.explain));
   splitFrench(content.fr).forEach(line => {
-    analyzeSentence(line, item).forEach(note => {
-      add(note.phrase, note.explain);
-    });
+    analyzeSentence(line, item).forEach(note => add(note.phrase, note.explain));
   });
-
-  const text = content.fr.toLowerCase();
-  const addIfInText = (phrase, explain, terms) => {
-    if (terms.some(term => text.includes(term.toLowerCase()))) add(phrase, explain);
-  };
-
-  addIfInText("je m'intéresse à...", "我对……感兴趣；介绍自己时比 j'aime 更成熟", ["je m'intéresse"]);
-  addIfInText("mon objectif est de...", "我的目标是……；收尾稳定好用", ["mon objectif est"]);
-  addIfInText("améliorer mon français", "提高法语；不要只说 apprendre le français", ["améliorer mon français"]);
-  addIfInText("Pourriez-vous... ?", "礼貌提问核心开头，比 Vous pouvez...? 更稳", ["pourriez-vous"]);
-  addIfInText("J'aimerais savoir...", "我想了解……；自然、礼貌、可反复用", ["j'aimerais savoir", "j'aimerais connaître"]);
-  addIfInText("Y a-t-il... ?", "是否有……；问条件、费用、规则都能用", ["y a-t-il"]);
-  addIfInText("À mon avis", "表达观点的安全开头", ["à mon avis"]);
-  addIfInText("D'un côté... d'un autre côté...", "一方面……另一方面……；B2 论证主力结构", ["d'un côté", "d'un autre côté"]);
-  addIfInText("trouver un équilibre", "找到平衡；观点题万能收束", ["trouver un équilibre"]);
-  addIfInText("cela étant dit", "话虽如此；自然转折", ["cela étant dit"]);
-  addIfInText("ce qui me paraît déterminant", "我认为决定性的地方；引出核心理由", ["ce qui me paraît déterminant"]);
-  addIfInText("en définitive", "归根结底；总结开头", ["en définitive"]);
-
-  if (!notes.length) {
-    curatedVocabularyNotes(item, level).forEach(note => add(note.phrase, note.explain));
-  }
-  return notes.slice(0, 12);
+  return notes.slice(0, 10);
 }
 
 function renderAnalysis(item, content) {
