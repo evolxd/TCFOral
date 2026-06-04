@@ -1276,11 +1276,125 @@ function cardStructureNote(item, content) {
   return "身份/事实 → 个人偏好 → 原因解释 → 目标收束。适合 Tâche 1 用稳定节奏回答。";
 }
 
-function cardVocabularyNotes(item, content) {
+function curatedVocabularyNotes(item, level) {
+  const key = safeFileName(`${item.title} ${item.theme}`);
+  const notes = [];
+  const add = (phrase, explain) => notes.push({ phrase, explain });
+
+  if (key.includes("presentation")) {
+    add("je viens de...", "我来自……；自我介绍最稳定开头");
+    add("je vis actuellement...", "我目前住在……；比 j'habite 更适合正式介绍");
+    add("mon objectif est de...", "我的目标是……；用来收束自我介绍");
+  } else if (key.includes("travail") || key.includes("etudes")) {
+    add("mon parcours", "我的经历/路径；比 mon expérience 更有整体感");
+    add("compétences", "能力、技能；学习和工作题常用");
+    add("à moyen terme", "从中期来看；谈计划时很稳");
+  } else if (key.includes("ville") || key.includes("logement") || key.includes("quartier")) {
+    add("un environnement calme", "安静的环境；住房和城市题高频");
+    add("qualité de vie", "生活质量；把居住偏好说得更成熟");
+    add("les déplacements", "出行、通勤；城市便利性常用");
+  } else if (key.includes("loisirs")) {
+    add("pendant mon temps libre", "在空闲时间；兴趣题标准开头");
+    add("me concentrer", "集中注意力；解释爱好的个人价值");
+    add("progresser régulièrement", "稳定进步；适合学习类爱好");
+  } else if (key.includes("canada") || key.includes("francais")) {
+    add("mieux communiquer", "更好沟通；语言学习核心目的");
+    add("vie quotidienne", "日常生活；加拿大生活题常用");
+    add("plus de confiance", "更多信心；学习进步的自然结果");
+  } else if (key.includes("questions-frequentes") || key.includes("reponses-courtes")) {
+    add("lorsque les rôles sont clairs", "当分工清楚时；团队合作题好用");
+    add("persévérant", "坚持的、有毅力的；性格题关键词");
+    add("adaptabilité", "适应能力；优点题很实用");
+  } else if (key.includes("poli") || key.includes("situation") || key.includes("entree")) {
+    add("merci de prendre un moment", "感谢对方抽时间；礼貌开场");
+    add("me renseigner", "给我信息；比 informer 更口语自然");
+    add("avant de prendre ma décision", "在做决定前；解释为什么要问");
+  } else if (key.includes("colocation") || key.includes("immeuble")) {
+    add("ce qui est inclus", "包含哪些内容；租房费用必问");
+    add("l'ambiance de l'immeuble", "楼内氛围；比 voisinage 更具体");
+    add("espaces communs", "公共空间；合租场景必备");
+  } else if (key.includes("cours") || key.includes("associations") || key.includes("activite")) {
+    add("le déroulement de l'activité", "活动流程；报名咨询高频");
+    add("à quel public s'adresse...", "面向什么人群；课程活动题好用");
+    add("une séance d'essai", "试听/试课；非常实用");
+  } else if (key.includes("voyage") || key.includes("transport") || key.includes("voiture")) {
+    add("les options les plus pratiques", "最实用的选择；旅行交通题常用");
+    add("la durée du trajet", "路程时间；交通题必备");
+    add("conditions d'annulation", "取消条件；订票/租车/旅行必问");
+  } else if (key.includes("restaurant") || key.includes("hotel") || key.includes("rendez-vous") || key.includes("service")) {
+    add("me confirmer", "向我确认；预约场景很自然");
+    add("services compris dans le prix", "价格包含的服务；避免费用误解");
+    add("reporter le rendez-vous", "改期预约；医疗/服务场景常用");
+  } else if (key.includes("cadeau") || key.includes("enfant") || key.includes("animal")) {
+    add("ses habitudes quotidiennes", "日常习惯；照看场景核心");
+    add("ce qu'il vaut mieux éviter", "最好避免的事；问得很真实");
+    add("en cas d'imprévu", "遇到突发情况；照看/服务题实用");
+  } else if (key.includes("relances") || key.includes("confirmation") || key.includes("追问")) {
+    add("si je comprends bien", "如果我理解正确；确认信息必背");
+    add("dans la pratique", "实际操作中；把追问问得自然");
+    add("si vous étiez à ma place", "如果您是我；礼貌征求建议");
+  } else if (key.includes("opinion") || key.includes("questions-d-opinion")) {
+    add("Que pensez-vous de... ?", "您怎么看……；观点题题干核心");
+    add("les avantages l'emportent-ils...", "优点是否超过缺点；观点题常见问法");
+    add("dans quelle mesure", "在多大程度上；典型抽象提问");
+  } else if (key.includes("technologie") || key.includes("numerique")) {
+    add("l'accès à l'information", "获取信息；科技题核心词");
+    add("l'esprit critique", "批判思维；科技/教育题高频");
+    add("garder une forme de contrôle", "保持控制感；科技题好结论");
+  } else if (key.includes("ecole") || key.includes("egalite")) {
+    add("réduire les inégalités", "减少不平等；教育题核心表达");
+    add("les résultats scolaires", "学习成绩；比 les notes 更完整");
+    add("la formation du jugement", "判断力培养；教育题加分词块");
+  } else if (key.includes("integration") || key.includes("identite")) {
+    add("pays d'accueil", "接收国/所在国家；移民话题常用");
+    add("identité d'origine", "原有身份/文化身份；融合话题核心");
+    add("cadre commun", "共同框架；社会融合话题好用");
+  } else if (key.includes("ecologie")) {
+    add("responsabilité individuelle", "个人责任；环保题核心概念");
+    add("action politique", "政策行动；和个人行动形成对比");
+    add("socialement acceptable", "社会上可接受；政策讨论很有用");
+  } else if (key.includes("consommation")) {
+    add("pouvoir d'achat", "购买力；消费/经济题高频");
+    add("marqueur social", "社会标志；解释消费心理很高级");
+    add("consommation responsable", "负责任消费；环保和消费题通用");
+  } else if (key.includes("sante")) {
+    add("santé publique", "公共健康；健康政策题核心");
+    add("liberté individuelle", "个人自由；和公共利益形成对比");
+    add("intérêt collectif", "集体利益；观点题常用");
+  } else if (key.includes("famille")) {
+    add("entraide", "互助；家庭题关键词");
+    add("relations plus libres", "更自由的关系；现代家庭话题好用");
+    add("modèle imposé", "被强加的模式；表达传统限制");
+  } else if (key.includes("prix")) {
+    add("coût total approximatif", "大概总费用；比 combien 更完整");
+    add("frais supplémentaires", "额外费用；价格题必背");
+    add("budget limité", "预算有限；自然引出推荐");
+  } else if (key.includes("accord")) {
+    add("je partage globalement ce point de vue", "我总体赞同；比 je suis d'accord 更成熟");
+    add("j'y ajouterais une condition", "我会加一个条件；避免绝对同意");
+    add("se heurter à des difficultés", "遇到困难/阻力；现实限制表达");
+  } else {
+    add("à mon avis", "表达观点的安全开头");
+    add("par exemple", "举例过渡，口语最稳");
+    add("trouver un équilibre", "找到平衡；观点题常用结尾");
+  }
+
+  if (level === "a2") {
+    add("parce que", "A2 保底原因连接词，必须说稳");
+  } else if (level === "b2") {
+    add("ce qui est important, c'est...", "B2 很好用的强调句型");
+  } else {
+    add("nuancé / nuancée", "有层次、有保留；C1 观点表达关键词");
+  }
+  return notes;
+}
+
+function cardVocabularyNotes(item, content, level) {
   const notes = [];
   const add = (phrase, explain) => {
     if (!notes.some(existing => existing.phrase === phrase)) notes.push({ phrase, explain });
   };
+  curatedVocabularyNotes(item, level).forEach(note => add(note.phrase, note.explain));
   splitFrench(content.fr).forEach(line => {
     analyzeSentence(line, item).forEach(note => {
       add(note.phrase, note.explain);
@@ -1310,7 +1424,7 @@ function cardVocabularyNotes(item, content) {
 }
 
 function renderAnalysis(item, content) {
-  const vocab = cardVocabularyNotes(item, content);
+  const vocab = cardVocabularyNotes(item, content, activeLevel);
   return `<details class="analysis">
     <summary>
       <span class="analysis-head">
