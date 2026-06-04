@@ -1210,6 +1210,41 @@ const analysisRules = [
   ,[/s'engager/i, "s'engager", "承诺参加/报名一段时间"]
   ,[/contraintes personnelles/i, "contraintes personnelles", "个人限制；解释选择时好用"]
   ,[/à première vue/i, "à première vue", "初步看来；保留余地"]
+  ,[/s[’']adapter|m[’']adapter/i, "s'adapter", "适应；移民、学习、工作场景都常用"]
+  ,[/clarté|clairement/i, "clarté / clairement", "清楚、清晰；说语言目标很自然"]
+  ,[/fluidité|fluide/i, "fluidité / fluide", "流利度；口语考试核心词"]
+  ,[/confiance/i, "confiance", "信心；表达学习进步的高频词"]
+  ,[/rythme de vie/i, "un rythme de vie", "生活节奏；比 vie 更具体"]
+  ,[/équilibré|équilibre/i, "équilibre / équilibré", "平衡；几乎所有观点题都能用"]
+  ,[/quotidien|quotidienne/i, "au quotidien / vie quotidienne", "日常生活；小白高频但很有用"]
+  ,[/professionnel|professionnelle/i, "professionnel / professionnelle", "职业上的；Tâche 1 常用"]
+  ,[/utile/i, "utile", "有用的；A2/B2 保底词，但非常稳"]
+  ,[/limites?/i, "une limite / des limites", "限制；讲优缺点时必备"]
+  ,[/avantages?/i, "un avantage / des avantages", "优点；观点题基本词"]
+  ,[/inconvénients?/i, "un inconvénient", "缺点；比 problème 更考试化"]
+  ,[/conseilleriez-vous/i, "Que me conseilleriez-vous ?", "礼貌征求建议，互动题很好用"]
+  ,[/serait-il possible|est-il possible/i, "Est-il possible de... ?", "礼貌问是否可以做某事"]
+  ,[/pour être sûr/i, "pour être sûr de...", "为了确认；追问时显得自然"]
+  ,[/si je comprends bien/i, "si je comprends bien", "如果我理解正确；确认信息必背"]
+  ,[/en pratique|dans la pratique/i, "en pratique", "实际操作中；把问题问得更真实"]
+  ,[/se passe|cela se passe/i, "comment cela se passe", "事情怎么进行；服务咨询高频"]
+  ,[/m[’']indiquer/i, "m'indiquer", "告知、指出；比 dire 更正式"]
+  ,[/me confirmer/i, "me confirmer", "向我确认；预约/价格/时间常用"]
+  ,[/tenir compte de|faire attention à/i, "faire attention à", "注意、留意；指出限制时常用"]
+  ,[/concernant/i, "concernant", "关于；问规则时很好用"]
+  ,[/démarches administratives/i, "démarches administratives", "行政手续；加拿大生活场景实用"]
+  ,[/conditions d[’']annulation|politique d[’']annulation/i, "conditions d'annulation", "取消条件；旅行/预约必备"]
+  ,[/niveau de confort/i, "niveau de confort", "舒适程度；交通/旅行场景可背"]
+  ,[/profil du public|public/i, "le public", "参与人群/对象；课程活动场景常用"]
+  ,[/séance d[’']essai/i, "une séance d'essai", "试听/试课；报名场景实用"]
+  ,[/matériel fourni/i, "le matériel est fourni", "材料是否提供；课程活动常用"]
+  ,[/imprévu/i, "un imprévu", "突发情况；真实口语很常用"]
+  ,[/préférence|préférences/i, "une préférence", "偏好；送礼/选择场景常用"]
+  ,[/symbolique/i, "symbolique", "象征性的；送礼表达更细腻"]
+  ,[/allergie/i, "une allergie", "过敏；照看孩子/宠物/餐饮常用"]
+  ,[/responsabilité/i, "responsabilité", "责任；观点题高频抽象名词"]
+  ,[/justice/i, "justice", "公平/正义；观点题结尾好用"]
+  ,[/efficacité/i, "efficacité", "效率；工作、政策、科技话题常用"]
 ];
 
 function analyzeSentence(line, item) {
@@ -1243,12 +1278,35 @@ function cardStructureNote(item, content) {
 
 function cardVocabularyNotes(item, content) {
   const notes = [];
+  const add = (phrase, explain) => {
+    if (!notes.some(existing => existing.phrase === phrase)) notes.push({ phrase, explain });
+  };
   splitFrench(content.fr).forEach(line => {
     analyzeSentence(line, item).forEach(note => {
-      if (!notes.some(existing => existing.phrase === note.phrase)) notes.push(note);
+      add(note.phrase, note.explain);
     });
   });
-  return notes.slice(0, 10);
+  if (item.type === "tache1") {
+    add("je m'intéresse à...", "我对……感兴趣；介绍自己时比 j'aime 更成熟");
+    add("mon objectif est de...", "我的目标是……；收尾稳定好用");
+    add("améliorer mon français", "提高法语；不要只说 apprendre le français");
+  }
+  if (item.type === "tache2" || item.type === "questions") {
+    add("Pourriez-vous... ?", "礼貌提问核心开头，比 Vous pouvez...? 更稳");
+    add("J'aimerais savoir...", "我想了解……；自然、礼貌、可反复用");
+    add("Y a-t-il... ?", "是否有……；问条件、费用、规则都能用");
+  }
+  if (item.type === "tache3" || item.type === "variations") {
+    add("À mon avis", "表达观点的安全开头");
+    add("D'un côté... d'un autre côté...", "一方面……另一方面……；B2 论证主力结构");
+    add("trouver un équilibre", "找到平衡；观点题万能收束");
+  }
+  if (item.type === "connecteurs") {
+    add("cela étant dit", "话虽如此；自然转折");
+    add("ce qui me paraît déterminant", "我认为决定性的地方；引出核心理由");
+    add("en définitive", "归根结底；总结开头");
+  }
+  return notes.slice(0, 12);
 }
 
 function renderAnalysis(item, content) {
@@ -1267,7 +1325,7 @@ function renderAnalysis(item, content) {
         <div class="analysis-notes"><span class="note">${escapeHtml(cardStructureNote(item, content))}</span></div>
       </div>
       <div class="analysis-item">
-        <div class="analysis-fr">重点词汇和词块</div>
+        <div class="analysis-fr">本卡值得背的表达</div>
         <div class="analysis-notes">${vocab.map(note => `<span class="note"><span class="note-phrase">${escapeHtml(note.phrase)}</span><span>${escapeHtml(note.explain)}</span></span>`).join("")}</div>
       </div>
     </div>
