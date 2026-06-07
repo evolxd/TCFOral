@@ -201,6 +201,27 @@ h2 { margin: 0; font-size: 19px; }
   display: grid;
   gap: 10px;
 }
+.sentence-pair {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 8px;
+  align-items: start;
+  padding-bottom: 2px;
+}
+.sentence-check {
+  width: 18px;
+  height: 18px;
+  margin-top: 4px;
+  accent-color: var(--green);
+  cursor: pointer;
+}
+.sentence-body {
+  min-width: 0;
+}
+.sentence-pair.is-muted .sentence-fr,
+.sentence-pair.is-muted .sentence-zh {
+  color: #9aa39b;
+}
 .sentence-fr {
   font-size: 19px;
   line-height: 1.38;
@@ -211,10 +232,6 @@ h2 { margin: 0; font-size: 19px; }
   line-height: 1.25;
   margin-top: 0;
   max-width: 75%;
-}
-.sentence-pair {
-  margin: 0;
-  padding-bottom: 2px;
 }
 .analysis {
   margin-top: 16px;
@@ -332,6 +349,11 @@ h2 { margin: 0; font-size: 19px; }
 .card-audio {
   width: min(360px, 100%);
   height: 38px;
+}
+.loop-active {
+  border-color: #5b765d;
+  background: #eef4ee;
+  color: #243827;
 }
 .side {
   position: fixed;
@@ -1142,11 +1164,28 @@ function splitFrench(text) {
     });
 }
 
-function renderBilingual(content) {
+function sentencePracticeKey(cardIndex, sentenceIndex, level = activeLevel) {
+  return `tcf_sentence_enabled_${level}_${cardIndex}_${sentenceIndex}`;
+}
+
+function isSentenceEnabled(cardIndex, sentenceIndex, level = activeLevel) {
+  return localStorage.getItem(sentencePracticeKey(cardIndex, sentenceIndex, level)) !== "0";
+}
+
+function setSentenceEnabled(cardIndex, sentenceIndex, enabled, level = activeLevel) {
+  localStorage.setItem(sentencePracticeKey(cardIndex, sentenceIndex, level), enabled ? "1" : "0");
+}
+
+function renderBilingual(content, cardIndex) {
   const frLines = splitFrench(content.fr);
   return `<div class="sentence-list">${frLines.map((line, index) => {
     const zh = content.zh[index] ? `<div class="sentence-zh">${escapeHtml(content.zh[index])}</div>` : "";
-    return `<div class="sentence-pair"><div class="sentence-fr">${escapeHtml(line)}</div>${zh}</div>`;
+    const checked = isSentenceEnabled(cardIndex, index) ? "checked" : "";
+    const muted = checked ? "" : " is-muted";
+    return `<label class="sentence-pair${muted}">
+      <input class="sentence-check" type="checkbox" data-sentence-card="${cardIndex}" data-sentence-index="${index}" ${checked}>
+      <div class="sentence-body"><div class="sentence-fr">${escapeHtml(line)}</div>${zh}</div>
+    </label>`;
   }).join("")}</div>`;
 }
 
@@ -1531,10 +1570,11 @@ function renderCards() {
       </div>
       <h2>${item.title}</h2>
       <p class="cn">${item.cn}</p>
-      <div class="fr" id="text-${index}">${renderBilingual(content)}</div>
+      <div class="fr" id="text-${index}">${renderBilingual(content, index)}</div>
       ${renderAnalysis(item, content)}
       <div class="actions">
         <button class="primary" data-speak="${index}">朗读</button>
+        <button data-loop="${index}">循环播放</button>
         <button data-copy="${index}">复制</button>
         <a href="${googleTranslateUrl(content.fr)}" target="_blank" rel="noopener"><button>Google 发音</button></a>
         <audio class="card-audio" data-audio="${index}" controls preload="metadata"></audio>
@@ -1650,6 +1690,8 @@ async function getTtsBlob(text) {
 }
 
 let activePlayer = audio;
+let activePlaybackToken = 0;
+let activeLoopButton = null;
 
 function usePlayer(player) {
   if (activePlayer && activePlayer !== player) {
@@ -1659,8 +1701,24 @@ function usePlayer(player) {
   return activePlayer;
 }
 
+function stopLoopUi() {
+  if (!activeLoopButton) return;
+  activeLoopButton.classList.remove("loop-active");
+  activeLoopButton.textContent = "循环播放";
+  activeLoopButton = null;
+}
+
+function selectedSentenceEntries(item, cardIndex, level = activeLevel) {
+  const content = variantFor(item, level);
+  return splitFrench(content.fr)
+    .map((line, index) => ({ line, index }))
+    .filter(entry => isSentenceEnabled(cardIndex, entry.index, level));
+}
+
 async function speakText(text, player = audio) {
   const target = usePlayer(player);
+  activePlaybackToken += 1;
+  stopLoopUi();
   if (provider.value === "browser") {
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = "fr-FR";
@@ -1697,30 +1755,56 @@ function localAudioName(item, cardIndex, sentence, sentenceIndex, level = active
   return level === "c1" ? `audio/${fileName}` : `audio/${level}/${fileName}`;
 }
 
-async function speakItem(item, cardIndex, player = audio, level = activeLevel) {
+async function speakItem(item, cardIndex, player = audio, level = activeLevel, options = {}) {
   const target = usePlayer(player);
   const content = variantFor(item, level);
-  const lines = splitFrench(content.fr);
-  const urls = lines.map((line, index) => localAudioName(item, cardIndex, line, index, level));
+  const entries = selectedSentenceEntries(item, cardIndex, level);
+  if (!entries.length) {
+    alert("这张卡片的句子都取消勾选了。请至少勾选一句再朗读。");
+    return;
+  }
+  const urls = entries.map(entry => localAudioName(item, cardIndex, entry.line, entry.index, level));
   let current = 0;
   const hosted = location.hostname.includes("github.io");
+  const playbackToken = activePlaybackToken += 1;
+  const loop = Boolean(options.loop);
+  if (loop) {
+    stopLoopUi();
+    activeLoopButton = options.button || null;
+    if (activeLoopButton) {
+      activeLoopButton.classList.add("loop-active");
+      activeLoopButton.textContent = "停止循环";
+    }
+  } else {
+    stopLoopUi();
+  }
   const playCurrent = () => {
+    if (playbackToken !== activePlaybackToken) return;
     target.src = urls[current];
     target.play().catch(() => {
       if (hosted && !cleanCredential(apiKey.value)) {
-        alert(`第 ${current + 1} 句本地音频无法播放：${urls[current]}\n\n请确认这个文件已经上传到 GitHub 的 audio 文件夹，并等待 GitHub Pages 部署完成后 Ctrl+F5 强制刷新。`);
+        alert(`第 ${entries[current].index + 1} 句本地音频无法播放：${urls[current]}\n\n请确认这个文件已经上传到 GitHub 的 audio 文件夹，并等待 GitHub Pages 部署完成后 Ctrl+F5 强制刷新。`);
       } else {
-        speakText(content.fr, target);
+        speakText(entries.map(entry => entry.line).join("\n\n"), target);
       }
     });
   };
   target.onended = () => {
+    if (playbackToken !== activePlaybackToken) return;
     current += 1;
-    if (current < urls.length) playCurrent();
+    if (current < urls.length) {
+      playCurrent();
+    } else if (loop) {
+      current = 0;
+      playCurrent();
+    } else {
+      stopLoopUi();
+    }
   };
   target.onerror = () => {
+    if (playbackToken !== activePlaybackToken) return;
     if (hosted && !cleanCredential(apiKey.value)) {
-      alert(`第 ${current + 1} 句本地音频没有找到或无法读取：${urls[current]}`);
+      alert(`第 ${entries[current].index + 1} 句本地音频没有找到或无法读取：${urls[current]}`);
     }
   };
   playCurrent();
@@ -1777,6 +1861,7 @@ filtersEl.addEventListener("click", event => {
 cardsEl.addEventListener("click", async event => {
   const copyBtn = event.target.closest("[data-copy]");
   const speakBtn = event.target.closest("[data-speak]");
+  const loopBtn = event.target.closest("[data-loop]");
   const downloadBtn = event.target.closest("[data-download]");
   if (copyBtn) {
     await navigator.clipboard.writeText(variantFor(templates[Number(copyBtn.dataset.copy)], activeLevel).fr);
@@ -1792,6 +1877,24 @@ cardsEl.addEventListener("click", async event => {
       alert("TTS 请求失败。可以先检查 key、voice_id、余额，或改用浏览器自带语音。错误：" + err.message.slice(0, 240));
     }
   }
+  if (loopBtn) {
+    try {
+      if (activeLoopButton === loopBtn) {
+        activePlaybackToken += 1;
+        const index = Number(loopBtn.dataset.loop);
+        const player = cardsEl.querySelector(`[data-audio="${index}"]`) || audio;
+        player.pause();
+        stopLoopUi();
+        return;
+      }
+      const index = Number(loopBtn.dataset.loop);
+      const player = cardsEl.querySelector(`[data-audio="${index}"]`) || audio;
+      await speakItem(templates[index], index, player, activeLevel, { loop: true, button: loopBtn });
+    } catch (err) {
+      stopLoopUi();
+      alert("循环播放失败。错误：" + err.message.slice(0, 240));
+    }
+  }
   if (downloadBtn) {
     try {
       await downloadSentenceAudios(templates[Number(downloadBtn.dataset.download)], downloadBtn);
@@ -1803,10 +1906,26 @@ cardsEl.addEventListener("click", async event => {
   }
 });
 
+cardsEl.addEventListener("change", event => {
+  const box = event.target.closest("[data-sentence-card]");
+  if (!box) return;
+  const cardIndex = Number(box.dataset.sentenceCard);
+  const sentenceIndex = Number(box.dataset.sentenceIndex);
+  setSentenceEnabled(cardIndex, sentenceIndex, box.checked, activeLevel);
+  box.closest(".sentence-pair")?.classList.toggle("is-muted", !box.checked);
+  if (activeLoopButton) {
+    activePlaybackToken += 1;
+    if (activePlayer) activePlayer.pause();
+    stopLoopUi();
+  }
+});
+
 searchEl.addEventListener("input", renderCards);
 levelSelect.addEventListener("change", () => {
   activeLevel = levelSelect.value;
   localStorage.setItem("tcf_level", activeLevel);
+  activePlaybackToken += 1;
+  stopLoopUi();
   if (activePlayer) activePlayer.pause();
   renderCards();
 });
