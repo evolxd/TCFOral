@@ -417,6 +417,7 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   border-radius: var(--radius);
   background: #fbfcfa;
   padding: 12px;
+  position: relative;
 }
 .typing-head {
   display: flex;
@@ -449,6 +450,37 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
 .typing-box:focus {
   border-color: #8aa08f;
   box-shadow: 0 0 0 3px rgba(70, 106, 81, .12);
+}
+.accent-palette {
+  position: sticky;
+  bottom: 8px;
+  z-index: 2;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  width: fit-content;
+  max-width: 100%;
+  margin: -42px 8px 8px auto;
+  padding: 6px;
+  border: 1px solid #dbe5dc;
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, .94);
+  box-shadow: 0 10px 22px rgba(29, 41, 35, .12);
+  backdrop-filter: blur(8px);
+}
+.accent-btn {
+  min-width: 31px;
+  min-height: 30px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  color: var(--sage-dark);
+  font-size: 16px;
+  font-weight: 720;
+  line-height: 1;
+}
+.accent-btn:hover {
+  background: var(--sage-light);
+  border-color: #b9c9bb;
 }
 .typing-result {
   display: grid;
@@ -1351,12 +1383,16 @@ function renderBilingual(content, cardIndex) {
 
 function renderTypingPractice(cardIndex) {
   const draft = localStorage.getItem(typingPracticeKey(cardIndex)) || "";
+  const accents = ["é", "è", "ê", "ë", "à", "â", "î", "ï", "ô", "ù", "û", "ü", "ç", "œ", "É", "À"];
   return `<div class="typing-practice">
     <div class="typing-head">
       <span class="typing-title">听写检查</span>
       <span class="typing-hint">只检查当前勾选的句子</span>
     </div>
     <textarea class="typing-box" data-typing="${cardIndex}" placeholder="听一句，打一遍。可以逐句换行，也可以整段输入。">${escapeHtml(draft)}</textarea>
+    <div class="accent-palette" aria-label="法语符号快捷输入">
+      ${accents.map(char => `<button class="accent-btn" type="button" data-accent="${char}" data-accent-target="${cardIndex}">${char}</button>`).join("")}
+    </div>
     <div class="actions">
       <button data-check-typing="${cardIndex}">检查</button>
       <button data-clear-typing="${cardIndex}">清空</button>
@@ -1988,6 +2024,22 @@ function checkTypingPractice(cardIndex) {
   result.innerHTML = `<span class="typing-score">整体匹配 ${wholeScore}%</span>${rows}${extra}`;
 }
 
+function insertAccent(cardIndex, char) {
+  const box = cardsEl.querySelector(`[data-typing="${cardIndex}"]`);
+  if (!box) return;
+  const start = box.selectionStart ?? box.value.length;
+  const end = box.selectionEnd ?? box.value.length;
+  const before = box.value.slice(0, start);
+  const after = box.value.slice(end);
+  box.value = before + char + after;
+  const next = start + char.length;
+  box.focus();
+  box.setSelectionRange(next, next);
+  localStorage.setItem(typingPracticeKey(cardIndex), box.value);
+  const result = cardsEl.querySelector(`[data-typing-result="${cardIndex}"]`);
+  if (result && result.innerHTML.trim()) checkTypingPractice(cardIndex);
+}
+
 async function speakText(text, player = audio) {
   const target = usePlayer(player);
   activePlaybackToken += 1;
@@ -2143,6 +2195,10 @@ cardsEl.addEventListener("click", async event => {
   const downloadBtn = event.target.closest("[data-download]");
   const checkTypingBtn = event.target.closest("[data-check-typing]");
   const clearTypingBtn = event.target.closest("[data-clear-typing]");
+  const accentBtn = event.target.closest("[data-accent]");
+  if (accentBtn) {
+    insertAccent(Number(accentBtn.dataset.accentTarget), accentBtn.dataset.accent);
+  }
   if (copyBtn) {
     await navigator.clipboard.writeText(variantFor(templates[Number(copyBtn.dataset.copy)], activeLevel).fr);
     copyBtn.textContent = "已复制";

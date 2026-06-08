@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-c1-v9";
+const CACHE_NAME = "tcf-oral-c1-v10";
 const CORE_ASSETS = [
   "./",
   "./index.html",
