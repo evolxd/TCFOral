@@ -1561,7 +1561,9 @@ function simplifyA2(line, item) {
     .replace(/à condition de ne pas/gi, "mais il ne faut pas")
     .replace(/dans la mesure où/gi, "parce que")
     .replace(/toutefois/gi, "mais")
-    .replace(/cependant/gi, "mais");
+    .replace(/cependant/gi, "mais")
+    .replace(/qui demandent à la fois de la communication, de l'organisation et une bonne capacité d'adaptation/gi, "qui demandent de communiquer tout en sachant s'organiser et s'adapter")
+    .replace(/qui demandent à la fois de la communication$/gi, "qui demandent de communiquer tout en sachant s'organiser et s'adapter");
   text = trimComplexSentence(text, item.type === "tache3" || item.type === "variations" ? 24 : 20);
   return ensureSentenceEnd(text);
 }
@@ -1573,7 +1575,9 @@ function simplifyB2(line, item) {
     .replace(/ne devrait pas être confondue? avec/gi, "ne doit pas être confondue avec")
     .replace(/de manière assez concrète/gi, "de manière concrète")
     .replace(/éventuels frais supplémentaires/gi, "frais supplémentaires")
-    .replace(/cela étant dit/gi, "cela dit");
+    .replace(/cela étant dit/gi, "cela dit")
+    .replace(/qui demandent à la fois de la communication, de l'organisation et une bonne capacité d'adaptation/gi, "qui demandent de communiquer tout en sachant s'organiser et s'adapter")
+    .replace(/qui demandent à la fois de la communication$/gi, "qui demandent de communiquer tout en sachant s'organiser et s'adapter");
   text = trimComplexSentence(text, item.type === "tache3" || item.type === "variations" ? 34 : 30);
   return ensureSentenceEnd(text);
 }
@@ -2417,7 +2421,7 @@ function legacyDownloadedFileName(text) {
 function localAudioName(item, cardIndex, sentence, sentenceIndex, level = activeLevel) {
   const titleSlug = legacyDownloadedFileName(item.title);
   const sentenceSlug = level === "c1" ? legacyDownloadedFileName(sentence) : safeFileName(sentence);
-  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=6`;
+  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=7`;
   return level === "c1" ? `audio/${fileName}` : `audio/${level}/${fileName}`;
 }
 
