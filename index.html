@@ -1657,6 +1657,17 @@ function saveSettings() {
   closeSettings();
 }
 
+function persistSettings() {
+  const settings = {
+    provider: provider.value,
+    apiKey: apiKey.value,
+    voiceId: voiceId.value,
+    speechSpeed: speechSpeed.value,
+    openaiVoice: openaiVoice.value
+  };
+  localStorage.setItem("tcf_tts_settings", JSON.stringify(settings));
+}
+
 function loadSettings() {
   const raw = localStorage.getItem("tcf_tts_settings");
   if (!raw) return;
@@ -1676,7 +1687,10 @@ function syncProviderFields() {
   document.querySelectorAll(".api-field").forEach(el => el.hidden = provider.value === "browser");
   document.querySelectorAll(".eleven-field").forEach(el => el.hidden = !isEleven);
   document.querySelectorAll(".openai-field").forEach(el => el.hidden = !isOpenAI);
-  speedValue.textContent = Number(speechSpeed.value).toFixed(2);
+  const rate = currentPlaybackRate();
+  speedValue.textContent = rate.toFixed(2);
+  applyPlaybackRate(audio);
+  document.querySelectorAll(".card-audio").forEach(applyPlaybackRate);
 }
 
 function openSettings() {
@@ -1754,11 +1768,24 @@ let activePlayer = audio;
 let activePlaybackToken = 0;
 let activeLoopButton = null;
 
+function currentPlaybackRate() {
+  const rate = Number(speechSpeed.value);
+  if (!Number.isFinite(rate)) return 1;
+  return Math.min(1.5, Math.max(0.5, rate));
+}
+
+function applyPlaybackRate(player) {
+  if (!player) return;
+  player.playbackRate = currentPlaybackRate();
+  player.defaultPlaybackRate = currentPlaybackRate();
+}
+
 function usePlayer(player) {
   if (activePlayer && activePlayer !== player) {
     activePlayer.pause();
   }
   activePlayer = player || audio;
+  applyPlaybackRate(activePlayer);
   return activePlayer;
 }
 
@@ -1783,13 +1810,14 @@ async function speakText(text, player = audio) {
   if (provider.value === "browser") {
     const utter = new SpeechSynthesisUtterance(text);
     utter.lang = "fr-FR";
-    utter.rate = .9;
+    utter.rate = currentPlaybackRate();
     speechSynthesis.cancel();
     speechSynthesis.speak(utter);
     return;
   }
   const blob = await getTtsBlob(text);
   target.src = URL.createObjectURL(blob);
+  applyPlaybackRate(target);
   await target.play();
 }
 
@@ -1842,6 +1870,7 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
   const playCurrent = () => {
     if (playbackToken !== activePlaybackToken) return;
     target.src = urls[current];
+    applyPlaybackRate(target);
     target.play().catch(() => {
       if (hosted && !cleanCredential(apiKey.value)) {
         alert(`第 ${entries[current].index + 1} 句本地音频无法播放：${urls[current]}\n\n请确认这个文件已经上传到 GitHub 的 audio 文件夹，并等待 GitHub Pages 部署完成后 Ctrl+F5 强制刷新。`);
@@ -1999,6 +2028,7 @@ resetBtn.addEventListener("click", () => {
 
 provider.addEventListener("change", syncProviderFields);
 speechSpeed.addEventListener("input", syncProviderFields);
+speechSpeed.addEventListener("change", persistSettings);
 saveTts.addEventListener("click", saveSettings);
 testTts.addEventListener("click", () => speakText("Bonjour. Je m'entraîne pour l'examen oral du TCF et je voudrais parler avec clarté, nuance et précision."));
 settingsToggle.addEventListener("click", openSettings);
