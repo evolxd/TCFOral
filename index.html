@@ -1237,12 +1237,8 @@ function lines(fr, zh) {
 }
 
 function variantFor(item, level) {
-  if (level === "c1") return { fr: item.fr, zh: item.zh || [], label: "C1 提升版" };
-  const title = item.title.toLowerCase();
-  const theme = item.theme.toLowerCase();
-  const type = item.type;
-  if (level === "a2") return a2Variant(type, title, theme);
-  return b2Variant(type, title, theme);
+  if (level === "c1") return { fr: item.fr, zh: item.zh || [], label: levelLabels.c1 };
+  return levelVariantFromCard(item, level);
 }
 
 function a2Variant(type, title, theme) {
@@ -1403,6 +1399,77 @@ function b2Variant(type, title, theme) {
     "Pour argumenter : ce qui est important, c'est que ; par exemple ; cela montre que.",
     "Pour conclure : en résumé ; pour cette raison ; il faut trouver un équilibre."
   ], ["用于让步：话虽如此；同时；也要承认。", "用于论证：重要的是；例如；这说明。", "用于总结：总之；因此；需要找到平衡。"]);
+}
+
+function levelVariantFromCard(item, level) {
+  const frLines = splitFrench(item.fr);
+  const zhLinesForCard = item.zh || [];
+  const targetCount = item.type === "connecteurs"
+    ? frLines.length
+    : level === "a2"
+      ? Math.min(4, frLines.length)
+      : Math.min(5, frLines.length);
+  const picked = chooseLevelSentences(item, frLines, targetCount);
+  const fr = picked.map(entry => level === "a2" ? simplifyA2(entry.line, item) : simplifyB2(entry.line, item));
+  const zh = picked.map(entry => zhLinesForCard[entry.index] || "");
+  return { fr: fr.join("\n\n"), zh, label: levelLabels[level] };
+}
+
+function chooseLevelSentences(item, frLines, targetCount) {
+  if (item.type !== "tache3" && item.type !== "variations") {
+    return frLines.slice(0, targetCount).map((line, index) => ({ line, index }));
+  }
+  const first = frLines.slice(0, Math.min(targetCount - 1, frLines.length)).map((line, index) => ({ line, index }));
+  const lastIndex = frLines.length - 1;
+  if (lastIndex > (first[first.length - 1]?.index ?? -1)) first.push({ line: frLines[lastIndex], index: lastIndex });
+  return first.slice(0, targetCount);
+}
+
+function simplifyA2(line, item) {
+  let text = line
+    .replace(/À mon sens|À mes yeux|Selon moi/gi, "À mon avis")
+    .replace(/Il me semble indispensable de/gi, "Je pense qu'il faut")
+    .replace(/ne devrait pas être confondue? avec/gi, "n'est pas la même chose que")
+    .replace(/de manière assez concrète/gi, "concrètement")
+    .replace(/le déroulement concret de/gi, "comment se passe")
+    .replace(/éventuels frais supplémentaires/gi, "frais en plus")
+    .replace(/conditions à respecter/gi, "conditions importantes")
+    .replace(/une réponse nuancée/gi, "une réponse simple mais équilibrée")
+    .replace(/l'enjeu n'est pas seulement de/gi, "le plus important n'est pas seulement de")
+    .replace(/à condition de ne pas/gi, "mais il ne faut pas")
+    .replace(/dans la mesure où/gi, "parce que")
+    .replace(/toutefois/gi, "mais")
+    .replace(/cependant/gi, "mais");
+  text = trimComplexSentence(text, item.type === "tache3" || item.type === "variations" ? 24 : 20);
+  return ensureSentenceEnd(text);
+}
+
+function simplifyB2(line, item) {
+  let text = line
+    .replace(/À mon sens|À mes yeux/gi, "À mon avis")
+    .replace(/Il me semble indispensable de/gi, "Je pense qu'il est important de")
+    .replace(/ne devrait pas être confondue? avec/gi, "ne doit pas être confondue avec")
+    .replace(/de manière assez concrète/gi, "de manière concrète")
+    .replace(/éventuels frais supplémentaires/gi, "frais supplémentaires")
+    .replace(/cela étant dit/gi, "cela dit");
+  text = trimComplexSentence(text, item.type === "tache3" || item.type === "variations" ? 34 : 30);
+  return ensureSentenceEnd(text);
+}
+
+function trimComplexSentence(text, maxWords) {
+  let cleaned = text.replace(/\s+/g, " ").trim();
+  const hardStop = cleaned.search(/[;:]/);
+  if (hardStop > 48) cleaned = cleaned.slice(0, hardStop);
+  const commaParts = cleaned.split(/,\s+/);
+  if (commaParts.length > 2) cleaned = commaParts.slice(0, 2).join(", ");
+  const words = cleaned.split(" ");
+  if (words.length > maxWords) cleaned = words.slice(0, maxWords).join(" ");
+  return cleaned.replace(/\s+([,.!?;:])/g, "$1").trim();
+}
+
+function ensureSentenceEnd(text) {
+  if (!text) return "";
+  return /[.!?]$/.test(text) ? text : `${text}.`;
 }
 
 let active = "all";
@@ -2233,7 +2300,9 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
     target.src = urls[current];
     applyPlaybackRate(target);
     target.play().catch(() => {
-      if (hosted && !cleanCredential(apiKey.value)) {
+      if (provider.value === "browser") {
+        speakText(entries.map(entry => entry.line).join("\n\n"), target);
+      } else if (hosted && !cleanCredential(apiKey.value)) {
         alert(`第 ${entries[current].index + 1} 句本地音频无法播放：${urls[current]}\n\n请确认这个文件已经上传到 GitHub 的 audio 文件夹，并等待 GitHub Pages 部署完成后 Ctrl+F5 强制刷新。`);
       } else {
         speakText(entries.map(entry => entry.line).join("\n\n"), target);
@@ -2254,6 +2323,7 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
   };
   target.onerror = () => {
     if (playbackToken !== activePlaybackToken) return;
+    if (provider.value === "browser") return;
     if (hosted && !cleanCredential(apiKey.value)) {
       alert(`第 ${entries[current].index + 1} 句本地音频没有找到或无法读取：${urls[current]}`);
     }

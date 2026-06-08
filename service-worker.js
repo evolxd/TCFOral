@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-c1-v18-enlearn-shell";
+const CACHE_NAME = "tcf-oral-c1-v19-level-variants";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
