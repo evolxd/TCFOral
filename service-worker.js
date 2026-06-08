@@ -1,6 +1,5 @@
-const CACHE_NAME = "tcf-oral-c1-v14";
+const CACHE_NAME = "tcf-oral-c1-v18-enlearn-shell";
 const CORE_ASSETS = [
-  "./",
   "./index.html",
   "./manifest.webmanifest",
   "./icons/icon.svg"
@@ -24,14 +23,7 @@ self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") return;
   if (event.request.mode === "navigate" || event.request.destination === "document") {
     event.respondWith(
-      fetch(event.request)
-        .then(response => {
-          if (response.ok) {
-            const copy = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-          }
-          return response;
-        })
+      fetch(event.request, { cache: "no-store" })
         .catch(() => caches.match(event.request).then(cached => cached || caches.match("./index.html")))
     );
     return;
