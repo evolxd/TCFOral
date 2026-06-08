@@ -411,6 +411,89 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   color: var(--sage-dark);
   font-weight: 650;
 }
+.typing-practice {
+  margin-top: 14px;
+  border: 1px solid #dde7df;
+  border-radius: var(--radius);
+  background: #fbfcfa;
+  padding: 12px;
+}
+.typing-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+.typing-title {
+  color: #26382b;
+  font-size: 15px;
+  font-weight: 720;
+}
+.typing-hint {
+  color: var(--muted);
+  font-size: 12px;
+}
+.typing-box {
+  width: 100%;
+  min-height: 96px;
+  resize: vertical;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: white;
+  color: var(--ink);
+  padding: 10px 11px;
+  line-height: 1.45;
+  outline: none;
+}
+.typing-box:focus {
+  border-color: #8aa08f;
+  box-shadow: 0 0 0 3px rgba(70, 106, 81, .12);
+}
+.typing-result {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+}
+.typing-score {
+  display: inline-flex;
+  width: fit-content;
+  border-radius: 999px;
+  background: var(--sage-light);
+  color: var(--sage-dark);
+  padding: 4px 9px;
+  font-size: 12px;
+  font-weight: 720;
+}
+.typing-line {
+  border: 1px solid #e1e8e1;
+  border-radius: var(--radius);
+  background: white;
+  padding: 8px 9px;
+  font-size: 13px;
+}
+.typing-line.good {
+  border-color: #cfe0d1;
+  background: #f4faf4;
+}
+.typing-line.bad {
+  border-color: #ead8d2;
+  background: #fff8f6;
+}
+.typing-label {
+  display: block;
+  color: var(--muted);
+  font-size: 12px;
+  margin-bottom: 2px;
+}
+.typing-target,
+.typing-user {
+  display: block;
+  line-height: 1.4;
+}
+.typing-user {
+  color: #6f3a2d;
+}
 .side {
   position: fixed;
   top: 0;
@@ -1241,6 +1324,10 @@ function sentencePracticeKey(cardIndex, sentenceIndex, level = activeLevel) {
   return `tcf_sentence_enabled_${level}_${cardIndex}_${sentenceIndex}`;
 }
 
+function typingPracticeKey(cardIndex, level = activeLevel) {
+  return `tcf_typing_practice_${level}_${cardIndex}`;
+}
+
 function isSentenceEnabled(cardIndex, sentenceIndex, level = activeLevel) {
   return localStorage.getItem(sentencePracticeKey(cardIndex, sentenceIndex, level)) !== "0";
 }
@@ -1260,6 +1347,22 @@ function renderBilingual(content, cardIndex) {
       <div class="sentence-body"><div class="sentence-fr">${escapeHtml(line)}</div>${zh}</div>
     </label>`;
   }).join("")}</div>`;
+}
+
+function renderTypingPractice(cardIndex) {
+  const draft = localStorage.getItem(typingPracticeKey(cardIndex)) || "";
+  return `<div class="typing-practice">
+    <div class="typing-head">
+      <span class="typing-title">听写检查</span>
+      <span class="typing-hint">只检查当前勾选的句子</span>
+    </div>
+    <textarea class="typing-box" data-typing="${cardIndex}" placeholder="听一句，打一遍。可以逐句换行，也可以整段输入。">${escapeHtml(draft)}</textarea>
+    <div class="actions">
+      <button data-check-typing="${cardIndex}">检查</button>
+      <button data-clear-typing="${cardIndex}">清空</button>
+    </div>
+    <div class="typing-result" data-typing-result="${cardIndex}"></div>
+  </div>`;
 }
 
 const analysisRules = [
@@ -1653,6 +1756,7 @@ function renderCards() {
         <span class="rate-pill" data-rate-label="${index}">x${currentPlaybackRate().toFixed(2)}</span>
         <audio class="card-audio" data-audio="${index}" controls preload="metadata"></audio>
       </div>
+      ${renderTypingPractice(index)}
     </article>
   `;
   }).join("");
@@ -1819,6 +1923,71 @@ function selectedSentenceEntries(item, cardIndex, level = activeLevel) {
     .filter(entry => isSentenceEnabled(cardIndex, entry.index, level));
 }
 
+function normalizeDictation(text) {
+  return (text || "")
+    .replace(/[’`´]/g, "'")
+    .replace(/\s+/g, " ")
+    .replace(/\s+([,.;:!?])/g, "$1")
+    .trim()
+    .toLowerCase();
+}
+
+function levenshteinDistance(a, b) {
+  const previous = Array.from({ length: b.length + 1 }, (_, index) => index);
+  const current = new Array(b.length + 1);
+  for (let i = 1; i <= a.length; i += 1) {
+    current[0] = i;
+    for (let j = 1; j <= b.length; j += 1) {
+      const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+      current[j] = Math.min(
+        previous[j] + 1,
+        current[j - 1] + 1,
+        previous[j - 1] + cost
+      );
+    }
+    for (let j = 0; j <= b.length; j += 1) previous[j] = current[j];
+  }
+  return previous[b.length];
+}
+
+function similarityPercent(target, user) {
+  const a = normalizeDictation(target);
+  const b = normalizeDictation(user);
+  if (!a && !b) return 100;
+  if (!a || !b) return 0;
+  const distance = levenshteinDistance(a, b);
+  return Math.max(0, Math.round((1 - distance / Math.max(a.length, b.length)) * 100));
+}
+
+function checkTypingPractice(cardIndex) {
+  const item = templates[cardIndex];
+  const entries = selectedSentenceEntries(item, cardIndex, activeLevel);
+  const box = cardsEl.querySelector(`[data-typing="${cardIndex}"]`);
+  const result = cardsEl.querySelector(`[data-typing-result="${cardIndex}"]`);
+  if (!box || !result) return;
+  if (!entries.length) {
+    result.innerHTML = `<div class="typing-line bad">这张卡片没有勾选任何句子，先勾选一句再检查。</div>`;
+    return;
+  }
+  const userLines = splitFrench(box.value);
+  const targetLines = entries.map(entry => entry.line);
+  const wholeScore = similarityPercent(targetLines.join(" "), userLines.join(" "));
+  const rows = targetLines.map((target, index) => {
+    const typed = userLines[index] || "";
+    const ok = normalizeDictation(target) === normalizeDictation(typed);
+    const score = similarityPercent(target, typed);
+    return `<div class="typing-line ${ok ? "good" : "bad"}">
+      <span class="typing-label">第 ${entries[index].index + 1} 句 · ${ok ? "正确" : `相似度 ${score}%`}</span>
+      <span class="typing-target">${escapeHtml(target)}</span>
+      ${ok ? "" : `<span class="typing-label">你的输入</span><span class="typing-user">${escapeHtml(typed || "（空）")}</span>`}
+    </div>`;
+  }).join("");
+  const extra = userLines.length > targetLines.length
+    ? `<div class="typing-line bad"><span class="typing-label">多出的内容</span><span class="typing-user">${escapeHtml(userLines.slice(targetLines.length).join(" "))}</span></div>`
+    : "";
+  result.innerHTML = `<span class="typing-score">整体匹配 ${wholeScore}%</span>${rows}${extra}`;
+}
+
 async function speakText(text, player = audio) {
   const target = usePlayer(player);
   activePlaybackToken += 1;
@@ -1972,6 +2141,8 @@ cardsEl.addEventListener("click", async event => {
   const speakBtn = event.target.closest("[data-speak]");
   const loopBtn = event.target.closest("[data-loop]");
   const downloadBtn = event.target.closest("[data-download]");
+  const checkTypingBtn = event.target.closest("[data-check-typing]");
+  const clearTypingBtn = event.target.closest("[data-clear-typing]");
   if (copyBtn) {
     await navigator.clipboard.writeText(variantFor(templates[Number(copyBtn.dataset.copy)], activeLevel).fr);
     copyBtn.textContent = "已复制";
@@ -2013,6 +2184,17 @@ cardsEl.addEventListener("click", async event => {
       downloadBtn.disabled = false;
     }
   }
+  if (checkTypingBtn) {
+    checkTypingPractice(Number(checkTypingBtn.dataset.checkTyping));
+  }
+  if (clearTypingBtn) {
+    const index = Number(clearTypingBtn.dataset.clearTyping);
+    const box = cardsEl.querySelector(`[data-typing="${index}"]`);
+    const result = cardsEl.querySelector(`[data-typing-result="${index}"]`);
+    if (box) box.value = "";
+    if (result) result.innerHTML = "";
+    localStorage.removeItem(typingPracticeKey(index));
+  }
 });
 
 cardsEl.addEventListener("change", event => {
@@ -2027,6 +2209,14 @@ cardsEl.addEventListener("change", event => {
     if (activePlayer) activePlayer.pause();
     stopLoopUi();
   }
+  const result = cardsEl.querySelector(`[data-typing-result="${cardIndex}"]`);
+  if (result && result.innerHTML.trim()) checkTypingPractice(cardIndex);
+});
+
+cardsEl.addEventListener("input", event => {
+  const box = event.target.closest("[data-typing]");
+  if (!box) return;
+  localStorage.setItem(typingPracticeKey(Number(box.dataset.typing)), box.value);
 });
 
 searchEl.addEventListener("input", renderCards);
