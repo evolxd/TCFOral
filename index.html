@@ -457,6 +457,9 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   justify-content: flex-end;
   margin-top: 8px;
 }
+.accent-wrap.is-open {
+  margin-bottom: 188px;
+}
 .accent-toggle {
   min-width: 42px;
   min-height: 38px;
@@ -469,7 +472,7 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
 .accent-palette {
   position: absolute;
   right: 0;
-  bottom: 44px;
+  top: 44px;
   z-index: 8;
   display: none;
   grid-template-columns: repeat(4, 42px);
@@ -2074,6 +2077,13 @@ function closeAccentPalettes(except = null) {
   });
 }
 
+function openAccentPalette(cardIndex) {
+  const wrap = cardsEl.querySelector(`[data-accent-wrap="${cardIndex}"]`);
+  if (!wrap) return;
+  closeAccentPalettes(wrap);
+  wrap.classList.add("is-open");
+}
+
 async function speakText(text, player = audio) {
   const target = usePlayer(player);
   activePlaybackToken += 1;
@@ -2316,6 +2326,12 @@ cardsEl.addEventListener("input", event => {
   localStorage.setItem(typingPracticeKey(Number(box.dataset.typing)), box.value);
 });
 
+cardsEl.addEventListener("focusin", event => {
+  const box = event.target.closest("[data-typing]");
+  if (!box) return;
+  openAccentPalette(Number(box.dataset.typing));
+});
+
 searchEl.addEventListener("input", renderCards);
 levelSelect.addEventListener("change", () => {
   activeLevel = levelSelect.value;
@@ -2347,7 +2363,7 @@ document.addEventListener("keydown", event => {
   }
 });
 document.addEventListener("click", event => {
-  if (!event.target.closest(".accent-wrap")) closeAccentPalettes();
+  if (!event.target.closest(".accent-wrap") && !event.target.closest("[data-typing]")) closeAccentPalettes();
 });
 
 loadSettings();
