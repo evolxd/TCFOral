@@ -1002,8 +1002,8 @@ const templates = [
     level: "C1",
     title: "Présentation personnelle élégante",
     cn: "开场自我介绍：简洁说明身份、地点和学习目标。",
-    fr: "Bonjour, je m'appelle Patrick.\n\nJe viens de Chine et je vis actuellement au Canada.\n\nSur le plan professionnel, je m'intéresse beaucoup aux domaines qui demandent à la fois de la communication, de l'organisation et une bonne capacité d'adaptation.\n\nDans ma vie quotidienne, j'aime apprendre les langues, découvrir de nouvelles cultures et améliorer progressivement ma manière de m'exprimer en français.\n\nAujourd'hui, mon objectif est de parler avec plus de précision, de fluidité et de naturel.",
-    zh: ["您好，我叫 Patrick。", "我来自中国，目前生活在加拿大。", "在职业方面，我对既需要沟通、组织能力，又需要适应能力的领域很感兴趣。", "在日常生活中，我喜欢学习语言、了解新的文化，并逐步提高自己的法语表达方式。", "现在，我的目标是说得更准确、更流利、更自然。"]
+    fr: "Bonjour, je m'appelle Patrick.\n\nJe viens de Chine et je vis actuellement au Canada.\n\nSur le plan professionnel, je m'intéresse beaucoup aux domaines qui exigent à la fois d'excellentes compétences en communication, un sens de l'organisation et une grande capacité d'adaptation.\n\nDans ma vie quotidienne, j'aime apprendre les langues, découvrir de nouvelles cultures et perfectionner mon expression orale en français.\n\nAujourd'hui, mon objectif est de m'exprimer avec plus de précision, de fluidité et de spontanéité.",
+    zh: ["您好，我叫 Patrick。", "我来自中国，目前生活在加拿大。", "在职业方面，我对同时需要优秀沟通能力、组织意识和较强适应能力的领域很感兴趣。", "在日常生活中，我喜欢学习语言、了解新的文化，并不断完善自己的法语口语表达。", "现在，我的目标是表达得更准确、更流利、更自然自如。"]
   },
   {
     type: "tache1",
@@ -1562,6 +1562,8 @@ function simplifyA2(line, item) {
     .replace(/dans la mesure où/gi, "parce que")
     .replace(/toutefois/gi, "mais")
     .replace(/cependant/gi, "mais")
+    .replace(/qui exigent à la fois d'excellentes compétences en communication, un sens de l'organisation et une grande capacité d'adaptation/gi, "qui demandent de bien communiquer tout en sachant s'organiser et s'adapter")
+    .replace(/m'exprimer avec plus de précision, de fluidité et de spontanéité/gi, "m'exprimer avec plus de précision et plus de spontanéité")
     .replace(/qui demandent à la fois de la communication, de l'organisation et une bonne capacité d'adaptation/gi, "qui demandent de communiquer tout en sachant s'organiser et s'adapter")
     .replace(/qui demandent à la fois de la communication$/gi, "qui demandent de communiquer tout en sachant s'organiser et s'adapter");
   text = trimComplexSentence(text, item.type === "tache3" || item.type === "variations" ? 24 : 20);
@@ -1576,6 +1578,8 @@ function simplifyB2(line, item) {
     .replace(/de manière assez concrète/gi, "de manière concrète")
     .replace(/éventuels frais supplémentaires/gi, "frais supplémentaires")
     .replace(/cela étant dit/gi, "cela dit")
+    .replace(/qui exigent à la fois d'excellentes compétences en communication, un sens de l'organisation et une grande capacité d'adaptation/gi, "qui demandent de bien communiquer tout en sachant s'organiser et s'adapter")
+    .replace(/m'exprimer avec plus de précision, de fluidité et de spontanéité/gi, "m'exprimer avec plus de précision ainsi qu'avec davantage de fluidité et de spontanéité")
     .replace(/qui demandent à la fois de la communication, de l'organisation et une bonne capacité d'adaptation/gi, "qui demandent de communiquer tout en sachant s'organiser et s'adapter")
     .replace(/qui demandent à la fois de la communication$/gi, "qui demandent de communiquer tout en sachant s'organiser et s'adapter");
   text = trimComplexSentence(text, item.type === "tache3" || item.type === "variations" ? 34 : 30);
@@ -2421,7 +2425,7 @@ function legacyDownloadedFileName(text) {
 function localAudioName(item, cardIndex, sentence, sentenceIndex, level = activeLevel) {
   const titleSlug = legacyDownloadedFileName(item.title);
   const sentenceSlug = level === "c1" ? legacyDownloadedFileName(sentence) : safeFileName(sentence);
-  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=7`;
+  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=8`;
   return level === "c1" ? `audio/${fileName}` : `audio/${level}/${fileName}`;
 }
 
