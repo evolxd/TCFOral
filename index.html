@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#5d745f">
 <meta name="google" content="notranslate">
 <link rel="manifest" href="manifest.webmanifest">
-<title>TCF 法语口语 C1 背诵模板库</title>
+<title>TCF Canada 口语背诵训练</title>
 <style>
 :root {
   --ink: #17211d;
@@ -267,6 +267,22 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   flex-wrap: wrap;
   gap: 7px;
   margin-bottom: 12px;
+}
+.card-level {
+  margin-left: auto;
+  min-height: 28px;
+  border: 1px solid #dce6dc;
+  border-radius: 999px;
+  background: #fbfcf9;
+  color: var(--sage-dark);
+  padding: 3px 10px;
+  font-size: 12px;
+  font-weight: 650;
+  outline: none;
+}
+.card-level:focus {
+  border-color: #8aa08f;
+  box-shadow: 0 0 0 3px rgba(70, 106, 81, .12);
 }
 .card h2 {
   font-size: 24px;
@@ -776,7 +792,7 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
 <div class="settings-backdrop" id="settingsBackdrop"></div>
 <div class="app">
   <aside class="rail">
-    <p class="brand">TCF Canada Oral<br>C1 Practice</p>
+    <p class="brand">TCF Canada Oral<br>Practice</p>
     <p class="sub">面向口语考试的句型材料、逐句音频与结构提示。</p>
     <input id="search" class="search" placeholder="搜索主题、场景或表达">
     <div class="filters" id="filters"></div>
@@ -790,7 +806,7 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
         <p class="lede">按考试任务整理常用场景、观点表达和可迁移句型，适合反复朗读、跟读和替换练习。</p>
       </div>
       <div class="level-switch">
-        <label for="levelSelect">当前难度</label>
+        <label for="levelSelect">默认难度</label>
         <select id="levelSelect">
           <option value="a2">A2 稳定版</option>
           <option value="b2" selected>B2 过线版</option>
@@ -806,7 +822,7 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
       </div>
       <div class="stat"><b id="visibleCount">0</b><span>当前材料</span></div>
       <div class="stat"><b>2' / 4'30</b><span>Tâche 2 / Tâche 3</span></div>
-      <div class="stat"><b>C1</b><span>结构、语域、衔接</span></div>
+      <div class="stat"><b>A2 / B2 / C1</b><span>每张卡可单独切换</span></div>
     </div>
 
     <section>
@@ -1172,7 +1188,7 @@ const templates = [
     type: "connecteurs",
     theme: "连接词",
     level: "C1",
-    title: "C1 连接词替换表",
+    title: "连接词替换表",
     cn: "连接词替换：用于让步、论证和总结。",
     fr: "Pour nuancer : cela étant dit ; encore faut-il préciser que ; il serait réducteur de penser que.\n\nPour argumenter : ce qui me paraît déterminant, c'est que ; il ne faut pas perdre de vue que ; cette idée se vérifie notamment lorsque.\n\nPour conclure : en définitive ; tout l'enjeu consiste à ; la réponse dépend moins de A que de B."
   }
@@ -1214,7 +1230,7 @@ const zhLines = [
   ["当您说这是可以的，这是特殊情况，还是通常都可以这样做？", "为了确认我理解正确，这是否意味着我需要先预约，然后当天带文件？", "在实际操作中，人们最常选择哪种方案？", "在做决定之前，有没有我应该注意的缺点？", "如果您站在我的位置，您会选择哪个选项？为什么？"],
   ["您怎么看当今社会中的这种变化？", "在您看来，优点是否大于缺点？", "您认为国家、家庭还是个人应该承担主要责任？", "这是个人自由的问题，还是公共利益的问题？", "这种解决办法在日常生活中到底能在多大程度上发挥作用？"],
   ["基础句：我想了解具体安排。", "扩展版：在决定之前，我需要弄清楚实际流程。", "礼貌版：您能不能给我介绍一下实际情况？", "追问版：在实际操作中，通常是怎么进行的？", "确认版：所以如果我理解正确，我需要先预约，然后再确认细节，是这样吗？"],
-  ["基础句：这个方案有优点和缺点。", "让步版：我承认这个方案有一定吸引力，但它也有明显限制。", "更 C1：问题不在于它是否有用，而在于它是否适合所有人。", "反方版：如果缺少配套措施，这个方案甚至可能加剧不平等。", "总结版：所以关键不是简单赞成或反对，而是看实施条件。"],
+  ["基础句：这个方案有优点和缺点。", "让步版：我承认这个方案有一定吸引力，但它也有明显限制。", "高级版：问题不在于它是否有用，而在于它是否适合所有人。", "反方版：如果缺少配套措施，这个方案甚至可能加剧不平等。", "总结版：所以关键不是简单赞成或反对，而是看实施条件。"],
   ["基础句：科技很方便。", "抽象版：科技提高了效率，也改变了人们与信息的关系。", "风险版：但如果使用不加控制，它也会削弱注意力和判断力。", "例子版：比如，社交网络让沟通更快，却也让人更容易被碎片信息牵着走。", "平衡版：因此，真正的问题不是是否使用科技，而是如何保持主动权。"],
   ["基础句：学校很重要。", "社会版：学校是社会减少机会不平等的重要工具。", "限制版：不过，学校不能单独解决所有社会问题。", "深化版：如果只强调成绩，教育就会失去培养判断力和人格的作用。", "总结版：因此，教育的目标应当是知识、能力和公民意识的平衡。"],
   ["基础句：我想知道价格。", "自然版：您能告诉我总费用大概是多少吗？", "精确版：这个价格包含所有服务吗，还是还有额外费用？", "比较版：如果我预算有限，您会推荐哪种选择？", "确认版：所以最终我要支付的是这个金额，不会再有隐藏费用，对吗？"],
@@ -1483,6 +1499,31 @@ const resetBtn = document.querySelector("#resetBtn");
 const levelSelect = document.querySelector("#levelSelect");
 levelSelect.value = activeLevel;
 
+function cardLevelKey(cardIndex) {
+  return `tcf_card_level_${cardIndex}`;
+}
+
+function cardLevel(cardIndex) {
+  return localStorage.getItem(cardLevelKey(cardIndex)) || activeLevel;
+}
+
+function setCardLevel(cardIndex, level) {
+  localStorage.setItem(cardLevelKey(cardIndex), level);
+}
+
+function clearCardLevels() {
+  for (let index = localStorage.length - 1; index >= 0; index -= 1) {
+    const key = localStorage.key(index);
+    if (key && key.startsWith("tcf_card_level_")) localStorage.removeItem(key);
+  }
+}
+
+function levelOptions(selected) {
+  return Object.entries(levelLabels)
+    .map(([value, label]) => `<option value="${value}" ${value === selected ? "selected" : ""}>${label}</option>`)
+    .join("");
+}
+
 function counts() {
   return templates.reduce((acc, item) => {
     acc[item.type] = (acc[item.type] || 0) + 1;
@@ -1540,11 +1581,11 @@ function setSentenceEnabled(cardIndex, sentenceIndex, enabled, level = activeLev
   localStorage.setItem(sentencePracticeKey(cardIndex, sentenceIndex, level), enabled ? "1" : "0");
 }
 
-function renderBilingual(content, cardIndex) {
+function renderBilingual(content, cardIndex, level = cardLevel(cardIndex)) {
   const frLines = splitFrench(content.fr);
   return `<div class="sentence-list">${frLines.map((line, index) => {
     const zh = content.zh[index] ? `<div class="sentence-zh">${escapeHtml(content.zh[index])}</div>` : "";
-    const checked = isSentenceEnabled(cardIndex, index) ? "checked" : "";
+    const checked = isSentenceEnabled(cardIndex, index, level) ? "checked" : "";
     const muted = checked ? "" : " is-muted";
     return `<label class="sentence-pair${muted}">
       <input class="sentence-check" type="checkbox" data-sentence-card="${cardIndex}" data-sentence-index="${index}" ${checked}>
@@ -1553,8 +1594,8 @@ function renderBilingual(content, cardIndex) {
   }).join("")}</div>`;
 }
 
-function renderTypingPractice(cardIndex) {
-  const draft = localStorage.getItem(typingPracticeKey(cardIndex)) || "";
+function renderTypingPractice(cardIndex, level = cardLevel(cardIndex)) {
+  const draft = localStorage.getItem(typingPracticeKey(cardIndex, level)) || "";
   const accents = ["é", "è", "ê", "ë", "à", "â", "î", "ï", "ô", "ù", "û", "ü", "ç", "œ", "É", "À"];
   return `<div class="typing-practice">
     <div class="typing-head">
@@ -1598,7 +1639,7 @@ const analysisRules = [
   [/en fonction de/i, "en fonction de", "根据不同条件来判断"],
   [/il ne s[’']agit pas/i, "il ne s'agit pas de...", "重新定义问题，论证感强"],
   [/l[’']enjeu n[’']est pas/i, "l'enjeu n'est pas...", "指出真正关键，适合总结"],
-  [/encore faut-il/i, "encore faut-il que", "补充必要条件，典型 C1 让步"],
+  [/encore faut-il/i, "encore faut-il que", "补充必要条件，典型高级让步"],
   [/cela étant dit/i, "cela étant dit", "让步转折，比 mais 更稳"],
   [/il serait réducteur de penser que/i, "il serait réducteur de penser que", "反驳过度简化观点"],
   [/ne devrait pas être confondue? avec/i, "ne pas être confondu avec", "区分概念，适合抽象话题"],
@@ -1722,7 +1763,7 @@ function cardStructureNote(item, content) {
   if (key.includes("famille")) return "家庭变化 → 新关系基础 → 利弊平衡。家庭题要能说传统，也能说现代变化。";
   if (key.includes("opinion")) return "这是题干反射库：观点、利弊、责任、自由/集体、可行性。背问题是为了听懂考官方向。";
   if (key.includes("intention simple")) return "简单意图 → 礼貌升级 → 具体流程 → 实际做法 → 确认理解。用于把短问句变成自然互动。";
-  if (key.includes("avantages") || key.includes("nuance")) return "承认优点 → 指出限制 → 转向条件 → 落到实施。训练 B2/C1 最重要的“有保留表达”。";
+  if (key.includes("avantages") || key.includes("nuance")) return "承认优点 → 指出限制 → 转向条件 → 落到实施。训练 B2 以上最重要的“有保留表达”。";
   if (key.includes("price") || key.includes("prix")) return "问价格 → 问总价 → 问额外费用 → 请求预算方案 → 确认最终金额。费用题要避免只问 combien。";
   if (key.includes("accord")) return "先总体同意 → 加条件 → 提醒复杂性 → 现实限制 → 平衡结论。比一句 je suis d'accord 高很多。";
   if (key.includes("connecteurs")) return "按功能背：让步、论证、总结。每个连接词后面要连一个完整句子，才能在考场自动出来。";
@@ -1862,7 +1903,7 @@ function curatedVocabularyNotes(item, level) {
     add("attractive", "有吸引力的；比 bien 更成熟。");
     add("des limites importantes", "重要限制；利弊题必须会说。");
     add("convient à tous les publics", "适合所有人群；提出适用条件。");
-    add("conditions de mise en œuvre", "实施条件；C1 方案分析关键词。");
+    add("conditions de mise en œuvre", "实施条件；高级方案分析关键词。");
   } else if (key.includes("idee banale sur la technologie")) {
     add("transforme notre rapport à l'information", "改变我们与信息的关系；科技题高级表达。");
     add("si son usage n'est pas maîtrisé", "如果使用不受控制；风险条件。");
@@ -1885,7 +1926,7 @@ function curatedVocabularyNotes(item, level) {
     add("se heurter à des difficultés", "遇到困难/阻力；现实限制表达。");
   } else if (key.includes("connecteurs")) {
     add("cela étant dit", "话虽如此；比 mais 更自然。");
-    add("encore faut-il préciser que", "还必须说明的是；C1 条件补充。");
+    add("encore faut-il préciser que", "还必须说明的是；高级条件补充。");
     add("ce qui me paraît déterminant", "我认为决定性的地方；引出关键理由。");
     add("tout l'enjeu consiste à", "整个关键在于；总结句很好用。");
   }
@@ -1909,8 +1950,8 @@ function cardVocabularyNotes(item, content, level) {
   return notes.slice(0, 10);
 }
 
-function renderAnalysis(item, content) {
-  const vocab = cardVocabularyNotes(item, content, activeLevel);
+function renderAnalysis(item, content, level = activeLevel) {
+  const vocab = cardVocabularyNotes(item, content, level);
   return `<details class="analysis">
     <summary>
       <span class="analysis-head">
@@ -1936,7 +1977,8 @@ function renderCards() {
   const q = searchEl.value.trim().toLowerCase();
   const data = templates.filter(item => {
     const typeOk = active === "all" || item.type === active;
-    const content = variantFor(item, activeLevel);
+    const index = templates.indexOf(item);
+    const content = variantFor(item, cardLevel(index));
     const hay = `${item.theme} ${item.title} ${item.cn} ${content.fr} ${(content.zh || []).join(" ")}`.toLowerCase();
     return typeOk && (!q || hay.includes(q));
   });
@@ -1947,27 +1989,30 @@ function renderCards() {
   }
   cardsEl.innerHTML = data.map(item => {
     const index = templates.indexOf(item);
-    const content = variantFor(item, activeLevel);
+    const level = cardLevel(index);
+    const content = variantFor(item, level);
     return `
     <article class="card">
       <div class="meta">
         <span class="pill ${item.type === "tache3" ? "red" : item.type === "connecteurs" || item.type === "questions" || item.type === "variations" ? "gold" : "blue"}">${categoryLabels[item.type]}</span>
         <span class="pill">${item.theme}</span>
         <span class="pill">${content.label}</span>
+        <select class="card-level" data-card-level="${index}" aria-label="切换本卡难度">${levelOptions(level)}</select>
       </div>
       <h2>${item.title}</h2>
       <p class="cn">${item.cn}</p>
-      <div class="fr" id="text-${index}">${renderBilingual(content, index)}</div>
-      ${renderAnalysis(item, content)}
+      <div class="fr" id="text-${index}">${renderBilingual(content, index, level)}</div>
+      ${renderAnalysis(item, content, level)}
       <div class="actions">
         <button class="primary" data-speak="${index}">朗读</button>
         <button data-loop="${index}">循环播放</button>
         <button data-copy="${index}">复制</button>
+        <button data-download="${index}">下载本卡音频</button>
         <a href="${googleTranslateUrl(content.fr)}" target="_blank" rel="noopener"><button>Google 发音</button></a>
         <span class="rate-pill" data-rate-label="${index}">x${currentPlaybackRate().toFixed(2)}</span>
         <audio class="card-audio" data-audio="${index}" controls preload="metadata"></audio>
       </div>
-      ${renderTypingPractice(index)}
+      ${renderTypingPractice(index, level)}
     </article>
   `;
   }).join("");
@@ -2172,7 +2217,8 @@ function similarityPercent(target, user) {
 
 function checkTypingPractice(cardIndex) {
   const item = templates[cardIndex];
-  const entries = selectedSentenceEntries(item, cardIndex, activeLevel);
+  const level = cardLevel(cardIndex);
+  const entries = selectedSentenceEntries(item, cardIndex, level);
   const box = cardsEl.querySelector(`[data-typing="${cardIndex}"]`);
   const result = cardsEl.querySelector(`[data-typing-result="${cardIndex}"]`);
   if (!box || !result) return;
@@ -2210,7 +2256,7 @@ function insertAccent(cardIndex, char) {
   const next = start + char.length;
   box.focus();
   box.setSelectionRange(next, next);
-  localStorage.setItem(typingPracticeKey(cardIndex), box.value);
+  localStorage.setItem(typingPracticeKey(cardIndex, cardLevel(cardIndex)), box.value);
   const result = cardsEl.querySelector(`[data-typing-result="${cardIndex}"]`);
   if (result && result.innerHTML.trim()) checkTypingPractice(cardIndex);
 }
@@ -2346,12 +2392,12 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-async function downloadSentenceAudios(item, button) {
+async function downloadSentenceAudios(item, button, level = activeLevel, cardIndex = templates.indexOf(item)) {
   if (provider.value === "browser") {
     alert("浏览器自带语音不能生成 mp3。请切换 ElevenLabs 或 OpenAI。");
     return;
   }
-  const content = variantFor(item, activeLevel);
+  const content = variantFor(item, level);
   const lines = splitFrench(content.fr);
   const originalText = button.textContent;
   button.disabled = true;
@@ -2359,8 +2405,10 @@ async function downloadSentenceAudios(item, button) {
     for (let index = 0; index < lines.length; index += 1) {
       button.textContent = `下载中 ${index + 1}/${lines.length}`;
       const blob = await getTtsBlob(lines[index]);
-      const prefix = activeLevel === "c1" ? "" : `${activeLevel}-`;
-      const name = `${prefix}${item.type}-${safeFileName(item.title)}-${String(index + 1).padStart(2, "0")}-${safeFileName(lines[index])}.mp3`;
+      const name = localAudioName(item, cardIndex, lines[index], index, level)
+        .split("/")
+        .pop()
+        .replace(/\?.*$/, "");
       downloadBlob(blob, name);
       await sleep(650);
     }
@@ -2391,7 +2439,8 @@ cardsEl.addEventListener("click", async event => {
     insertAccent(Number(accentBtn.dataset.accentTarget), accentBtn.dataset.accent);
   }
   if (copyBtn) {
-    await navigator.clipboard.writeText(variantFor(templates[Number(copyBtn.dataset.copy)], activeLevel).fr);
+    const index = Number(copyBtn.dataset.copy);
+    await navigator.clipboard.writeText(variantFor(templates[index], cardLevel(index)).fr);
     copyBtn.textContent = "已复制";
     setTimeout(() => copyBtn.textContent = "复制", 900);
   }
@@ -2399,7 +2448,7 @@ cardsEl.addEventListener("click", async event => {
     try {
       const index = Number(speakBtn.dataset.speak);
       const player = cardsEl.querySelector(`[data-audio="${index}"]`) || audio;
-      await speakItem(templates[index], index, player, activeLevel);
+      await speakItem(templates[index], index, player, cardLevel(index));
     } catch (err) {
       alert("TTS 请求失败。可以先检查 key、voice_id、余额，或改用浏览器自带语音。错误：" + err.message.slice(0, 240));
     }
@@ -2416,7 +2465,7 @@ cardsEl.addEventListener("click", async event => {
       }
       const index = Number(loopBtn.dataset.loop);
       const player = cardsEl.querySelector(`[data-audio="${index}"]`) || audio;
-      await speakItem(templates[index], index, player, activeLevel, { loop: true, button: loopBtn });
+      await speakItem(templates[index], index, player, cardLevel(index), { loop: true, button: loopBtn });
     } catch (err) {
       stopLoopUi();
       alert("循环播放失败。错误：" + err.message.slice(0, 240));
@@ -2424,7 +2473,8 @@ cardsEl.addEventListener("click", async event => {
   }
   if (downloadBtn) {
     try {
-      await downloadSentenceAudios(templates[Number(downloadBtn.dataset.download)], downloadBtn);
+      const index = Number(downloadBtn.dataset.download);
+      await downloadSentenceAudios(templates[index], downloadBtn, cardLevel(index), index);
     } catch (err) {
       alert("下载失败。请检查 key、voice_id、余额，或确认浏览器允许多个文件下载。错误：" + err.message.slice(0, 240));
       downloadBtn.textContent = "下载逐句音频";
@@ -2440,16 +2490,28 @@ cardsEl.addEventListener("click", async event => {
     const result = cardsEl.querySelector(`[data-typing-result="${index}"]`);
     if (box) box.value = "";
     if (result) result.innerHTML = "";
-    localStorage.removeItem(typingPracticeKey(index));
+    localStorage.removeItem(typingPracticeKey(index, cardLevel(index)));
   }
 });
 
 cardsEl.addEventListener("change", event => {
+  const levelBox = event.target.closest("[data-card-level]");
+  if (levelBox) {
+    const cardIndex = Number(levelBox.dataset.cardLevel);
+    const top = window.scrollY;
+    setCardLevel(cardIndex, levelBox.value);
+    activePlaybackToken += 1;
+    if (activePlayer) activePlayer.pause();
+    stopLoopUi();
+    renderCards();
+    window.scrollTo({ top, left: 0 });
+    return;
+  }
   const box = event.target.closest("[data-sentence-card]");
   if (!box) return;
   const cardIndex = Number(box.dataset.sentenceCard);
   const sentenceIndex = Number(box.dataset.sentenceIndex);
-  setSentenceEnabled(cardIndex, sentenceIndex, box.checked, activeLevel);
+  setSentenceEnabled(cardIndex, sentenceIndex, box.checked, cardLevel(cardIndex));
   box.closest(".sentence-pair")?.classList.toggle("is-muted", !box.checked);
   if (activeLoopButton) {
     activePlaybackToken += 1;
@@ -2463,7 +2525,8 @@ cardsEl.addEventListener("change", event => {
 cardsEl.addEventListener("input", event => {
   const box = event.target.closest("[data-typing]");
   if (!box) return;
-  localStorage.setItem(typingPracticeKey(Number(box.dataset.typing)), box.value);
+  const cardIndex = Number(box.dataset.typing);
+  localStorage.setItem(typingPracticeKey(cardIndex, cardLevel(cardIndex)), box.value);
 });
 
 cardsEl.addEventListener("focusin", event => {
@@ -2476,6 +2539,7 @@ searchEl.addEventListener("input", renderCards);
 levelSelect.addEventListener("change", () => {
   activeLevel = levelSelect.value;
   localStorage.setItem("tcf_level", activeLevel);
+  clearCardLevels();
   activePlaybackToken += 1;
   stopLoopUi();
   if (activePlayer) activePlayer.pause();
