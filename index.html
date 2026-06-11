@@ -2645,6 +2645,8 @@ async function getTtsBlob(text) {
 let activePlayer = audio;
 let activePlaybackToken = 0;
 let activeLoopButton = null;
+let loopDelayTimer = null;
+const LOOP_SENTENCE_GAP_MS = 6000;
 
 function currentPlaybackRate() {
   const rate = Number(speechSpeed.value);
@@ -2670,6 +2672,10 @@ function usePlayer(player) {
 }
 
 function stopLoopUi() {
+  if (loopDelayTimer) {
+    clearTimeout(loopDelayTimer);
+    loopDelayTimer = null;
+  }
   if (!activeLoopButton) return;
   activeLoopButton.classList.remove("loop-active");
   activeLoopButton.textContent = "循环播放";
@@ -2859,14 +2865,26 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
       }
     });
   };
+  const playNext = () => {
+    if (playbackToken !== activePlaybackToken) return;
+    if (!loop) {
+      playCurrent();
+      return;
+    }
+    if (loopDelayTimer) clearTimeout(loopDelayTimer);
+    loopDelayTimer = setTimeout(() => {
+      loopDelayTimer = null;
+      if (playbackToken === activePlaybackToken) playCurrent();
+    }, LOOP_SENTENCE_GAP_MS);
+  };
   target.onended = () => {
     if (playbackToken !== activePlaybackToken) return;
     current += 1;
     if (current < urls.length) {
-      playCurrent();
+      playNext();
     } else if (loop) {
       current = 0;
-      playCurrent();
+      playNext();
     } else {
       stopLoopUi();
     }
