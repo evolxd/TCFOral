@@ -2255,6 +2255,11 @@ function setSentenceEnabled(cardIndex, sentenceIndex, enabled, level = activeLev
   localStorage.setItem(sentencePracticeKey(cardIndex, sentenceIndex, level), enabled ? "1" : "0");
 }
 
+function allSentencesEnabled(content, cardIndex, level = activeLevel) {
+  const lines = splitFrench(content.fr);
+  return lines.length > 0 && lines.every((_, sentenceIndex) => isSentenceEnabled(cardIndex, sentenceIndex, level));
+}
+
 function sentenceStage(cardIndex, sentenceIndex, level = activeLevel) {
   const stored = localStorage.getItem(sentenceStageKey(cardIndex, sentenceIndex, level));
   if (stored === "read" || stored === "recite" || stored === "mastered") return stored;
@@ -2708,8 +2713,7 @@ function renderCards() {
       <h2>${item.title}</h2>
       <p class="cn">${item.cn}</p>
       <div class="sentence-toolbar" aria-label="本卡句子选择">
-        <button type="button" data-select-sentences="${index}" data-select-mode="all">全选</button>
-        <button type="button" data-select-sentences="${index}" data-select-mode="none">全不选</button>
+        <button type="button" data-toggle-sentences="${index}">${allSentencesEnabled(content, index, level) ? "全不选" : "全选"}</button>
       </div>
       <div class="fr" id="text-${index}">${renderBilingual(content, index, level)}</div>
       ${renderAnalysis(item, content, level)}
@@ -3182,13 +3186,13 @@ cardsEl.addEventListener("click", async event => {
   const checkTypingBtn = event.target.closest("[data-check-typing]");
   const clearTypingBtn = event.target.closest("[data-clear-typing]");
   const accentBtn = event.target.closest("[data-accent]");
-  const selectSentencesBtn = event.target.closest("[data-select-sentences]");
+  const selectSentencesBtn = event.target.closest("[data-toggle-sentences]");
   const stageBtn = event.target.closest("[data-stage-card]");
   if (selectSentencesBtn) {
-    const cardIndex = Number(selectSentencesBtn.dataset.selectSentences);
+    const cardIndex = Number(selectSentencesBtn.dataset.toggleSentences);
     const level = cardLevel(cardIndex);
     const content = variantFor(templates[cardIndex], level);
-    const checked = selectSentencesBtn.dataset.selectMode === "all";
+    const checked = !allSentencesEnabled(content, cardIndex, level);
     splitFrench(content.fr).forEach((_, sentenceIndex) => {
       setSentenceEnabled(cardIndex, sentenceIndex, checked, level);
     });
