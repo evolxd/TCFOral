@@ -223,6 +223,28 @@ h1 {
   border-radius: inherit;
   background: linear-gradient(90deg, #d8e7d8, #89a98e);
 }
+.training-modes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 12px;
+}
+.training-mode-btn {
+  min-height: 30px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.16);
+  background: rgba(255,255,255,.08);
+  color: #eaf1e8;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.training-mode-btn.active {
+  background: #e8f0e4;
+  color: #234331;
+  border-color: #e8f0e4;
+}
 .section-title {
   margin: 28px 0 14px;
   display: flex;
@@ -880,7 +902,12 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
     justify-content: space-between;
     min-height: 42px;
   }
-  .statline { display: none; }
+  .statline {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin: 10px 0 16px;
+  }
+  .statline .stat:not(.session-card) { display: none; }
   .section-title {
     margin: 16px 0 10px;
   }
@@ -1001,7 +1028,8 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
       <div class="stat session-card">
         <b>本次训练</b>
         <span>听句子、背句子、打字检查，按一个流程走完</span>
-        <div class="progress-track"><span class="progress-fill"></span></div>
+        <div class="training-modes" id="trainingModes" aria-label="训练模式"></div>
+        <div class="progress-track"><span class="progress-fill" id="sessionProgressFill"></span></div>
       </div>
       <div class="stat"><b id="visibleCount">0</b><span>当前材料</span></div>
       <div class="stat"><b>2' / 4'30</b><span>Tâche 2 / Tâche 3</span></div>
@@ -2075,9 +2103,12 @@ function ensureSentenceEnd(text) {
 
 let active = "all";
 let activeLevel = localStorage.getItem("tcf_level") || "b2";
+let activeTrainingMode = localStorage.getItem("tcf_training_mode") || "all";
 
 const cardsEl = document.querySelector("#cards");
 const filtersEl = document.querySelector("#filters");
+const trainingModesEl = document.querySelector("#trainingModes");
+const sessionProgressFill = document.querySelector("#sessionProgressFill");
 const searchEl = document.querySelector("#search");
 const visibleCount = document.querySelector("#visibleCount");
 const resetBtn = document.querySelector("#resetBtn");
@@ -2109,6 +2140,44 @@ function levelOptions(selected) {
     .join("");
 }
 
+const trainingModeLabels = {
+  all: "全部",
+  read: "学读",
+  recite: "背诵",
+  unfinished: "未熟",
+  mastered: "已熟"
+};
+
+function cardMatchesTrainingMode(item, cardIndex, mode = activeTrainingMode) {
+  if (mode === "all") return true;
+  const level = cardLevel(cardIndex);
+  const stats = cardMasteryStats(variantFor(item, level), cardIndex, level);
+  if (mode === "read") return stats.read > 0;
+  if (mode === "recite") return stats.recite > 0;
+  if (mode === "mastered") return stats.mastered > 0;
+  if (mode === "unfinished") return stats.read + stats.recite > 0;
+  return true;
+}
+
+function trainingModeCounts() {
+  return templates.reduce((acc, item, index) => {
+    Object.keys(trainingModeLabels).forEach(mode => {
+      if (cardMatchesTrainingMode(item, index, mode)) acc[mode] = (acc[mode] || 0) + 1;
+    });
+    return acc;
+  }, {});
+}
+
+function sessionSentenceStats() {
+  return templates.reduce((acc, item, index) => {
+    const level = cardLevel(index);
+    const stats = cardMasteryStats(variantFor(item, level), index, level);
+    acc.total += stats.total;
+    acc.mastered += stats.mastered;
+    return acc;
+  }, { total: 0, mastered: 0 });
+}
+
 function counts() {
   return templates.reduce((acc, item) => {
     acc[item.type] = (acc[item.type] || 0) + 1;
@@ -2123,6 +2192,18 @@ function renderFilters() {
       <span>${label}</span><span class="count">${c[key] || 0}</span>
     </button>
   `).join("");
+}
+
+function renderTrainingModes() {
+  const c = trainingModeCounts();
+  trainingModesEl.innerHTML = Object.entries(trainingModeLabels).map(([key, label]) => `
+    <button class="training-mode-btn ${activeTrainingMode === key ? "active" : ""}" data-training-mode="${key}">
+      ${label} ${c[key] || 0}
+    </button>
+  `).join("");
+  const stats = sessionSentenceStats();
+  const percent = stats.total ? Math.round((stats.mastered / stats.total) * 100) : 0;
+  sessionProgressFill.style.width = `${percent}%`;
 }
 
 function googleTranslateUrl(text) {
@@ -2600,9 +2681,10 @@ function renderCards() {
   const data = templates.filter(item => {
     const typeOk = active === "all" || item.type === active;
     const index = templates.indexOf(item);
+    const modeOk = cardMatchesTrainingMode(item, index);
     const content = variantFor(item, cardLevel(index));
     const hay = `${item.theme} ${item.title} ${item.cn} ${content.fr} ${(content.zh || []).join(" ")}`.toLowerCase();
-    return typeOk && (!q || hay.includes(q));
+    return typeOk && modeOk && (!q || hay.includes(q));
   });
   visibleCount.textContent = data.length;
   if (!data.length) {
@@ -3083,6 +3165,15 @@ filtersEl.addEventListener("click", event => {
   renderCards();
 });
 
+trainingModesEl.addEventListener("click", event => {
+  const btn = event.target.closest("[data-training-mode]");
+  if (!btn) return;
+  activeTrainingMode = btn.dataset.trainingMode;
+  localStorage.setItem("tcf_training_mode", activeTrainingMode);
+  renderTrainingModes();
+  renderCards();
+});
+
 cardsEl.addEventListener("click", async event => {
   const copyBtn = event.target.closest("[data-copy]");
   const speakBtn = event.target.closest("[data-speak]");
@@ -3109,6 +3200,7 @@ cardsEl.addEventListener("click", async event => {
     const sentenceIndex = Number(stageBtn.dataset.stageIndex);
     const level = cardLevel(cardIndex);
     setSentenceStage(cardIndex, sentenceIndex, stageBtn.dataset.stageValue, level);
+    renderTrainingModes();
     renderCards();
     return;
   }
@@ -3180,6 +3272,7 @@ cardsEl.addEventListener("change", event => {
     activePlaybackToken += 1;
     if (activePlayer) activePlayer.pause();
     stopLoopUi();
+    renderTrainingModes();
     renderCards();
     window.scrollTo({ top, left: 0 });
     return;
@@ -3220,12 +3313,16 @@ levelSelect.addEventListener("change", () => {
   activePlaybackToken += 1;
   stopLoopUi();
   if (activePlayer) activePlayer.pause();
+  renderTrainingModes();
   renderCards();
 });
 resetBtn.addEventListener("click", () => {
   active = "all";
+  activeTrainingMode = "all";
+  localStorage.setItem("tcf_training_mode", activeTrainingMode);
   searchEl.value = "";
   renderFilters();
+  renderTrainingModes();
   renderCards();
 });
 
@@ -3252,6 +3349,7 @@ document.addEventListener("click", event => {
 loadSettings();
 syncProviderFields();
 renderFilters();
+renderTrainingModes();
 renderCards();
 
 if ("serviceWorker" in navigator && location.protocol !== "file:") {
