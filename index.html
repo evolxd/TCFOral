@@ -674,6 +674,15 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   margin-top: 14px;
 }
 .training-footer { justify-content: space-between; }
+.training-controls audio {
+  flex: 1 1 260px;
+  min-width: 220px;
+}
+.recording-active {
+  border-color: #9a3d31;
+  background: #fff1ee;
+  color: #7a2d22;
+}
 .training-result {
   margin-top: 14px;
   padding: 12px 13px;
@@ -1177,8 +1186,11 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
           <textarea class="training-answer" id="trainingAnswer" spellcheck="false" autocorrect="off" autocomplete="off" autocapitalize="off" lang="fr" placeholder="这里先用文字输入模拟你说出的法语；下一步可接 Gemini 录音转写。"></textarea>
           <div class="training-controls">
             <button class="primary" id="trainingPlay">播放原音</button>
+            <button id="trainingRecord">开始录音</button>
+            <button id="trainingTranscribe" disabled>Gemini 转写并评分</button>
             <button id="trainingCheck">评分</button>
             <audio id="trainingAudio" controls preload="metadata"></audio>
+            <audio id="recordingAudio" controls preload="metadata"></audio>
           </div>
           <div class="training-result" id="trainingResult"></div>
         </div>
@@ -1221,6 +1233,10 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
     <div class="field">
       <label for="loopGap">循环间隔 <span id="loopGapValue">6秒</span></label>
       <input id="loopGap" type="range" min="0" max="12" step="1" value="6">
+    </div>
+    <div class="field">
+      <label for="geminiKey">Gemini API Key（训练转写）</label>
+      <input id="geminiKey" type="password" placeholder="用于录音转写，不填则用文字输入评分">
     </div>
     <div class="field openai-field" hidden>
       <label for="openaiVoice">OpenAI voice</label>
@@ -2265,8 +2281,11 @@ const trainingTarget = document.querySelector("#trainingTarget");
 const trainingAnswer = document.querySelector("#trainingAnswer");
 const trainingResult = document.querySelector("#trainingResult");
 const trainingPlay = document.querySelector("#trainingPlay");
+const trainingRecord = document.querySelector("#trainingRecord");
+const trainingTranscribe = document.querySelector("#trainingTranscribe");
 const trainingCheck = document.querySelector("#trainingCheck");
 const trainingAudio = document.querySelector("#trainingAudio");
+const recordingAudio = document.querySelector("#recordingAudio");
 const trainingPrev = document.querySelector("#trainingPrev");
 const trainingNext = document.querySelector("#trainingNext");
 const trainingFinish = document.querySelector("#trainingFinish");
@@ -2494,6 +2513,9 @@ const trainingStageLabels = {
 };
 
 let trainingSession = null;
+let trainingRecorder = null;
+let trainingChunks = [];
+let trainingRecordingBlob = null;
 
 function currentTrainingContent() {
   if (!trainingSession) return null;
@@ -2529,6 +2551,8 @@ function closeTraining() {
   trainingOverlay.hidden = true;
   trainingSession = null;
   trainingAudio.pause();
+  recordingAudio.pause();
+  if (trainingRecorder && trainingRecorder.state !== "inactive") trainingRecorder.stop();
 }
 
 function renderTraining() {
@@ -2546,6 +2570,11 @@ function renderTraining() {
   trainingTarget.textContent = mode === "read" ? zh : "";
   trainingAnswer.value = "";
   trainingResult.innerHTML = "";
+  trainingRecordingBlob = null;
+  recordingAudio.removeAttribute("src");
+  trainingTranscribe.disabled = true;
+  trainingRecord.textContent = "开始录音";
+  trainingRecord.classList.remove("recording-active");
   trainingPrev.disabled = trainingSession.sentenceIndex === 0;
   trainingNext.disabled = trainingSession.sentenceIndex >= frLines.length - 1;
   trainingSession.startedAt = Date.now();
@@ -2559,6 +2588,104 @@ function playTrainingAudio() {
   trainingAudio.play().catch(() => {
     trainingResult.innerHTML = "本句本地音频没有播放成功。请确认 GitHub 的 audio 文件已上传，或稍后强制刷新。";
   });
+}
+
+async function toggleTrainingRecording() {
+  if (trainingRecorder && trainingRecorder.state === "recording") {
+    trainingRecorder.stop();
+    trainingRecord.textContent = "处理中...";
+    trainingRecord.disabled = true;
+    return;
+  }
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    trainingResult.innerHTML = "当前浏览器不支持录音。建议用最新版 Chrome 或 Edge。";
+    return;
+  }
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  trainingChunks = [];
+  trainingRecordingBlob = null;
+  const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "audio/webm";
+  trainingRecorder = new MediaRecorder(stream, { mimeType });
+  trainingRecorder.ondataavailable = event => {
+    if (event.data.size) trainingChunks.push(event.data);
+  };
+  trainingRecorder.onstop = () => {
+    stream.getTracks().forEach(track => track.stop());
+    trainingRecordingBlob = new Blob(trainingChunks, { type: mimeType });
+    recordingAudio.src = URL.createObjectURL(trainingRecordingBlob);
+    trainingRecord.disabled = false;
+    trainingRecord.textContent = "重新录音";
+    trainingRecord.classList.remove("recording-active");
+    trainingTranscribe.disabled = false;
+    trainingResult.innerHTML = "录音已完成。可以先回放，再点 Gemini 转写并评分。";
+  };
+  trainingRecorder.start();
+  trainingRecord.textContent = "停止录音";
+  trainingRecord.classList.add("recording-active");
+  trainingTranscribe.disabled = true;
+  trainingResult.innerHTML = "正在录音，说完后点“停止录音”。";
+}
+
+function blobToBase64(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(String(reader.result).split(",")[1] || "");
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function extractGeminiText(data) {
+  return data?.candidates?.[0]?.content?.parts?.map(part => part.text || "").join("").trim() || "";
+}
+
+async function transcribeTrainingRecording() {
+  if (!trainingRecordingBlob) {
+    trainingResult.innerHTML = "请先录音。";
+    return;
+  }
+  const key = cleanCredential(geminiKey.value);
+  if (!key) {
+    trainingResult.innerHTML = "请先在设置里填写 Gemini API Key。没有 key 时，可以继续用文字输入评分。";
+    openSettings();
+    return;
+  }
+  const data = currentTrainingContent();
+  if (!data) return;
+  trainingTranscribe.disabled = true;
+  trainingTranscribe.textContent = "转写中...";
+  trainingResult.innerHTML = "正在发送录音给 Gemini 转写。短句通常几秒完成。";
+  try {
+    const base64Audio = await blobToBase64(trainingRecordingBlob);
+    const prompt = [
+      "Transcribe this short TCF Canada oral practice recording into French only.",
+      "Return only the learner's French sentence, with normal punctuation.",
+      "Do not translate. Do not explain. If the audio is unclear, return the closest French transcription.",
+      `Target sentence for context: ${data.fr}`
+    ].join("\n");
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${encodeURIComponent(key)}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        contents: [{
+          parts: [
+            { text: prompt },
+            { inline_data: { mime_type: trainingRecordingBlob.type || "audio/webm", data: base64Audio } }
+          ]
+        }]
+      })
+    });
+    if (!response.ok) throw new Error(await response.text());
+    const json = await response.json();
+    const transcript = extractGeminiText(json).replace(/^["“”']|["“”']$/g, "").trim();
+    trainingAnswer.value = transcript;
+    scoreTrainingAnswer();
+  } catch (err) {
+    trainingResult.innerHTML = `Gemini 转写失败：${escapeHtml(err.message.slice(0, 260))}<br>你仍然可以手动输入法语并评分。`;
+  } finally {
+    trainingTranscribe.disabled = false;
+    trainingTranscribe.textContent = "Gemini 转写并评分";
+  }
 }
 
 function scoreTrainingAnswer() {
@@ -3026,6 +3153,7 @@ function saveSettings() {
     voiceId: voiceId.value,
     speechSpeed: speechSpeed.value,
     loopGap: loopGap.value,
+    geminiKey: geminiKey.value,
     openaiVoice: openaiVoice.value
   };
   localStorage.setItem("tcf_tts_settings", JSON.stringify(settings));
@@ -3039,6 +3167,7 @@ function persistSettings() {
     voiceId: voiceId.value,
     speechSpeed: speechSpeed.value,
     loopGap: loopGap.value,
+    geminiKey: geminiKey.value,
     openaiVoice: openaiVoice.value
   };
   localStorage.setItem("tcf_tts_settings", JSON.stringify(settings));
@@ -3054,6 +3183,7 @@ function loadSettings() {
     voiceId.value = settings.voiceId || "";
     speechSpeed.value = settings.speechSpeed || "0.82";
     loopGap.value = settings.loopGap || "6";
+    geminiKey.value = settings.geminiKey || "";
     openaiVoice.value = settings.openaiVoice || "marin";
   } catch {}
 }
@@ -3609,6 +3739,15 @@ trainingTabs.addEventListener("click", event => {
 });
 
 trainingPlay.addEventListener("click", playTrainingAudio);
+trainingRecord.addEventListener("click", () => {
+  toggleTrainingRecording().catch(err => {
+    trainingRecord.disabled = false;
+    trainingRecord.textContent = "开始录音";
+    trainingRecord.classList.remove("recording-active");
+    trainingResult.innerHTML = `录音启动失败：${escapeHtml(err.message.slice(0, 220))}`;
+  });
+});
+trainingTranscribe.addEventListener("click", transcribeTrainingRecording);
 trainingCheck.addEventListener("click", scoreTrainingAnswer);
 trainingPrev.addEventListener("click", () => moveTraining(-1));
 trainingNext.addEventListener("click", () => moveTraining(1));
