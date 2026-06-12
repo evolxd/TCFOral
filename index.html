@@ -350,6 +350,10 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
 .sentence-pair.is-muted {
   background: #f6f7f3;
 }
+.sentence-pair.is-reciting {
+  border-color: #eadfca;
+  background: #fffdf8;
+}
 .sentence-pair.is-mastered {
   border-color: #dce9dc;
   background: #fbfdf9;
@@ -366,23 +370,39 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   margin-top: 1px;
   max-width: 75%;
 }
-.mastery-btn {
+.stage-control {
   align-self: start;
-  min-width: 54px;
-  height: 34px;
-  padding: 0 10px;
+  display: inline-grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2px;
+  padding: 3px;
   border-radius: 999px;
   border: 1px solid #dce5dc;
   background: #f7faf6;
+}
+.stage-btn {
+  min-width: 34px;
+  height: 28px;
+  padding: 0 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
   color: #526054;
   font-size: 13px;
   font-weight: 700;
   cursor: pointer;
 }
-.mastery-btn.is-mastered {
-  background: #2f5a43;
-  border-color: #2f5a43;
+.stage-btn.is-active[data-stage-value="recite"] {
+  background: #8a6a2f;
   color: #fff;
+}
+.stage-btn.is-active[data-stage-value="mastered"] {
+  background: #2f5a43;
+  color: #fff;
+}
+.stage-btn.is-active[data-stage-value="read"] {
+  background: #e7eee7;
+  color: #244533;
 }
 .mastery-summary {
   margin-left: auto;
@@ -877,11 +897,13 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
     grid-template-columns: 24px minmax(0, 1fr);
     padding: 7px 6px 8px;
   }
-  .mastery-btn {
+  .stage-control {
     grid-column: 2;
     justify-self: start;
-    min-width: 50px;
-    height: 30px;
+  }
+  .stage-btn {
+    min-width: 32px;
+    height: 28px;
     font-size: 12px;
   }
   .mastery-summary {
@@ -2127,6 +2149,10 @@ function sentenceMasteryKey(cardIndex, sentenceIndex, level = activeLevel) {
   return `tcf_sentence_mastered_${level}_${cardIndex}_${sentenceIndex}`;
 }
 
+function sentenceStageKey(cardIndex, sentenceIndex, level = activeLevel) {
+  return `tcf_sentence_stage_${level}_${cardIndex}_${sentenceIndex}`;
+}
+
 function isSentenceEnabled(cardIndex, sentenceIndex, level = activeLevel) {
   return localStorage.getItem(sentencePracticeKey(cardIndex, sentenceIndex, level)) !== "0";
 }
@@ -2135,21 +2161,23 @@ function setSentenceEnabled(cardIndex, sentenceIndex, enabled, level = activeLev
   localStorage.setItem(sentencePracticeKey(cardIndex, sentenceIndex, level), enabled ? "1" : "0");
 }
 
-function isSentenceMastered(cardIndex, sentenceIndex, level = activeLevel) {
-  return localStorage.getItem(sentenceMasteryKey(cardIndex, sentenceIndex, level)) === "1";
+function sentenceStage(cardIndex, sentenceIndex, level = activeLevel) {
+  const stored = localStorage.getItem(sentenceStageKey(cardIndex, sentenceIndex, level));
+  if (stored === "read" || stored === "recite" || stored === "mastered") return stored;
+  return localStorage.getItem(sentenceMasteryKey(cardIndex, sentenceIndex, level)) === "1" ? "mastered" : "read";
 }
 
-function setSentenceMastered(cardIndex, sentenceIndex, mastered, level = activeLevel) {
-  localStorage.setItem(sentenceMasteryKey(cardIndex, sentenceIndex, level), mastered ? "1" : "0");
+function setSentenceStage(cardIndex, sentenceIndex, stage, level = activeLevel) {
+  localStorage.setItem(sentenceStageKey(cardIndex, sentenceIndex, level), stage);
 }
 
 function cardMasteryStats(content, cardIndex, level = activeLevel) {
   const total = splitFrench(content.fr).length;
-  let mastered = 0;
+  const stats = { total, read: 0, recite: 0, mastered: 0 };
   for (let index = 0; index < total; index += 1) {
-    if (isSentenceMastered(cardIndex, index, level)) mastered += 1;
+    stats[sentenceStage(cardIndex, index, level)] += 1;
   }
-  return { total, mastered };
+  return stats;
 }
 
 function renderBilingual(content, cardIndex, level = cardLevel(cardIndex)) {
@@ -2157,14 +2185,20 @@ function renderBilingual(content, cardIndex, level = cardLevel(cardIndex)) {
   return `<div class="sentence-list">${frLines.map((line, index) => {
     const zh = content.zh[index] ? `<div class="sentence-zh">${escapeHtml(content.zh[index])}</div>` : "";
     const checked = isSentenceEnabled(cardIndex, index, level) ? "checked" : "";
-    const mastered = isSentenceMastered(cardIndex, index, level);
+    const stage = sentenceStage(cardIndex, index, level);
     const muted = checked ? "" : " is-muted";
-    const masteredClass = mastered ? " is-mastered" : "";
+    const stageClass = stage === "mastered" ? " is-mastered" : stage === "recite" ? " is-reciting" : "";
     const sentenceId = `sentence-${level}-${cardIndex}-${index}`;
-    return `<div class="sentence-pair${muted}${masteredClass}">
+    return `<div class="sentence-pair${muted}${stageClass}">
       <input id="${sentenceId}" class="sentence-check" type="checkbox" data-sentence-card="${cardIndex}" data-sentence-index="${index}" ${checked}>
       <label class="sentence-body" for="${sentenceId}"><div class="sentence-fr">${escapeHtml(line)}</div>${zh}</label>
-      <button class="mastery-btn${masteredClass}" type="button" data-mastery-card="${cardIndex}" data-mastery-index="${index}">${mastered ? "已会" : "待熟"}</button>
+      <div class="stage-control" role="group" aria-label="句子熟练度">
+        ${[
+          ["read", "读"],
+          ["recite", "背"],
+          ["mastered", "熟"]
+        ].map(([value, label]) => `<button class="stage-btn${stage === value ? " is-active" : ""}" type="button" data-stage-card="${cardIndex}" data-stage-index="${index}" data-stage-value="${value}">${label}</button>`).join("")}
+      </div>
     </div>`;
   }).join("")}</div>`;
 }
@@ -2574,7 +2608,7 @@ function renderCards() {
         <span class="pill">${item.theme}</span>
         <span class="pill">${content.label}</span>
         <select class="card-level" data-card-level="${index}" aria-label="切换本卡难度">${levelOptions(level)}</select>
-        <span class="mastery-summary">${mastery.mastered}/${mastery.total} 已掌握</span>
+        <span class="mastery-summary">读 ${mastery.read} · 背 ${mastery.recite} · 熟 ${mastery.mastered}</span>
       </div>
       <h2>${item.title}</h2>
       <p class="cn">${item.cn}</p>
@@ -3040,13 +3074,12 @@ cardsEl.addEventListener("click", async event => {
   const checkTypingBtn = event.target.closest("[data-check-typing]");
   const clearTypingBtn = event.target.closest("[data-clear-typing]");
   const accentBtn = event.target.closest("[data-accent]");
-  const masteryBtn = event.target.closest("[data-mastery-card]");
-  if (masteryBtn) {
-    const cardIndex = Number(masteryBtn.dataset.masteryCard);
-    const sentenceIndex = Number(masteryBtn.dataset.masteryIndex);
+  const stageBtn = event.target.closest("[data-stage-card]");
+  if (stageBtn) {
+    const cardIndex = Number(stageBtn.dataset.stageCard);
+    const sentenceIndex = Number(stageBtn.dataset.stageIndex);
     const level = cardLevel(cardIndex);
-    const next = !isSentenceMastered(cardIndex, sentenceIndex, level);
-    setSentenceMastered(cardIndex, sentenceIndex, next, level);
+    setSentenceStage(cardIndex, sentenceIndex, stageBtn.dataset.stageValue, level);
     renderCards();
     return;
   }
