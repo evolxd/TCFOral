@@ -1185,19 +1185,19 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
           <div class="training-target" id="trainingTarget"></div>
           <textarea class="training-answer" id="trainingAnswer" spellcheck="false" autocorrect="off" autocomplete="off" autocapitalize="off" lang="fr" placeholder="这里先用文字输入模拟你说出的法语；下一步可接 Gemini 录音转写。"></textarea>
           <div class="training-controls">
-            <button class="primary" id="trainingPlay">播放原音</button>
-            <button id="trainingRecord">开始录音</button>
-            <button id="trainingTranscribe" disabled>Gemini 转写并评分</button>
-            <button id="trainingCheck">评分</button>
+            <button type="button" class="primary" id="trainingPlay">播放原音</button>
+            <button type="button" id="trainingRecord">开始录音</button>
+            <button type="button" id="trainingTranscribe" disabled>Gemini 转写并评分</button>
+            <button type="button" id="trainingCheck">评分</button>
             <audio id="trainingAudio" controls preload="metadata"></audio>
             <audio id="recordingAudio" controls preload="metadata"></audio>
           </div>
           <div class="training-result" id="trainingResult"></div>
         </div>
         <div class="training-footer">
-          <button id="trainingPrev">上一句</button>
-          <button id="trainingNext">下一句</button>
-          <button id="trainingFinish">本卡总结</button>
+          <button type="button" id="trainingPrev">上一句</button>
+          <button type="button" id="trainingNext">下一句</button>
+          <button type="button" id="trainingFinish">本卡总结</button>
         </div>
       </div>
     </section>
@@ -2569,10 +2569,11 @@ function renderTraining() {
   trainingPrompt.textContent = mode === "read" ? fr : zh;
   trainingTarget.textContent = mode === "read" ? zh : "";
   trainingAnswer.value = "";
-  trainingResult.innerHTML = "";
+  trainingResult.innerHTML = "文字评分可直接使用：输入你说出的法语，点“评分”。录音评分需要先允许麦克风权限。";
   trainingRecordingBlob = null;
   recordingAudio.removeAttribute("src");
   trainingTranscribe.disabled = true;
+  trainingRecord.disabled = false;
   trainingRecord.textContent = "开始录音";
   trainingRecord.classList.remove("recording-active");
   trainingPrev.disabled = trainingSession.sentenceIndex === 0;
@@ -2597,11 +2598,24 @@ async function toggleTrainingRecording() {
     trainingRecord.disabled = true;
     return;
   }
+  if (!window.isSecureContext) {
+    trainingResult.innerHTML = "录音需要安全环境。请用 https://evolxd.github.io/TCFOral/ 打开，不要用 file:// 本地文件。";
+    return;
+  }
   if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
     trainingResult.innerHTML = "当前浏览器不支持录音。建议用最新版 Chrome 或 Edge。";
     return;
   }
-  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  let stream;
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  } catch (err) {
+    const denied = err.name === "NotAllowedError" || err.name === "SecurityError";
+    trainingResult.innerHTML = denied
+      ? "浏览器没有获得麦克风权限。请点击地址栏左侧锁头/权限图标，允许麦克风，然后刷新页面。"
+      : `麦克风启动失败：${escapeHtml(err.message || err.name || "未知错误")}`;
+    return;
+  }
   trainingChunks = [];
   trainingRecordingBlob = null;
   const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "audio/webm";
@@ -2612,6 +2626,14 @@ async function toggleTrainingRecording() {
   trainingRecorder.onstop = () => {
     stream.getTracks().forEach(track => track.stop());
     trainingRecordingBlob = new Blob(trainingChunks, { type: mimeType });
+    if (!trainingRecordingBlob.size) {
+      trainingRecord.disabled = false;
+      trainingRecord.textContent = "重新录音";
+      trainingRecord.classList.remove("recording-active");
+      trainingTranscribe.disabled = true;
+      trainingResult.innerHTML = "没有录到有效声音。请重新录音，并确认浏览器麦克风权限已开启。";
+      return;
+    }
     recordingAudio.src = URL.createObjectURL(trainingRecordingBlob);
     trainingRecord.disabled = false;
     trainingRecord.textContent = "重新录音";

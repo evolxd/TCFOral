@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v20-card-levels";
+const CACHE_NAME = "tcf-oral-v21-training-recording-fix";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
