@@ -2533,6 +2533,7 @@ function currentTrainingContent() {
 }
 
 function openTraining(cardIndex, mode = "read") {
+  stopAllPlayback();
   const level = cardLevel(cardIndex);
   const content = variantFor(templates[cardIndex], level);
   trainingSession = {
@@ -3339,6 +3340,17 @@ function stopLoopUi() {
   activeLoopButton.classList.remove("loop-active");
   activeLoopButton.textContent = "循环播放";
   activeLoopButton = null;
+}
+
+function stopAllPlayback() {
+  activePlaybackToken += 1;
+  stopLoopUi();
+  [activePlayer, audio, trainingAudio, recordingAudio, ...document.querySelectorAll(".card-audio")]
+    .filter(Boolean)
+    .forEach(player => {
+      player.pause();
+      player.currentTime = 0;
+    });
 }
 
 function selectedSentenceEntries(item, cardIndex, level = activeLevel) {
