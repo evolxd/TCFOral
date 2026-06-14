@@ -2623,11 +2623,18 @@ async function toggleTrainingRecording() {
     trainingRecord.disabled = true;
     return;
   }
+  trainingRecord.textContent = "请求麦克风...";
+  trainingRecord.disabled = true;
+  trainingResult.innerHTML = "正在请求麦克风权限。如果浏览器弹出权限提示，请选择允许。";
   if (!window.isSecureContext) {
+    trainingRecord.disabled = false;
+    trainingRecord.textContent = "开始录音";
     trainingResult.innerHTML = "录音需要安全环境。请用 https://evolxd.github.io/TCFOral/ 打开，不要用 file:// 本地文件。";
     return;
   }
   if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    trainingRecord.disabled = false;
+    trainingRecord.textContent = "开始录音";
     trainingResult.innerHTML = "当前浏览器不支持录音。建议用最新版 Chrome 或 Edge。";
     return;
   }
@@ -2635,6 +2642,8 @@ async function toggleTrainingRecording() {
   try {
     stream = await navigator.mediaDevices.getUserMedia({ audio: true });
   } catch (err) {
+    trainingRecord.disabled = false;
+    trainingRecord.textContent = "开始录音";
     const denied = err.name === "NotAllowedError" || err.name === "SecurityError";
     trainingResult.innerHTML = denied
       ? "浏览器没有获得麦克风权限。请点击地址栏左侧锁头/权限图标，允许麦克风，然后刷新页面。"
@@ -2643,8 +2652,13 @@ async function toggleTrainingRecording() {
   }
   trainingChunks = [];
   trainingRecordingBlob = null;
-  const mimeType = MediaRecorder.isTypeSupported("audio/webm;codecs=opus") ? "audio/webm;codecs=opus" : "audio/webm";
-  trainingRecorder = new MediaRecorder(stream, { mimeType });
+  const mimeType = [
+    "audio/webm;codecs=opus",
+    "audio/webm",
+    "audio/mp4",
+    "audio/aac"
+  ].find(type => MediaRecorder.isTypeSupported(type)) || "";
+  trainingRecorder = mimeType ? new MediaRecorder(stream, { mimeType }) : new MediaRecorder(stream);
   trainingRecorder.ondataavailable = event => {
     if (event.data.size) trainingChunks.push(event.data);
   };
@@ -2667,6 +2681,7 @@ async function toggleTrainingRecording() {
     trainingResult.innerHTML = "录音已完成。可以先回放，再点 Gemini 转写并评分。";
   };
   trainingRecorder.start();
+  trainingRecord.disabled = false;
   trainingRecord.textContent = "停止录音";
   trainingRecord.classList.add("recording-active");
   trainingTranscribe.disabled = true;

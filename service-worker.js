@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v22-remember-scroll";
+const CACHE_NAME = "tcf-oral-v23-ios-recording-feedback";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
