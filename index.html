@@ -2268,6 +2268,8 @@ function ensureSentenceEnd(text) {
 let active = "all";
 let activeLevel = localStorage.getItem("tcf_level") || "b2";
 let activeTrainingMode = localStorage.getItem("tcf_training_mode") || "all";
+let restoreScrollAfterRender = true;
+let scrollSaveTimer = null;
 
 const cardsEl = document.querySelector("#cards");
 const filtersEl = document.querySelector("#filters");
@@ -2387,6 +2389,26 @@ function renderTrainingModes() {
   const stats = sessionSentenceStats();
   const percent = stats.total ? Math.round((stats.mastered / stats.total) * 100) : 0;
   sessionProgressFill.style.width = `${percent}%`;
+}
+
+function saveScrollPosition() {
+  if (scrollSaveTimer) clearTimeout(scrollSaveTimer);
+  scrollSaveTimer = setTimeout(() => {
+    localStorage.setItem("tcf_last_scroll_y", String(Math.max(0, Math.round(window.scrollY))));
+  }, 160);
+}
+
+function restoreScrollPosition() {
+  if (!restoreScrollAfterRender) return;
+  restoreScrollAfterRender = false;
+  const saved = Number(localStorage.getItem("tcf_last_scroll_y") || 0);
+  if (!Number.isFinite(saved) || saved <= 0) return;
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+      window.scrollTo({ top: Math.min(saved, maxScroll), left: 0 });
+    });
+  });
 }
 
 function googleTranslateUrl(text) {
@@ -3163,6 +3185,7 @@ function renderCards() {
   visibleCount.textContent = data.length;
   if (!data.length) {
     cardsEl.innerHTML = `<div class="empty">没有匹配结果。换一个关键词，比如 logement、culture、科技、连接词。</div>`;
+    restoreScrollPosition();
     return;
   }
   cardsEl.innerHTML = data.map(item => {
@@ -3198,8 +3221,9 @@ function renderCards() {
       </div>
       ${renderTypingPractice(index, level)}
     </article>
-  `;
+  `; 
   }).join("");
+  restoreScrollPosition();
 }
 
 function saveSettings() {
@@ -3839,10 +3863,13 @@ resetBtn.addEventListener("click", () => {
   active = "all";
   activeTrainingMode = "all";
   localStorage.setItem("tcf_training_mode", activeTrainingMode);
+  localStorage.removeItem("tcf_last_scroll_y");
+  restoreScrollAfterRender = false;
   searchEl.value = "";
   renderFilters();
   renderTrainingModes();
   renderCards();
+  window.scrollTo({ top: 0, left: 0 });
 });
 
 provider.addEventListener("change", syncProviderFields);
@@ -3865,6 +3892,10 @@ document.addEventListener("keydown", event => {
 });
 document.addEventListener("click", event => {
   if (!event.target.closest(".accent-wrap") && !event.target.closest("[data-typing]")) closeAccentPalettes();
+});
+window.addEventListener("scroll", saveScrollPosition, { passive: true });
+window.addEventListener("beforeunload", () => {
+  localStorage.setItem("tcf_last_scroll_y", String(Math.max(0, Math.round(window.scrollY))));
 });
 
 loadSettings();
