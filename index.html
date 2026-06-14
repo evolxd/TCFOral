@@ -3311,7 +3311,7 @@ function renderCards() {
         <button data-train="${index}">进入训练</button>
         <button class="primary" data-speak="${index}">朗读</button>
         <button data-loop="${index}">循环播放</button>
-        <button data-copy="${index}">复制</button>
+        <button data-next-loop="${index}">循环下一题卡</button>
         <button data-download="${index}">下载本卡音频</button>
         <a href="${googleTranslateUrl(content.fr)}" target="_blank" rel="noopener"><button>Google 发音</button></a>
         <span class="rate-pill" data-rate-label="${index}">x${currentPlaybackRate().toFixed(2)}</span>
@@ -3455,7 +3455,9 @@ async function getTtsBlob(text) {
 let activePlayer = audio;
 let activePlaybackToken = 0;
 let activeLoopButton = null;
+let activeNextLoopButton = null;
 let loopDelayTimer = null;
+let nextCardLoopTimer = null;
 
 function currentPlaybackRate() {
   const rate = Number(speechSpeed.value);
@@ -3491,10 +3493,20 @@ function stopLoopUi() {
     clearTimeout(loopDelayTimer);
     loopDelayTimer = null;
   }
-  if (!activeLoopButton) return;
-  activeLoopButton.classList.remove("loop-active");
-  activeLoopButton.textContent = "循环播放";
-  activeLoopButton = null;
+  if (nextCardLoopTimer) {
+    clearTimeout(nextCardLoopTimer);
+    nextCardLoopTimer = null;
+  }
+  if (activeLoopButton) {
+    activeLoopButton.classList.remove("loop-active");
+    activeLoopButton.textContent = "循环播放";
+    activeLoopButton = null;
+  }
+  if (activeNextLoopButton) {
+    activeNextLoopButton.classList.remove("loop-active");
+    activeNextLoopButton.textContent = "循环下一题卡";
+    activeNextLoopButton = null;
+  }
 }
 
 function stopAllPlayback() {
@@ -3513,6 +3525,27 @@ function selectedSentenceEntries(item, cardIndex, level = activeLevel) {
   return splitFrench(content.fr)
     .map((line, index) => ({ line, index }))
     .filter(entry => isSentenceEnabled(cardIndex, entry.index, level));
+}
+
+function currentVisibleCardIndexes() {
+  const q = searchEl.value.trim().toLowerCase();
+  return templates
+    .map((item, index) => ({ item, index }))
+    .filter(({ item, index }) => {
+      const typeOk = active === "all" || item.type === active;
+      const modeOk = cardMatchesTrainingMode(item, index);
+      const content = variantFor(item, cardLevel(index));
+      const hay = `${item.theme} ${item.title} ${item.cn} ${content.fr} ${(content.zh || []).join(" ")}`.toLowerCase();
+      return typeOk && modeOk && (!q || hay.includes(q));
+    })
+    .map(entry => entry.index);
+}
+
+function nextVisibleCardIndex(cardIndex) {
+  const indexes = currentVisibleCardIndexes();
+  if (!indexes.length) return cardIndex;
+  const current = indexes.indexOf(cardIndex);
+  return indexes[(current >= 0 ? current + 1 : 0) % indexes.length];
 }
 
 function normalizeDictation(text) {
@@ -3671,7 +3704,7 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
       activeLoopButton.classList.add("loop-active");
       activeLoopButton.textContent = "停止循环";
     }
-  } else {
+  } else if (!options.keepControls) {
     stopLoopUi();
   }
   const playCurrent = () => {
@@ -3712,7 +3745,8 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
       current = 0;
       playNext();
     } else {
-      stopLoopUi();
+      if (!options.keepControls) stopLoopUi();
+      if (typeof options.onComplete === "function") options.onComplete();
     }
   };
   target.onerror = () => {
@@ -3723,6 +3757,34 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
     }
   };
   playCurrent();
+}
+
+async function startNextCardLoop(cardIndex, button) {
+  stopLoopUi();
+  activeNextLoopButton = button;
+  activeNextLoopButton.classList.add("loop-active");
+  activeNextLoopButton.textContent = "停止循环下一题";
+
+  const playCard = async index => {
+    if (activeNextLoopButton !== button) return;
+    const player = cardsEl.querySelector(`[data-audio="${index}"]`) || audio;
+    await speakItem(templates[index], index, player, cardLevel(index), {
+      keepControls: true,
+      onComplete: () => {
+        if (activeNextLoopButton !== button) return;
+        const nextIndex = nextVisibleCardIndex(index);
+        nextCardLoopTimer = setTimeout(() => {
+          nextCardLoopTimer = null;
+          playCard(nextIndex).catch(err => {
+            stopLoopUi();
+            alert("循环下一题卡失败。错误：" + err.message.slice(0, 240));
+          });
+        }, currentLoopGapMs());
+      }
+    });
+  };
+
+  await playCard(cardIndex);
 }
 
 function downloadBlob(blob, fileName) {
@@ -3785,10 +3847,10 @@ trainingModesEl.addEventListener("click", event => {
 });
 
 cardsEl.addEventListener("click", async event => {
-  const copyBtn = event.target.closest("[data-copy]");
   const trainBtn = event.target.closest("[data-train]");
   const speakBtn = event.target.closest("[data-speak]");
   const loopBtn = event.target.closest("[data-loop]");
+  const nextLoopBtn = event.target.closest("[data-next-loop]");
   const downloadBtn = event.target.closest("[data-download]");
   const checkTypingBtn = event.target.closest("[data-check-typing]");
   const clearTypingBtn = event.target.closest("[data-clear-typing]");
@@ -3822,12 +3884,6 @@ cardsEl.addEventListener("click", async event => {
   if (accentBtn) {
     insertAccent(Number(accentBtn.dataset.accentTarget), accentBtn.dataset.accent);
   }
-  if (copyBtn) {
-    const index = Number(copyBtn.dataset.copy);
-    await navigator.clipboard.writeText(variantFor(templates[index], cardLevel(index)).fr);
-    copyBtn.textContent = "已复制";
-    setTimeout(() => copyBtn.textContent = "复制", 900);
-  }
   if (speakBtn) {
     try {
       const index = Number(speakBtn.dataset.speak);
@@ -3853,6 +3909,23 @@ cardsEl.addEventListener("click", async event => {
     } catch (err) {
       stopLoopUi();
       alert("循环播放失败。错误：" + err.message.slice(0, 240));
+    }
+  }
+  if (nextLoopBtn) {
+    try {
+      if (activeNextLoopButton === nextLoopBtn) {
+        activePlaybackToken += 1;
+        const index = Number(nextLoopBtn.dataset.nextLoop);
+        const player = cardsEl.querySelector(`[data-audio="${index}"]`) || audio;
+        player.pause();
+        stopLoopUi();
+        return;
+      }
+      const index = Number(nextLoopBtn.dataset.nextLoop);
+      await startNextCardLoop(index, nextLoopBtn);
+    } catch (err) {
+      stopLoopUi();
+      alert("循环下一题卡失败。错误：" + err.message.slice(0, 240));
     }
   }
   if (downloadBtn) {

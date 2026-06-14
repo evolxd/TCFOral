@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v25-reuse-mic-session";
+const CACHE_NAME = "tcf-oral-v26-next-card-loop";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
