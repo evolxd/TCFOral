@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v24-training-diff-highlight";
+const CACHE_NAME = "tcf-oral-v25-reuse-mic-session";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",

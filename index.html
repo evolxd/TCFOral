@@ -2564,6 +2564,7 @@ let trainingSession = null;
 let trainingRecorder = null;
 let trainingChunks = [];
 let trainingRecordingBlob = null;
+let trainingMicStream = null;
 
 function currentTrainingContent() {
   if (!trainingSession) return null;
@@ -2602,6 +2603,20 @@ function closeTraining() {
   trainingAudio.pause();
   recordingAudio.pause();
   if (trainingRecorder && trainingRecorder.state !== "inactive") trainingRecorder.stop();
+}
+
+async function getTrainingMicStream() {
+  if (trainingMicStream?.active) return trainingMicStream;
+  trainingMicStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  return trainingMicStream;
+}
+
+function stopTrainingMicStream() {
+  if (trainingRecorder && trainingRecorder.state === "recording") trainingRecorder.stop();
+  if (trainingMicStream) {
+    trainingMicStream.getTracks().forEach(track => track.stop());
+    trainingMicStream = null;
+  }
 }
 
 function renderTraining() {
@@ -2649,7 +2664,13 @@ async function toggleTrainingRecording() {
   }
   trainingRecord.textContent = "请求麦克风...";
   trainingRecord.disabled = true;
-  trainingResult.innerHTML = "正在请求麦克风权限。如果浏览器弹出权限提示，请选择允许。";
+  trainingAnswer.value = "";
+  trainingRecordingBlob = null;
+  recordingAudio.removeAttribute("src");
+  trainingTranscribe.disabled = true;
+  trainingResult.innerHTML = trainingMicStream?.active
+    ? "正在使用已授权的麦克风，新录音会覆盖上一次转写。"
+    : "正在请求麦克风权限。如果浏览器弹出权限提示，请选择允许。";
   if (!window.isSecureContext) {
     trainingRecord.disabled = false;
     trainingRecord.textContent = "开始录音";
@@ -2664,7 +2685,7 @@ async function toggleTrainingRecording() {
   }
   let stream;
   try {
-    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream = await getTrainingMicStream();
   } catch (err) {
     trainingRecord.disabled = false;
     trainingRecord.textContent = "开始录音";
@@ -2687,7 +2708,6 @@ async function toggleTrainingRecording() {
     if (event.data.size) trainingChunks.push(event.data);
   };
   trainingRecorder.onstop = () => {
-    stream.getTracks().forEach(track => track.stop());
     trainingRecordingBlob = new Blob(trainingChunks, { type: mimeType });
     if (!trainingRecordingBlob.size) {
       trainingRecord.disabled = false;
@@ -3974,6 +3994,7 @@ document.addEventListener("click", event => {
 window.addEventListener("scroll", saveScrollPosition, { passive: true });
 window.addEventListener("beforeunload", () => {
   localStorage.setItem("tcf_last_scroll_y", String(Math.max(0, Math.round(window.scrollY))));
+  stopTrainingMicStream();
 });
 
 loadSettings();
