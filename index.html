@@ -2651,14 +2651,22 @@ function renderTraining() {
   trainingNext.disabled = trainingSession.sentenceIndex >= frLines.length - 1;
   trainingSession.startedAt = Date.now();
   trainingAudio.src = localAudioName(item, trainingSession.cardIndex, fr, trainingSession.sentenceIndex, trainingSession.level);
+  trainingAudio.onerror = () => {
+    if (!trainingSession) return;
+    trainingResult.innerHTML = "本句本地 mp3 没有找到。点击“播放原音”会改用浏览器自带法语朗读，不会调用 API。";
+  };
   applyPlaybackRate(trainingAudio);
+  trainingAudio.load();
 }
 
 function playTrainingAudio() {
   if (!trainingSession) return;
+  const data = currentTrainingContent();
+  trainingAudio.onerror = null;
   applyPlaybackRate(trainingAudio);
   trainingAudio.play().catch(() => {
-    trainingResult.innerHTML = "本句本地音频没有播放成功。请确认 GitHub 的 audio 文件已上传，或稍后强制刷新。";
+    if (data?.fr) speakWithBrowserFrench(data.fr);
+    trainingResult.innerHTML = "本句本地 mp3 没有找到或尚未加载，已改用浏览器自带法语朗读，不会调用 API。";
   });
 }
 
@@ -3711,6 +3719,14 @@ function localAudioName(item, cardIndex, sentence, sentenceIndex, level = active
   const sentenceSlug = level === "c1" ? legacyDownloadedFileName(sentence) : safeFileName(sentence);
   const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=9`;
   return level === "c1" ? `audio/${fileName}` : `audio/${level}/${fileName}`;
+}
+
+function speakWithBrowserFrench(text) {
+  speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = "fr-FR";
+  utter.rate = currentPlaybackRate();
+  speechSynthesis.speak(utter);
 }
 
 async function speakItem(item, cardIndex, player = audio, level = activeLevel, options = {}) {
