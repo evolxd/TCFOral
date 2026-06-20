@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v32-recite-history-master";
+const CACHE_NAME = "tcf-oral-v33-training-global-navigation";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",

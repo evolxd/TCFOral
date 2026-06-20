@@ -2295,6 +2295,7 @@ let activeLevel = localStorage.getItem("tcf_level") || "b2";
 let activeTrainingMode = localStorage.getItem("tcf_training_mode") || "all";
 let restoreScrollAfterRender = true;
 let scrollSaveTimer = null;
+let lastTrainingCardIndex = null;
 
 const cardsEl = document.querySelector("#cards");
 const filtersEl = document.querySelector("#filters");
@@ -2434,6 +2435,15 @@ function restoreScrollPosition() {
       window.scrollTo({ top: Math.min(saved, maxScroll), left: 0 });
     });
   });
+}
+
+function scrollToCard(cardIndex, behavior = "smooth") {
+  const card = cardsEl.querySelector(`[data-card-index="${cardIndex}"]`);
+  if (!card) return;
+  restoreScrollAfterRender = false;
+  const top = Math.max(0, Math.round(card.getBoundingClientRect().top + window.scrollY - 14));
+  localStorage.setItem("tcf_last_scroll_y", String(top));
+  requestAnimationFrame(() => window.scrollTo({ top, left: 0, behavior }));
 }
 
 function googleTranslateUrl(text) {
@@ -2634,6 +2644,7 @@ function openTraining(cardIndex, mode = "read") {
   stopAllPlayback();
   const level = cardLevel(cardIndex);
   const content = variantFor(templates[cardIndex], level);
+  lastTrainingCardIndex = cardIndex;
   trainingSession = {
     cardIndex,
     level,
@@ -2647,11 +2658,13 @@ function openTraining(cardIndex, mode = "read") {
 }
 
 function closeTraining() {
+  const cardIndex = trainingSession?.cardIndex ?? lastTrainingCardIndex;
   trainingOverlay.hidden = true;
   trainingSession = null;
   trainingAudio.pause();
   recordingAudio.pause();
   if (trainingRecorder && trainingRecorder.state !== "inactive") trainingRecorder.stop();
+  if (Number.isInteger(cardIndex)) scrollToCard(cardIndex);
 }
 
 async function getTrainingMicStream() {
@@ -2673,6 +2686,7 @@ function renderTraining() {
   if (!data) return;
   const { item, frLines, fr, zh } = data;
   const mode = trainingSession.mode;
+  lastTrainingCardIndex = trainingSession.cardIndex;
   const currentStage = sentenceStage(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
   const currentStreak = recentPerfectReciteCount(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
   trainingTitle.textContent = item.title;
@@ -2696,7 +2710,7 @@ function renderTraining() {
   trainingRecord.textContent = "开始录音";
   trainingRecord.classList.remove("recording-active");
   trainingPrev.disabled = trainingSession.sentenceIndex === 0;
-  trainingNext.disabled = trainingSession.sentenceIndex >= frLines.length - 1;
+  trainingNext.disabled = false;
   trainingSession.startedAt = Date.now();
   trainingAudio.src = localAudioName(item, trainingSession.cardIndex, fr, trainingSession.sentenceIndex, trainingSession.level);
   trainingAudio.onerror = null;
@@ -3008,8 +3022,24 @@ function moveTraining(step) {
   if (!trainingSession) return;
   const data = currentTrainingContent();
   const next = trainingSession.sentenceIndex + step;
-  if (next < 0 || next >= data.frLines.length) return;
-  trainingSession.sentenceIndex = next;
+  if (next >= 0 && next < data.frLines.length) {
+    trainingSession.sentenceIndex = next;
+    renderTraining();
+    return;
+  }
+  const nextCardIndex = step > 0
+    ? nextVisibleCardIndex(trainingSession.cardIndex)
+    : previousVisibleCardIndex(trainingSession.cardIndex);
+  if (nextCardIndex === trainingSession.cardIndex) return;
+  const level = cardLevel(nextCardIndex);
+  const nextContent = variantFor(templates[nextCardIndex], level);
+  const nextLines = splitFrench(nextContent.fr);
+  trainingSession.cardIndex = nextCardIndex;
+  trainingSession.level = level;
+  trainingSession.sentenceIndex = step > 0 ? 0 : Math.max(0, nextLines.length - 1);
+  trainingSession.startedAt = Date.now();
+  trainingSession.scores = Array(nextLines.length).fill(null);
+  lastTrainingCardIndex = nextCardIndex;
   renderTraining();
 }
 
@@ -3404,7 +3434,7 @@ function renderCards() {
     const content = variantFor(item, level);
     const mastery = cardMasteryStats(content, index, level);
     return `
-    <article class="card">
+    <article class="card" id="card-${index}" data-card-index="${index}">
       <div class="meta">
         <span class="pill ${item.type === "tache3" ? "red" : item.type === "connecteurs" || item.type === "questions" || item.type === "variations" ? "gold" : "blue"}">${categoryLabels[item.type]}</span>
         <span class="pill">${item.theme}</span>
@@ -3658,6 +3688,14 @@ function nextVisibleCardIndex(cardIndex) {
   if (!indexes.length) return cardIndex;
   const current = indexes.indexOf(cardIndex);
   return indexes[(current >= 0 ? current + 1 : 0) % indexes.length];
+}
+
+function previousVisibleCardIndex(cardIndex) {
+  const indexes = currentVisibleCardIndexes();
+  if (!indexes.length) return cardIndex;
+  const current = indexes.indexOf(cardIndex);
+  const start = current >= 0 ? current : 0;
+  return indexes[(start - 1 + indexes.length) % indexes.length];
 }
 
 function normalizeDictation(text) {
