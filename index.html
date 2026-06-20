@@ -2653,7 +2653,7 @@ function renderTraining() {
   trainingAudio.src = localAudioName(item, trainingSession.cardIndex, fr, trainingSession.sentenceIndex, trainingSession.level);
   trainingAudio.onerror = () => {
     if (!trainingSession) return;
-    trainingResult.innerHTML = "本句本地 mp3 没有找到。点击“播放原音”会改用浏览器自带法语朗读，不会调用 API。";
+    trainingResult.innerHTML = "本句本地 mp3 没有找到。点击“播放原音”会改用你设置的 TTS 服务商朗读；如果没有填写 API key，才会退回浏览器自带语音。";
   };
   applyPlaybackRate(trainingAudio);
   trainingAudio.load();
@@ -2665,8 +2665,19 @@ function playTrainingAudio() {
   trainingAudio.onerror = null;
   applyPlaybackRate(trainingAudio);
   trainingAudio.play().catch(() => {
-    if (data?.fr) speakWithBrowserFrench(data.fr);
-    trainingResult.innerHTML = "本句本地 mp3 没有找到或尚未加载，已改用浏览器自带法语朗读，不会调用 API。";
+    if (!data?.fr) return;
+    const canUseConfiguredTts = provider.value !== "browser" && cleanCredential(apiKey.value);
+    trainingResult.innerHTML = canUseConfiguredTts
+      ? "本句本地 mp3 没有找到，正在改用你设置的 TTS 声音朗读。"
+      : "本句本地 mp3 没有找到，且没有可用 API key，已改用浏览器自带法语朗读。";
+    if (!canUseConfiguredTts) {
+      speakWithBrowserFrench(data.fr);
+      return;
+    }
+    return speakText(data.fr, trainingAudio).catch(err => {
+      trainingResult.innerHTML = `TTS 朗读失败：${escapeHtml(err.message.slice(0, 220))}<br>已退回浏览器自带法语朗读。`;
+      speakWithBrowserFrench(data.fr);
+    });
   });
 }
 
