@@ -2477,6 +2477,10 @@ function sentenceStageKey(cardIndex, sentenceIndex, level = activeLevel) {
   return `tcf_sentence_stage_${level}_${cardIndex}_${sentenceIndex}`;
 }
 
+function reciteStreakKey(cardIndex, sentenceIndex, level = activeLevel) {
+  return `tcf_recite_streak_${level}_${cardIndex}_${sentenceIndex}`;
+}
+
 function isSentenceEnabled(cardIndex, sentenceIndex, level = activeLevel) {
   return localStorage.getItem(sentencePracticeKey(cardIndex, sentenceIndex, level)) !== "0";
 }
@@ -2498,6 +2502,14 @@ function sentenceStage(cardIndex, sentenceIndex, level = activeLevel) {
 
 function setSentenceStage(cardIndex, sentenceIndex, stage, level = activeLevel) {
   localStorage.setItem(sentenceStageKey(cardIndex, sentenceIndex, level), stage);
+}
+
+function reciteStreak(cardIndex, sentenceIndex, level = activeLevel) {
+  return Number(localStorage.getItem(reciteStreakKey(cardIndex, sentenceIndex, level)) || "0");
+}
+
+function setReciteStreak(cardIndex, sentenceIndex, value, level = activeLevel) {
+  localStorage.setItem(reciteStreakKey(cardIndex, sentenceIndex, level), String(Math.max(0, value)));
 }
 
 function cardMasteryStats(content, cardIndex, level = activeLevel) {
@@ -2626,19 +2638,20 @@ function renderTraining() {
   if (!data) return;
   const { item, frLines, fr, zh } = data;
   const mode = trainingSession.mode;
-  const sentenceStage = getSentenceStage(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
+  const currentStage = sentenceStage(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
+  const currentStreak = reciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
   trainingTitle.textContent = item.title;
   trainingMeta.textContent = `${levelLabels[trainingSession.level]} · 第 ${trainingSession.sentenceIndex + 1}/${frLines.length} 句`;
   trainingTabs.innerHTML = `${Object.entries(trainingStageLabels).map(([value, label]) => (
     `<button type="button" class="${mode === value ? "active" : ""}" data-training-stage="${value}">${label}</button>`
-  )).join("")}<button type="button" class="stage-mastered ${sentenceStage === "mastered" ? "active" : ""}" disabled>熟</button>`;
+  )).join("")}<button type="button" class="stage-mastered ${currentStage === "mastered" ? "active" : ""}" disabled>熟</button>`;
   trainingPromptLabel.textContent = mode === "read" ? "跟读原句" : "看中文背法语";
   trainingPrompt.textContent = mode === "read" ? fr : (zh || "本句暂无中文提示");
   trainingTarget.textContent = "";
   trainingAnswer.value = "";
   trainingResult.innerHTML = mode === "read"
     ? "读：看法语，听原音，跟读后录音。达到 80 分会标为“读”。"
-    : "背：只看中文提示，说出法语。相似度达到 80%，且用时不超过原音频 1 秒，自动标为“熟”。";
+    : `背：只看中文提示，说出法语。连续 3 次 100%，且每次不超过原音频 1.5 秒，自动标为“熟”。当前连续 ${currentStreak}/3。`;
   trainingRecordingBlob = null;
   trainingRecordingStartedAt = null;
   trainingLastRecordingSeconds = null;
@@ -2722,7 +2735,7 @@ async function toggleTrainingRecording() {
   };
   trainingRecorder.onstop = () => {
     trainingLastRecordingSeconds = trainingRecordingStartedAt
-      ? Math.max(1, (Date.now() - trainingRecordingStartedAt) / 1000)
+      ? Number(Math.max(0.1, (Date.now() - trainingRecordingStartedAt) / 1000).toFixed(1))
       : null;
     trainingRecordingStartedAt = null;
     trainingRecordingBlob = new Blob(trainingChunks, { type: mimeType });
@@ -2892,39 +2905,50 @@ function scoreTrainingAnswer() {
     return;
   }
   const similarity = similarityPercent(data.fr, typed);
-  const elapsed = trainingLastRecordingSeconds || Math.max(1, (Date.now() - trainingSession.startedAt) / 1000);
+  const elapsed = Number((trainingLastRecordingSeconds || Math.max(0.1, (Date.now() - trainingSession.startedAt) / 1000)).toFixed(1));
   const audioSeconds = Number.isFinite(trainingAudio.duration) && trainingAudio.duration > 0
     ? trainingAudio.duration
     : Math.max(4, data.fr.split(/\s+/).length / 2.1);
-  const speedPassed = elapsed <= audioSeconds + 1;
+  const speedLimit = Number((audioSeconds + 1.5).toFixed(1));
+  const speedPassed = elapsed <= speedLimit;
+  const perfectRecite = trainingSession.mode === "recite" && similarity === 100 && speedPassed;
   const finalScore = similarity;
   trainingSession.scores[trainingSession.sentenceIndex] = {
     score: finalScore,
     similarity,
     seconds: elapsed,
     audioSeconds,
-    speedPassed
+    speedPassed,
+    perfectRecite
   };
   let stage = trainingSession.mode === "recite" ? "recite" : "read";
   let mastered = false;
   if (similarity >= 80) {
-    if (trainingSession.mode === "recite" && speedPassed) {
-      stage = "mastered";
-      mastered = true;
+    if (trainingSession.mode === "recite") {
+      const nextStreak = perfectRecite
+        ? reciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level) + 1
+        : 0;
+      setReciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, nextStreak, trainingSession.level);
+      if (nextStreak >= 3) {
+        stage = "mastered";
+        mastered = true;
+      }
     }
     setSentenceStage(trainingSession.cardIndex, trainingSession.sentenceIndex, stage, trainingSession.level);
+  } else if (trainingSession.mode === "recite") {
+    setReciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, 0, trainingSession.level);
   }
   const speedLine = trainingSession.mode === "recite"
-    ? `<br>背诵速度：${elapsed.toFixed(1)} 秒；原音频约 ${audioSeconds.toFixed(1)} 秒；${speedPassed ? "速度达标" : "还差一点，目标是不超过原音频 1 秒"}。`
+    ? `<br>背诵速度：${elapsed.toFixed(1)} 秒；原音频约 ${audioSeconds.toFixed(1)} 秒；目标 ≤ ${speedLimit.toFixed(1)} 秒；${speedPassed ? "速度达标" : "速度未达标"}。<br>连续完美背诵：${reciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level)}/3。`
     : "";
   const masteredLine = mastered
-    ? `<br><span class="training-score">已自动标为“熟”。</span>`
+    ? `<br><span class="training-score">连续 3 次完美背诵，已自动标为“熟”。</span>`
     : "";
   trainingResult.innerHTML = `<span class="training-score">本句 ${finalScore} 分</span><br>文字相似度：${similarity}%。${speedLine}${masteredLine}${diffLineHtml(data.fr, typed)}`;
   renderTrainingModes();
   renderCards();
   const masteredButton = trainingTabs.querySelector(".stage-mastered");
-  if (masteredButton) masteredButton.classList.toggle("active", getSentenceStage(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level) === "mastered");
+  if (masteredButton) masteredButton.classList.toggle("active", sentenceStage(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level) === "mastered");
 }
 
 function moveTraining(step) {

@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v30-training-uses-card-audio";
+const CACHE_NAME = "tcf-oral-v31-training-read-recite-master";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
