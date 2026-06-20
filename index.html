@@ -2481,6 +2481,10 @@ function reciteStreakKey(cardIndex, sentenceIndex, level = activeLevel) {
   return `tcf_recite_streak_${level}_${cardIndex}_${sentenceIndex}`;
 }
 
+function reciteHistoryKey(cardIndex, sentenceIndex, level = activeLevel) {
+  return `tcf_recite_history_${level}_${cardIndex}_${sentenceIndex}`;
+}
+
 function isSentenceEnabled(cardIndex, sentenceIndex, level = activeLevel) {
   return localStorage.getItem(sentencePracticeKey(cardIndex, sentenceIndex, level)) !== "0";
 }
@@ -2510,6 +2514,37 @@ function reciteStreak(cardIndex, sentenceIndex, level = activeLevel) {
 
 function setReciteStreak(cardIndex, sentenceIndex, value, level = activeLevel) {
   localStorage.setItem(reciteStreakKey(cardIndex, sentenceIndex, level), String(Math.max(0, value)));
+}
+
+function reciteHistory(cardIndex, sentenceIndex, level = activeLevel) {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(reciteHistoryKey(cardIndex, sentenceIndex, level)) || "[]");
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveReciteAttempt(cardIndex, sentenceIndex, attempt, level = activeLevel) {
+  const history = reciteHistory(cardIndex, sentenceIndex, level);
+  history.push(attempt);
+  localStorage.setItem(reciteHistoryKey(cardIndex, sentenceIndex, level), JSON.stringify(history.slice(-12)));
+  return history.slice(-3);
+}
+
+function recentPerfectReciteCount(cardIndex, sentenceIndex, level = activeLevel) {
+  const recent = reciteHistory(cardIndex, sentenceIndex, level).slice(-3);
+  let count = 0;
+  for (let index = recent.length - 1; index >= 0; index -= 1) {
+    if (!recent[index].perfect) break;
+    count += 1;
+  }
+  return count;
+}
+
+function lastThreeRecitesPerfect(cardIndex, sentenceIndex, level = activeLevel) {
+  const recent = reciteHistory(cardIndex, sentenceIndex, level).slice(-3);
+  return recent.length === 3 && recent.every(attempt => attempt.perfect);
 }
 
 function cardMasteryStats(content, cardIndex, level = activeLevel) {
@@ -2639,7 +2674,7 @@ function renderTraining() {
   const { item, frLines, fr, zh } = data;
   const mode = trainingSession.mode;
   const currentStage = sentenceStage(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
-  const currentStreak = reciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
+  const currentStreak = recentPerfectReciteCount(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
   trainingTitle.textContent = item.title;
   trainingMeta.textContent = `${levelLabels[trainingSession.level]} · 第 ${trainingSession.sentenceIndex + 1}/${frLines.length} 句`;
   trainingTabs.innerHTML = `${Object.entries(trainingStageLabels).map(([value, label]) => (
@@ -2651,7 +2686,7 @@ function renderTraining() {
   trainingAnswer.value = "";
   trainingResult.innerHTML = mode === "read"
     ? "读：看法语，听原音，跟读后录音。达到 80 分会标为“读”。"
-    : `背：只看中文提示，说出法语。连续 3 次 100%，且每次不超过原音频 1.5 秒，自动标为“熟”。当前连续 ${currentStreak}/3。`;
+    : `背：只看中文提示，说出法语。本句最近 3 次背诵记录都达到 100%，且每次不超过原音频 1.5 秒，自动标为“熟”。当前最近连续达标 ${currentStreak}/3。`;
   trainingRecordingBlob = null;
   trainingRecordingStartedAt = null;
   trainingLastRecordingSeconds = null;
@@ -2923,26 +2958,44 @@ function scoreTrainingAnswer() {
   };
   let stage = trainingSession.mode === "recite" ? "recite" : "read";
   let mastered = false;
+  let recentPerfectCount = recentPerfectReciteCount(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
   if (similarity >= 80) {
     if (trainingSession.mode === "recite") {
-      const nextStreak = perfectRecite
-        ? reciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level) + 1
-        : 0;
-      setReciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, nextStreak, trainingSession.level);
-      if (nextStreak >= 3) {
+      saveReciteAttempt(trainingSession.cardIndex, trainingSession.sentenceIndex, {
+        at: new Date().toISOString(),
+        perfect: perfectRecite,
+        similarity,
+        seconds: elapsed,
+        audioSeconds: Number(audioSeconds.toFixed(1)),
+        speedLimit,
+        speedPassed
+      }, trainingSession.level);
+      recentPerfectCount = recentPerfectReciteCount(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
+      setReciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, recentPerfectCount, trainingSession.level);
+      if (lastThreeRecitesPerfect(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level)) {
         stage = "mastered";
         mastered = true;
       }
     }
     setSentenceStage(trainingSession.cardIndex, trainingSession.sentenceIndex, stage, trainingSession.level);
   } else if (trainingSession.mode === "recite") {
-    setReciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, 0, trainingSession.level);
+    saveReciteAttempt(trainingSession.cardIndex, trainingSession.sentenceIndex, {
+      at: new Date().toISOString(),
+      perfect: false,
+      similarity,
+      seconds: elapsed,
+      audioSeconds: Number(audioSeconds.toFixed(1)),
+      speedLimit,
+      speedPassed
+    }, trainingSession.level);
+    recentPerfectCount = recentPerfectReciteCount(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
+    setReciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, recentPerfectCount, trainingSession.level);
   }
   const speedLine = trainingSession.mode === "recite"
-    ? `<br>背诵速度：${elapsed.toFixed(1)} 秒；原音频约 ${audioSeconds.toFixed(1)} 秒；目标 ≤ ${speedLimit.toFixed(1)} 秒；${speedPassed ? "速度达标" : "速度未达标"}。<br>连续完美背诵：${reciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level)}/3。`
+    ? `<br>背诵速度：${elapsed.toFixed(1)} 秒；原音频约 ${audioSeconds.toFixed(1)} 秒；目标 ≤ ${speedLimit.toFixed(1)} 秒；${speedPassed ? "速度达标" : "速度未达标"}。<br>本句最近连续达标记录：${recentPerfectCount}/3。`
     : "";
   const masteredLine = mastered
-    ? `<br><span class="training-score">连续 3 次完美背诵，已自动标为“熟”。</span>`
+    ? `<br><span class="training-score">本句最近 3 次记录全部达标，已自动标为“熟”。</span>`
     : "";
   trainingResult.innerHTML = `<span class="training-score">本句 ${finalScore} 分</span><br>文字相似度：${similarity}%。${speedLine}${masteredLine}${diffLineHtml(data.fr, typed)}`;
   renderTrainingModes();
