@@ -393,6 +393,18 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   border-color: #dce9dc;
   background: #fbfdf9;
 }
+.sentence-pair.is-playing {
+  border-color: #6d846f;
+  background: #f3f8f1;
+  box-shadow: inset 4px 0 0 #5d785f, 0 8px 22px rgba(66, 86, 68, .10);
+}
+.sentence-pair.is-playing .sentence-fr {
+  color: #173621;
+  font-weight: 650;
+}
+.sentence-pair.is-playing .sentence-zh {
+  color: #445a48;
+}
 .sentence-fr {
   font-size: 21px;
   line-height: 1.42;
@@ -573,6 +585,11 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   width: min(520px, 100%);
   height: 40px;
   border-radius: var(--radius);
+}
+.card-audio.is-tracking {
+  outline: 2px solid #d8e6d8;
+  outline-offset: 3px;
+  border-radius: 999px;
 }
 .training-overlay {
   position: fixed;
@@ -2575,7 +2592,7 @@ function renderBilingual(content, cardIndex, level = cardLevel(cardIndex)) {
     const muted = checked ? "" : " is-muted";
     const stageClass = stage === "mastered" ? " is-mastered" : stage === "recite" ? " is-reciting" : "";
     const sentenceId = `sentence-${level}-${cardIndex}-${index}`;
-    return `<div class="sentence-pair${muted}${stageClass}">
+    return `<div class="sentence-pair${muted}${stageClass}" data-sentence-pair-card="${cardIndex}" data-sentence-pair-index="${index}">
       <input id="${sentenceId}" class="sentence-check" type="checkbox" data-sentence-card="${cardIndex}" data-sentence-index="${index}" ${checked}>
       <label class="sentence-body" for="${sentenceId}"><div class="sentence-fr">${escapeHtml(line)}</div>${zh}</label>
       <div class="stage-control" role="group" aria-label="句子熟练度">
@@ -3453,7 +3470,7 @@ function renderCards() {
         <button data-train="${index}">进入训练</button>
         <button class="primary" data-speak="${index}">朗读</button>
         <button data-loop="${index}">循环播放</button>
-        <button data-next-loop="${index}">循环下一题卡</button>
+        <button data-next-loop="${index}">向下循环</button>
         <button data-download="${index}">下载本卡音频</button>
         <a href="${googleTranslateUrl(content.fr)}" target="_blank" rel="noopener"><button>Google 发音</button></a>
         <span class="rate-pill" data-rate-label="${index}">x${currentPlaybackRate().toFixed(2)}</span>
@@ -3646,9 +3663,10 @@ function stopLoopUi() {
   }
   if (activeNextLoopButton) {
     activeNextLoopButton.classList.remove("loop-active");
-    activeNextLoopButton.textContent = "循环下一题卡";
+    activeNextLoopButton.textContent = "向下循环";
     activeNextLoopButton = null;
   }
+  clearPlaybackHighlights();
 }
 
 function stopAllPlayback() {
@@ -3660,6 +3678,26 @@ function stopAllPlayback() {
       player.pause();
       player.currentTime = 0;
     });
+  clearPlaybackHighlights();
+}
+
+function clearPlaybackHighlights() {
+  document.querySelectorAll(".sentence-pair.is-playing").forEach(el => el.classList.remove("is-playing"));
+  document.querySelectorAll(".card-audio.is-tracking").forEach(el => el.classList.remove("is-tracking"));
+}
+
+function highlightPlaybackSentence(cardIndex, sentenceIndex, player) {
+  clearPlaybackHighlights();
+  const pair = cardsEl.querySelector(`[data-sentence-pair-card="${cardIndex}"][data-sentence-pair-index="${sentenceIndex}"]`);
+  if (pair) {
+    pair.classList.add("is-playing");
+    const rect = pair.getBoundingClientRect();
+    const isMostlyVisible = rect.top >= 96 && rect.bottom <= window.innerHeight - 70;
+    if (!isMostlyVisible) pair.scrollIntoView({ behavior: "smooth", block: "center" });
+  } else {
+    scrollToCard(cardIndex);
+  }
+  if (player) player.classList.add("is-tracking");
 }
 
 function selectedSentenceEntries(item, cardIndex, level = activeLevel) {
@@ -3867,6 +3905,8 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
   }
   const playCurrent = () => {
     if (playbackToken !== activePlaybackToken) return;
+    const entry = entries[current];
+    highlightPlaybackSentence(cardIndex, entry.index, target);
     target.onloadedmetadata = () => applyPlaybackRate(target);
     target.oncanplay = () => applyPlaybackRate(target);
     target.onplay = () => applyPlaybackRate(target);
@@ -3904,6 +3944,7 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
       playNext();
     } else {
       if (!options.keepControls) stopLoopUi();
+      if (!options.keepControls) clearPlaybackHighlights();
       if (typeof options.onComplete === "function") options.onComplete();
     }
   };
@@ -3921,10 +3962,11 @@ async function startNextCardLoop(cardIndex, button) {
   stopLoopUi();
   activeNextLoopButton = button;
   activeNextLoopButton.classList.add("loop-active");
-  activeNextLoopButton.textContent = "停止循环下一题";
+  activeNextLoopButton.textContent = "停止向下循环";
 
   const playCard = async index => {
     if (activeNextLoopButton !== button) return;
+    scrollToCard(index);
     const player = cardsEl.querySelector(`[data-audio="${index}"]`) || audio;
     await speakItem(templates[index], index, player, cardLevel(index), {
       keepControls: true,
