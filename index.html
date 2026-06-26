@@ -1230,7 +1230,6 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
             <button type="button" class="primary" id="trainingPlay">播放原音</button>
             <button type="button" id="trainingRecord">开始录音</button>
             <button type="button" id="trainingTranscribe" disabled>Gemini 转写并评分</button>
-            <button type="button" id="trainingCheck">评分</button>
             <audio id="trainingAudio" controls preload="metadata"></audio>
             <audio id="recordingAudio" controls preload="metadata"></audio>
           </div>
@@ -2330,7 +2329,6 @@ const trainingResult = document.querySelector("#trainingResult");
 const trainingPlay = document.querySelector("#trainingPlay");
 const trainingRecord = document.querySelector("#trainingRecord");
 const trainingTranscribe = document.querySelector("#trainingTranscribe");
-const trainingCheck = document.querySelector("#trainingCheck");
 const trainingAudio = document.querySelector("#trainingAudio");
 const recordingAudio = document.querySelector("#recordingAudio");
 const trainingPrev = document.querySelector("#trainingPrev");
@@ -2641,6 +2639,7 @@ let trainingRecordingBlob = null;
 let trainingMicStream = null;
 let trainingRecordingStartedAt = null;
 let trainingLastRecordingSeconds = null;
+let trainingTranscribeToken = 0;
 
 function currentTrainingContent() {
   if (!trainingSession) return null;
@@ -2676,6 +2675,7 @@ function openTraining(cardIndex, mode = "read") {
 
 function closeTraining() {
   const cardIndex = trainingSession?.cardIndex ?? lastTrainingCardIndex;
+  trainingTranscribeToken += 1;
   trainingOverlay.hidden = true;
   trainingSession = null;
   trainingAudio.pause();
@@ -2696,6 +2696,43 @@ function stopTrainingMicStream() {
     trainingMicStream.getTracks().forEach(track => track.stop());
     trainingMicStream = null;
   }
+}
+
+function stopActiveTrainingRecording() {
+  if (trainingRecorder && trainingRecorder.state === "recording") {
+    trainingRecorder.stop();
+    trainingRecord.textContent = "处理中...";
+    trainingRecord.disabled = true;
+    return true;
+  }
+  return false;
+}
+
+function pauseExternalPlaybackForTrainingPair() {
+  const externalWasActive = activePlayer && activePlayer !== trainingAudio && activePlayer !== recordingAudio;
+  if (externalWasActive) activePlaybackToken += 1;
+  stopLoopUi();
+  [audio, ...document.querySelectorAll(".card-audio")]
+    .filter(Boolean)
+    .forEach(player => player.pause());
+}
+
+function prepareExclusiveTrainingAction() {
+  stopActiveTrainingRecording();
+  activePlaybackToken += 1;
+  stopLoopUi();
+  [activePlayer, audio, trainingAudio, recordingAudio, ...document.querySelectorAll(".card-audio")]
+    .filter(Boolean)
+    .forEach(player => player.pause());
+}
+
+function sameTrainingTarget(target) {
+  return trainingSession
+    && target
+    && trainingSession.cardIndex === target.cardIndex
+    && trainingSession.sentenceIndex === target.sentenceIndex
+    && trainingSession.level === target.level
+    && trainingSession.mode === target.mode;
 }
 
 function renderTraining() {
@@ -2729,6 +2766,7 @@ function renderTraining() {
   trainingPrev.disabled = trainingSession.sentenceIndex === 0;
   trainingNext.disabled = false;
   trainingSession.startedAt = Date.now();
+  trainingTranscribeToken += 1;
   trainingAudio.src = localAudioName(item, trainingSession.cardIndex, fr, trainingSession.sentenceIndex, trainingSession.level);
   trainingAudio.onerror = null;
   applyPlaybackRate(trainingAudio);
@@ -2739,6 +2777,7 @@ function playTrainingAudio() {
   const data = currentTrainingContent();
   if (!data?.fr) return;
   trainingResult.innerHTML = "正在播放当前句原音。";
+  prepareExclusiveTrainingAction();
   speakItem(data.item, trainingSession.cardIndex, trainingAudio, trainingSession.level, {
     keepControls: true,
     entriesOverride: [{ line: data.fr, index: trainingSession.sentenceIndex }]
@@ -2749,13 +2788,15 @@ function playTrainingAudio() {
 
 async function toggleTrainingRecording() {
   if (trainingRecorder && trainingRecorder.state === "recording") {
-    trainingRecorder.stop();
+    stopActiveTrainingRecording();
     trainingRecord.textContent = "处理中...";
     trainingRecord.disabled = true;
     return;
   }
   trainingRecord.textContent = "请求麦克风...";
   trainingRecord.disabled = true;
+  prepareExclusiveTrainingAction();
+  trainingTranscribeToken += 1;
   trainingAnswer.value = "";
   trainingRecordingBlob = null;
   recordingAudio.removeAttribute("src");
@@ -2883,7 +2924,15 @@ function diffLineHtml(target, user) {
 }
 
 async function transcribeTrainingRecording() {
-  if (!trainingRecordingBlob) {
+  const transcriptionTarget = trainingSession ? {
+    cardIndex: trainingSession.cardIndex,
+    sentenceIndex: trainingSession.sentenceIndex,
+    level: trainingSession.level,
+    mode: trainingSession.mode
+  } : null;
+  const sourceBlob = trainingRecordingBlob;
+  const transcriptionToken = trainingTranscribeToken += 1;
+  if (!sourceBlob) {
     trainingResult.innerHTML = "请先录音。";
     return;
   }
@@ -2899,7 +2948,7 @@ async function transcribeTrainingRecording() {
   trainingTranscribe.textContent = "转写中...";
   trainingResult.innerHTML = "正在发送录音给 Gemini 转写。短句通常几秒完成。";
   try {
-    const base64Audio = await blobToBase64(trainingRecordingBlob);
+    const base64Audio = await blobToBase64(sourceBlob);
     const prompt = [
       "Transcribe this short TCF Canada oral practice recording into French only.",
       "Return only the learner's French sentence, with normal punctuation.",
@@ -2913,7 +2962,7 @@ async function transcribeTrainingRecording() {
         contents: [{
           parts: [
             { text: prompt },
-            { inline_data: { mime_type: trainingRecordingBlob.type || "audio/webm", data: base64Audio } }
+            { inline_data: { mime_type: sourceBlob.type || "audio/webm", data: base64Audio } }
           ]
         }]
       })
@@ -2921,11 +2970,14 @@ async function transcribeTrainingRecording() {
     if (!response.ok) throw new Error(await response.text());
     const json = await response.json();
     const transcript = extractGeminiText(json).replace(/^["“”']|["“”']$/g, "").trim();
+    if (transcriptionToken !== trainingTranscribeToken || !sameTrainingTarget(transcriptionTarget)) return;
     trainingAnswer.value = transcript;
     scoreTrainingAnswer();
   } catch (err) {
+    if (transcriptionToken !== trainingTranscribeToken || !sameTrainingTarget(transcriptionTarget)) return;
     trainingResult.innerHTML = `Gemini 转写失败：${escapeHtml(err.message.slice(0, 260))}<br>你仍然可以手动输入法语并评分。`;
   } finally {
+    if (transcriptionToken !== trainingTranscribeToken || !sameTrainingTarget(transcriptionTarget)) return;
     trainingTranscribe.disabled = false;
     trainingTranscribe.textContent = "Gemini 转写并评分";
   }
@@ -4200,6 +4252,14 @@ trainingTabs.addEventListener("click", event => {
   renderTraining();
 });
 
+[trainingAudio, recordingAudio].forEach(player => {
+  player.addEventListener("play", () => {
+    stopActiveTrainingRecording();
+    pauseExternalPlaybackForTrainingPair();
+    applyPlaybackRate(player);
+  });
+});
+
 trainingPlay.addEventListener("click", playTrainingAudio);
 trainingRecord.addEventListener("click", () => {
   toggleTrainingRecording().catch(err => {
@@ -4210,7 +4270,6 @@ trainingRecord.addEventListener("click", () => {
   });
 });
 trainingTranscribe.addEventListener("click", transcribeTrainingRecording);
-trainingCheck.addEventListener("click", scoreTrainingAnswer);
 trainingPrev.addEventListener("click", () => moveTraining(-1));
 trainingNext.addEventListener("click", () => moveTraining(1));
 trainingFinish.addEventListener("click", finishTrainingCard);
