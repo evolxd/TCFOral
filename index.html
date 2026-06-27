@@ -1229,7 +1229,6 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
           <div class="training-controls">
             <button type="button" class="primary" id="trainingPlay">播放原音</button>
             <button type="button" id="trainingRecord">开始录音</button>
-            <button type="button" id="trainingTranscribe" disabled>Gemini 转写并评分</button>
             <audio id="trainingAudio" controls preload="metadata"></audio>
             <audio id="recordingAudio" controls preload="metadata"></audio>
           </div>
@@ -2328,7 +2327,6 @@ const trainingAnswer = document.querySelector("#trainingAnswer");
 const trainingResult = document.querySelector("#trainingResult");
 const trainingPlay = document.querySelector("#trainingPlay");
 const trainingRecord = document.querySelector("#trainingRecord");
-const trainingTranscribe = document.querySelector("#trainingTranscribe");
 const trainingAudio = document.querySelector("#trainingAudio");
 const recordingAudio = document.querySelector("#recordingAudio");
 const trainingPrev = document.querySelector("#trainingPrev");
@@ -2553,6 +2551,7 @@ function reciteHistory(cardIndex, sentenceIndex, level = activeLevel) {
 function saveReciteAttempt(cardIndex, sentenceIndex, attempt, level = activeLevel) {
   const history = reciteHistory(cardIndex, sentenceIndex, level);
   history.push(attempt);
+  history.sort((a, b) => String(a.at || "").localeCompare(String(b.at || "")));
   localStorage.setItem(reciteHistoryKey(cardIndex, sentenceIndex, level), JSON.stringify(history.slice(-12)));
   return history.slice(-3);
 }
@@ -2639,7 +2638,28 @@ let trainingRecordingBlob = null;
 let trainingMicStream = null;
 let trainingRecordingStartedAt = null;
 let trainingLastRecordingSeconds = null;
-let trainingTranscribeToken = 0;
+let trainingRecordingTarget = null;
+const trainingBackgroundResults = new Map();
+
+function trainingTargetKey(target) {
+  return `${target.cardIndex}:${target.level}:${target.sentenceIndex}:${target.mode}`;
+}
+
+function snapshotTrainingTarget() {
+  const data = currentTrainingContent();
+  if (!trainingSession || !data) return null;
+  return {
+    cardIndex: trainingSession.cardIndex,
+    sentenceIndex: trainingSession.sentenceIndex,
+    level: trainingSession.level,
+    mode: trainingSession.mode,
+    fr: data.fr,
+    zh: data.zh,
+    audioSeconds: Number.isFinite(trainingAudio.duration) && trainingAudio.duration > 0
+      ? trainingAudio.duration
+      : Math.max(4, data.fr.split(/\s+/).length / 2.1)
+  };
+}
 
 function currentTrainingContent() {
   if (!trainingSession) return null;
@@ -2675,7 +2695,6 @@ function openTraining(cardIndex, mode = "read") {
 
 function closeTraining() {
   const cardIndex = trainingSession?.cardIndex ?? lastTrainingCardIndex;
-  trainingTranscribeToken += 1;
   trainingOverlay.hidden = true;
   trainingSession = null;
   trainingAudio.pause();
@@ -2752,21 +2771,20 @@ function renderTraining() {
   trainingPrompt.textContent = mode === "read" ? fr : (zh || "本句暂无中文提示");
   trainingTarget.textContent = "";
   trainingAnswer.value = "";
-  trainingResult.innerHTML = mode === "read"
+  const savedResult = trainingBackgroundResults.get(trainingTargetKey(snapshotTrainingTarget()));
+  trainingResult.innerHTML = savedResult || (mode === "read"
     ? "读：看法语，听原音，跟读后录音。达到 80 分会标为“读”。"
-    : `背：只看中文提示，说出法语。本句最近 3 次背诵记录都达到 100%，且每次不超过原音频 1.5 秒，自动标为“熟”。当前最近连续达标 ${currentStreak}/3。`;
+    : `背：只看中文提示，说出法语。本句最近 3 次背诵记录都达到 100%，且每次不超过原音频 1.5 秒，自动标为“熟”。当前最近连续达标 ${currentStreak}/3。`);
   trainingRecordingBlob = null;
   trainingRecordingStartedAt = null;
   trainingLastRecordingSeconds = null;
   recordingAudio.removeAttribute("src");
-  trainingTranscribe.disabled = true;
   trainingRecord.disabled = false;
   trainingRecord.textContent = "开始录音";
   trainingRecord.classList.remove("recording-active");
   trainingPrev.disabled = trainingSession.sentenceIndex === 0;
   trainingNext.disabled = false;
   trainingSession.startedAt = Date.now();
-  trainingTranscribeToken += 1;
   trainingAudio.src = localAudioName(item, trainingSession.cardIndex, fr, trainingSession.sentenceIndex, trainingSession.level);
   trainingAudio.onerror = null;
   applyPlaybackRate(trainingAudio);
@@ -2796,11 +2814,10 @@ async function toggleTrainingRecording() {
   trainingRecord.textContent = "请求麦克风...";
   trainingRecord.disabled = true;
   prepareExclusiveTrainingAction();
-  trainingTranscribeToken += 1;
   trainingAnswer.value = "";
   trainingRecordingBlob = null;
+  trainingRecordingTarget = snapshotTrainingTarget();
   recordingAudio.removeAttribute("src");
-  trainingTranscribe.disabled = true;
   trainingResult.innerHTML = trainingMicStream?.active
     ? "正在使用已授权的麦克风，新录音会覆盖上一次转写。"
     : "正在请求麦克风权限。如果浏览器弹出权限提示，请选择允许。";
@@ -2830,6 +2847,7 @@ async function toggleTrainingRecording() {
   }
   trainingChunks = [];
   trainingRecordingBlob = null;
+  const recordingTarget = trainingRecordingTarget;
   const mimeType = [
     "audio/webm;codecs=opus",
     "audio/webm",
@@ -2841,16 +2859,16 @@ async function toggleTrainingRecording() {
     if (event.data.size) trainingChunks.push(event.data);
   };
   trainingRecorder.onstop = () => {
-    trainingLastRecordingSeconds = trainingRecordingStartedAt
+    const recordingSeconds = trainingRecordingStartedAt
       ? Number(Math.max(0.1, (Date.now() - trainingRecordingStartedAt) / 1000).toFixed(1))
       : null;
+    trainingLastRecordingSeconds = recordingSeconds;
     trainingRecordingStartedAt = null;
     trainingRecordingBlob = new Blob(trainingChunks, { type: mimeType });
     if (!trainingRecordingBlob.size) {
       trainingRecord.disabled = false;
       trainingRecord.textContent = "重新录音";
       trainingRecord.classList.remove("recording-active");
-      trainingTranscribe.disabled = true;
       trainingResult.innerHTML = "没有录到有效声音。请重新录音，并确认浏览器麦克风权限已开启。";
       return;
     }
@@ -2858,8 +2876,13 @@ async function toggleTrainingRecording() {
     trainingRecord.disabled = false;
     trainingRecord.textContent = "重新录音";
     trainingRecord.classList.remove("recording-active");
-    trainingTranscribe.disabled = false;
-    trainingResult.innerHTML = "录音已完成。可以先回放，再点 Gemini 转写并评分。";
+    trainingResult.innerHTML = "录音已完成，Gemini 正在后台转写并评分；你可以切换到其他句子。";
+    transcribeTrainingRecording({
+      blob: trainingRecordingBlob,
+      target: recordingTarget,
+      recordingSeconds,
+      recordedAt: new Date().toISOString()
+    });
   };
   trainingRecordingStartedAt = Date.now();
   trainingLastRecordingSeconds = null;
@@ -2867,7 +2890,6 @@ async function toggleTrainingRecording() {
   trainingRecord.disabled = false;
   trainingRecord.textContent = "停止录音";
   trainingRecord.classList.add("recording-active");
-  trainingTranscribe.disabled = true;
   trainingResult.innerHTML = "正在录音，说完后点“停止录音”。";
 }
 
@@ -2923,37 +2945,30 @@ function diffLineHtml(target, user) {
   </div>`;
 }
 
-async function transcribeTrainingRecording() {
-  const transcriptionTarget = trainingSession ? {
-    cardIndex: trainingSession.cardIndex,
-    sentenceIndex: trainingSession.sentenceIndex,
-    level: trainingSession.level,
-    mode: trainingSession.mode
-  } : null;
-  const sourceBlob = trainingRecordingBlob;
-  const transcriptionToken = trainingTranscribeToken += 1;
+async function transcribeTrainingRecording(job) {
+  const transcriptionTarget = job?.target;
+  const sourceBlob = job?.blob;
   if (!sourceBlob) {
-    trainingResult.innerHTML = "请先录音。";
     return;
   }
   const key = cleanCredential(geminiKey.value);
   if (!key) {
-    trainingResult.innerHTML = "请先在设置里填写 Gemini API Key。没有 key 时，可以继续用文字输入评分。";
-    openSettings();
+    const message = "请先在设置里填写 Gemini API Key，录音暂未评分。";
+    trainingBackgroundResults.set(trainingTargetKey(transcriptionTarget), message);
+    if (sameTrainingTarget(transcriptionTarget)) trainingResult.innerHTML = message;
     return;
   }
-  const data = currentTrainingContent();
-  if (!data) return;
-  trainingTranscribe.disabled = true;
-  trainingTranscribe.textContent = "转写中...";
-  trainingResult.innerHTML = "正在发送录音给 Gemini 转写。短句通常几秒完成。";
+  if (!transcriptionTarget?.fr) return;
+  if (sameTrainingTarget(transcriptionTarget)) {
+    trainingResult.innerHTML = "Gemini 正在后台转写并评分；切换句子不会影响本句成绩。";
+  }
   try {
     const base64Audio = await blobToBase64(sourceBlob);
     const prompt = [
       "Transcribe this short TCF Canada oral practice recording into French only.",
       "Return only the learner's French sentence, with normal punctuation.",
       "Do not translate. Do not explain. If the audio is unclear, return the closest French transcription.",
-      `Target sentence for context: ${data.fr}`
+      `Target sentence for context: ${transcriptionTarget.fr}`
     ].join("\n");
     const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=${encodeURIComponent(key)}`, {
       method: "POST",
@@ -2970,16 +2985,11 @@ async function transcribeTrainingRecording() {
     if (!response.ok) throw new Error(await response.text());
     const json = await response.json();
     const transcript = extractGeminiText(json).replace(/^["“”']|["“”']$/g, "").trim();
-    if (transcriptionToken !== trainingTranscribeToken || !sameTrainingTarget(transcriptionTarget)) return;
-    trainingAnswer.value = transcript;
-    scoreTrainingAnswer();
+    scoreTrainingAnswer(transcriptionTarget, transcript, job.recordingSeconds, job.recordedAt);
   } catch (err) {
-    if (transcriptionToken !== trainingTranscribeToken || !sameTrainingTarget(transcriptionTarget)) return;
-    trainingResult.innerHTML = `Gemini 转写失败：${escapeHtml(err.message.slice(0, 260))}<br>你仍然可以手动输入法语并评分。`;
-  } finally {
-    if (transcriptionToken !== trainingTranscribeToken || !sameTrainingTarget(transcriptionTarget)) return;
-    trainingTranscribe.disabled = false;
-    trainingTranscribe.textContent = "Gemini 转写并评分";
+    const message = `Gemini 转写失败：${escapeHtml(err.message.slice(0, 260))}`;
+    trainingBackgroundResults.set(trainingTargetKey(transcriptionTarget), message);
+    if (sameTrainingTarget(transcriptionTarget)) trainingResult.innerHTML = message;
   }
 }
 
@@ -3014,77 +3024,85 @@ async function testGeminiConnection() {
   }
 }
 
-function scoreTrainingAnswer() {
-  const data = currentTrainingContent();
-  if (!data) return;
-  const typed = trainingAnswer.value.trim();
+function scoreTrainingAnswer(target, transcript, recordingSeconds, recordedAt) {
+  if (!target?.fr) return;
+  const typed = (transcript || "").trim();
   if (!typed) {
-    trainingResult.innerHTML = "请先录音并完成 Gemini 转写；如果转写失败，再手动补入法语文本后评分。";
+    const message = "Gemini 没有识别到有效法语，请重新录音。";
+    trainingBackgroundResults.set(trainingTargetKey(target), message);
+    if (sameTrainingTarget(target)) trainingResult.innerHTML = message;
     return;
   }
-  const similarity = similarityPercent(data.fr, typed);
-  const elapsed = Number((trainingLastRecordingSeconds || Math.max(0.1, (Date.now() - trainingSession.startedAt) / 1000)).toFixed(1));
-  const audioSeconds = Number.isFinite(trainingAudio.duration) && trainingAudio.duration > 0
-    ? trainingAudio.duration
-    : Math.max(4, data.fr.split(/\s+/).length / 2.1);
+  const similarity = similarityPercent(target.fr, typed);
+  const elapsed = Number((recordingSeconds || 0.1).toFixed(1));
+  const audioSeconds = target.audioSeconds;
   const speedLimit = Number((audioSeconds + 1.5).toFixed(1));
   const speedPassed = elapsed <= speedLimit;
-  const perfectRecite = trainingSession.mode === "recite" && similarity === 100 && speedPassed;
+  const perfectRecite = target.mode === "recite" && similarity === 100 && speedPassed;
   const finalScore = similarity;
-  trainingSession.scores[trainingSession.sentenceIndex] = {
+  if (trainingSession && trainingSession.cardIndex === target.cardIndex && trainingSession.level === target.level) {
+    trainingSession.scores[target.sentenceIndex] = {
     score: finalScore,
     similarity,
     seconds: elapsed,
     audioSeconds,
     speedPassed,
     perfectRecite
-  };
-  let stage = trainingSession.mode === "recite" ? "recite" : "read";
+    };
+  }
+  let stage = target.mode === "recite" ? "recite" : "read";
   let mastered = false;
-  let recentPerfectCount = recentPerfectReciteCount(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
+  let recentPerfectCount = recentPerfectReciteCount(target.cardIndex, target.sentenceIndex, target.level);
   if (similarity >= 80) {
-    if (trainingSession.mode === "recite") {
-      saveReciteAttempt(trainingSession.cardIndex, trainingSession.sentenceIndex, {
-        at: new Date().toISOString(),
+    if (target.mode === "recite") {
+      saveReciteAttempt(target.cardIndex, target.sentenceIndex, {
+        at: recordedAt || new Date().toISOString(),
         perfect: perfectRecite,
         similarity,
         seconds: elapsed,
         audioSeconds: Number(audioSeconds.toFixed(1)),
         speedLimit,
         speedPassed
-      }, trainingSession.level);
-      recentPerfectCount = recentPerfectReciteCount(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
-      setReciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, recentPerfectCount, trainingSession.level);
-      if (lastThreeRecitesPerfect(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level)) {
+      }, target.level);
+      recentPerfectCount = recentPerfectReciteCount(target.cardIndex, target.sentenceIndex, target.level);
+      setReciteStreak(target.cardIndex, target.sentenceIndex, recentPerfectCount, target.level);
+      if (lastThreeRecitesPerfect(target.cardIndex, target.sentenceIndex, target.level)) {
         stage = "mastered";
         mastered = true;
       }
     }
-    setSentenceStage(trainingSession.cardIndex, trainingSession.sentenceIndex, stage, trainingSession.level);
-  } else if (trainingSession.mode === "recite") {
-    saveReciteAttempt(trainingSession.cardIndex, trainingSession.sentenceIndex, {
-      at: new Date().toISOString(),
+    setSentenceStage(target.cardIndex, target.sentenceIndex, stage, target.level);
+  } else if (target.mode === "recite") {
+    saveReciteAttempt(target.cardIndex, target.sentenceIndex, {
+      at: recordedAt || new Date().toISOString(),
       perfect: false,
       similarity,
       seconds: elapsed,
       audioSeconds: Number(audioSeconds.toFixed(1)),
       speedLimit,
       speedPassed
-    }, trainingSession.level);
-    recentPerfectCount = recentPerfectReciteCount(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level);
-    setReciteStreak(trainingSession.cardIndex, trainingSession.sentenceIndex, recentPerfectCount, trainingSession.level);
+    }, target.level);
+    recentPerfectCount = recentPerfectReciteCount(target.cardIndex, target.sentenceIndex, target.level);
+    setReciteStreak(target.cardIndex, target.sentenceIndex, recentPerfectCount, target.level);
   }
-  const speedLine = trainingSession.mode === "recite"
+  const speedLine = target.mode === "recite"
     ? `<br>背诵速度：${elapsed.toFixed(1)} 秒；原音频约 ${audioSeconds.toFixed(1)} 秒；目标 ≤ ${speedLimit.toFixed(1)} 秒；${speedPassed ? "速度达标" : "速度未达标"}。<br>本句最近连续达标记录：${recentPerfectCount}/3。`
     : "";
   const masteredLine = mastered
     ? `<br><span class="training-score">本句最近 3 次记录全部达标，已自动标为“熟”。</span>`
     : "";
-  trainingResult.innerHTML = `<span class="training-score">本句 ${finalScore} 分</span><br>文字相似度：${similarity}%。${speedLine}${masteredLine}${diffLineHtml(data.fr, typed)}`;
+  const resultHtml = `<span class="training-score">本句 ${finalScore} 分</span><br>文字相似度：${similarity}%。${speedLine}${masteredLine}${diffLineHtml(target.fr, typed)}`;
+  trainingBackgroundResults.set(trainingTargetKey(target), resultHtml);
+  if (sameTrainingTarget(target)) {
+    trainingAnswer.value = typed;
+    trainingResult.innerHTML = resultHtml;
+  }
   renderTrainingModes();
   renderCards();
-  const masteredButton = trainingTabs.querySelector(".stage-mastered");
-  if (masteredButton) masteredButton.classList.toggle("active", sentenceStage(trainingSession.cardIndex, trainingSession.sentenceIndex, trainingSession.level) === "mastered");
+  if (sameTrainingTarget(target)) {
+    const masteredButton = trainingTabs.querySelector(".stage-mastered");
+    if (masteredButton) masteredButton.classList.toggle("active", sentenceStage(target.cardIndex, target.sentenceIndex, target.level) === "mastered");
+  }
 }
 
 function moveTraining(step) {
@@ -4269,7 +4287,6 @@ trainingRecord.addEventListener("click", () => {
     trainingResult.innerHTML = `录音启动失败：${escapeHtml(err.message.slice(0, 220))}`;
   });
 });
-trainingTranscribe.addEventListener("click", transcribeTrainingRecording);
 trainingPrev.addEventListener("click", () => moveTraining(-1));
 trainingNext.addEventListener("click", () => moveTraining(1));
 trainingFinish.addEventListener("click", finishTrainingCard);

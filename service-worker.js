@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v34-playback-tracking";
+const CACHE_NAME = "tcf-oral-v35-background-scoring";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
