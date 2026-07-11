@@ -2450,6 +2450,25 @@ function restoreScrollPosition() {
   });
 }
 
+function captureCardScrollAnchor(cardIndex) {
+  const card = cardsEl.querySelector(`[data-card-index="${cardIndex}"]`);
+  if (!card) return null;
+  return {
+    cardIndex,
+    topInViewport: card.getBoundingClientRect().top
+  };
+}
+
+function restoreCardScrollAnchor(anchor) {
+  if (!anchor) return false;
+  const card = cardsEl.querySelector(`[data-card-index="${anchor.cardIndex}"]`);
+  if (!card) return false;
+  const nextTop = card.getBoundingClientRect().top + window.scrollY - anchor.topInViewport;
+  window.scrollTo({ top: Math.max(0, Math.round(nextTop)), left: 0 });
+  localStorage.setItem("tcf_last_scroll_y", String(Math.max(0, Math.round(window.scrollY))));
+  return true;
+}
+
 function scrollToCard(cardIndex, behavior = "smooth") {
   const card = cardsEl.querySelector(`[data-card-index="${cardIndex}"]`);
   if (!card) return;
@@ -2676,18 +2695,19 @@ function currentTrainingContent() {
   };
 }
 
-function openTraining(cardIndex, mode = "read") {
+function openTraining(cardIndex, mode = "read", sentenceIndex = 0) {
   stopAllPlayback();
   const level = cardLevel(cardIndex);
   const content = variantFor(templates[cardIndex], level);
+  const sentenceCount = splitFrench(content.fr).length;
   lastTrainingCardIndex = cardIndex;
   trainingSession = {
     cardIndex,
     level,
     mode,
-    sentenceIndex: 0,
+    sentenceIndex: Math.max(0, Math.min(sentenceIndex, sentenceCount - 1)),
     startedAt: Date.now(),
-    scores: Array(splitFrench(content.fr).length).fill(null)
+    scores: Array(sentenceCount).fill(null)
   };
   trainingOverlay.hidden = false;
   renderTraining();
@@ -3098,7 +3118,10 @@ function scoreTrainingAnswer(target, transcript, recordingSeconds, recordedAt) {
     trainingResult.innerHTML = resultHtml;
   }
   renderTrainingModes();
-  renderCards();
+  renderCards({
+    preserveScroll: true,
+    scrollAnchor: captureCardScrollAnchor(target.cardIndex)
+  });
   if (sameTrainingTarget(target)) {
     const masteredButton = trainingTabs.querySelector(".stage-mastered");
     if (masteredButton) masteredButton.classList.toggle("active", sentenceStage(target.cardIndex, target.sentenceIndex, target.level) === "mastered");
@@ -3499,7 +3522,10 @@ function renderAnalysis(item, content, level = activeLevel) {
   </details>`;
 }
 
-function renderCards() {
+function renderCards(options = {}) {
+  const preserveScroll = Boolean(options.preserveScroll);
+  const scrollAnchor = options.scrollAnchor || null;
+  const scrollTop = window.scrollY;
   const q = searchEl.value.trim().toLowerCase();
   const data = templates.filter(item => {
     const typeOk = active === "all" || item.type === active;
@@ -3512,7 +3538,13 @@ function renderCards() {
   visibleCount.textContent = data.length;
   if (!data.length) {
     cardsEl.innerHTML = `<div class="empty">没有匹配结果。换一个关键词，比如 logement、culture、科技、连接词。</div>`;
-    restoreScrollPosition();
+    if (preserveScroll) {
+      requestAnimationFrame(() => {
+        if (!restoreCardScrollAnchor(scrollAnchor)) window.scrollTo({ top: scrollTop, left: 0 });
+      });
+    } else {
+      restoreScrollPosition();
+    }
     return;
   }
   cardsEl.innerHTML = data.map(item => {
@@ -3550,7 +3582,13 @@ function renderCards() {
     </article>
   `; 
   }).join("");
-  restoreScrollPosition();
+  if (preserveScroll) {
+    requestAnimationFrame(() => {
+      if (!restoreCardScrollAnchor(scrollAnchor)) window.scrollTo({ top: scrollTop, left: 0 });
+    });
+  } else {
+    restoreScrollPosition();
+  }
 }
 
 function saveSettings() {
@@ -4028,6 +4066,18 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
   playCurrent();
 }
 
+async function playSingleSentence(cardIndex, sentenceIndex) {
+  const item = templates[cardIndex];
+  const level = cardLevel(cardIndex);
+  const content = variantFor(item, level);
+  const line = splitFrench(content.fr)[sentenceIndex];
+  if (!line) return;
+  const player = cardsEl.querySelector(`[data-audio="${cardIndex}"]`) || audio;
+  await speakItem(item, cardIndex, player, level, {
+    entriesOverride: [{ line, index: sentenceIndex }]
+  });
+}
+
 async function startNextCardLoop(cardIndex, button) {
   stopLoopUi();
   activeNextLoopButton = button;
@@ -4128,14 +4178,22 @@ cardsEl.addEventListener("click", async event => {
   const selectSentencesBtn = event.target.closest("[data-toggle-sentences]");
   const stageBtn = event.target.closest("[data-stage-card]");
   if (selectSentencesBtn) {
+    event.preventDefault();
+    event.stopPropagation();
     const cardIndex = Number(selectSentencesBtn.dataset.toggleSentences);
+    const scrollAnchor = captureCardScrollAnchor(cardIndex);
     const level = cardLevel(cardIndex);
     const content = variantFor(templates[cardIndex], level);
     const checked = !allSentencesEnabled(content, cardIndex, level);
     splitFrench(content.fr).forEach((_, sentenceIndex) => {
       setSentenceEnabled(cardIndex, sentenceIndex, checked, level);
     });
-    renderCards();
+    if (activeLoopButton || activeNextLoopButton) {
+      activePlaybackToken += 1;
+      if (activePlayer) activePlayer.pause();
+      stopLoopUi();
+    }
+    renderCards({ preserveScroll: true, scrollAnchor });
     return;
   }
   if (trainBtn) {
@@ -4143,12 +4201,26 @@ cardsEl.addEventListener("click", async event => {
     return;
   }
   if (stageBtn) {
+    event.preventDefault();
+    event.stopPropagation();
     const cardIndex = Number(stageBtn.dataset.stageCard);
     const sentenceIndex = Number(stageBtn.dataset.stageIndex);
+    const scrollAnchor = captureCardScrollAnchor(cardIndex);
     const level = cardLevel(cardIndex);
-    setSentenceStage(cardIndex, sentenceIndex, stageBtn.dataset.stageValue, level);
+    const stage = stageBtn.dataset.stageValue;
+    setSentenceStage(cardIndex, sentenceIndex, stage, level);
     renderTrainingModes();
-    renderCards();
+    renderCards({ preserveScroll: true, scrollAnchor });
+    await new Promise(resolve => requestAnimationFrame(resolve));
+    if (stage === "read") {
+      try {
+        await playSingleSentence(cardIndex, sentenceIndex);
+      } catch (err) {
+        alert("本句播放失败。错误：" + err.message.slice(0, 240));
+      }
+    } else if (stage === "recite") {
+      openTraining(cardIndex, "recite", sentenceIndex);
+    }
     return;
   }
   if (accentBtn) {

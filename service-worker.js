@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v35-background-scoring";
+const CACHE_NAME = "tcf-oral-v37-card-anchor-scroll";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
