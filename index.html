@@ -2778,7 +2778,8 @@ function sameTrainingTarget(target) {
     && trainingSession.mode === target.mode;
 }
 
-function renderTraining() {
+function renderTraining(options = {}) {
+  const preserveMedia = Boolean(options.preserveMedia);
   const data = currentTrainingContent();
   if (!data) return;
   const { item, frLines, fr, zh } = data;
@@ -2799,6 +2800,7 @@ function renderTraining() {
   trainingResult.innerHTML = savedResult || (mode === "read"
     ? "读：看法语，听原音，跟读后录音。达到 80 分会标为“读”。"
     : `背：只看中文提示，说出法语。本句最近 3 次背诵记录都达到 100%，且每次不超过原音频 1.5 秒，自动标为“熟”。当前最近连续达标 ${currentStreak}/3。`);
+  if (!preserveMedia) {
   trainingRecordingBlob = null;
   trainingRecordingStartedAt = null;
   trainingLastRecordingSeconds = null;
@@ -2806,11 +2808,14 @@ function renderTraining() {
   trainingRecord.disabled = false;
   trainingRecord.textContent = "开始录音";
   trainingRecord.classList.remove("recording-active");
+  }
   trainingPrev.disabled = trainingSession.sentenceIndex === 0;
   trainingNext.disabled = false;
+  if (!preserveMedia) {
   trainingSession.startedAt = Date.now();
   trainingAudio.src = localAudioName(item, trainingSession.cardIndex, fr, trainingSession.sentenceIndex, trainingSession.level);
   trainingAudio.onerror = null;
+  }
   applyPlaybackRate(trainingAudio);
 }
 
@@ -4347,7 +4352,7 @@ trainingTabs.addEventListener("click", event => {
   const btn = event.target.closest("[data-training-stage]");
   if (!btn || !trainingSession) return;
   trainingSession.mode = btn.dataset.trainingStage;
-  renderTraining();
+  renderTraining({ preserveMedia: true });
 });
 
 [trainingAudio, recordingAudio].forEach(player => {
