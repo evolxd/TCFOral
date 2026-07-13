@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v41-b2-natural-polish";
+const CACHE_NAME = "tcf-oral-v42-audio-volume-normalize";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
