@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v39-training-mode-preserve-audio";
+const CACHE_NAME = "tcf-oral-v40-larger-zh-text";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
