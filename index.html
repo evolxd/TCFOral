@@ -2311,6 +2311,7 @@ let activeTrainingMode = localStorage.getItem("tcf_training_mode") || "all";
 let restoreScrollAfterRender = true;
 let scrollSaveTimer = null;
 let lastTrainingCardIndex = null;
+let trainingReturnAnchor = null;
 
 const cardsEl = document.querySelector("#cards");
 const filtersEl = document.querySelector("#filters");
@@ -2695,12 +2696,13 @@ function currentTrainingContent() {
   };
 }
 
-function openTraining(cardIndex, mode = "read", sentenceIndex = 0) {
+function openTraining(cardIndex, mode = "read", sentenceIndex = 0, returnAnchor = null) {
   stopAllPlayback();
   const level = cardLevel(cardIndex);
   const content = variantFor(templates[cardIndex], level);
   const sentenceCount = splitFrench(content.fr).length;
   lastTrainingCardIndex = cardIndex;
+  trainingReturnAnchor = returnAnchor || captureCardScrollAnchor(cardIndex);
   trainingSession = {
     cardIndex,
     level,
@@ -2715,12 +2717,14 @@ function openTraining(cardIndex, mode = "read", sentenceIndex = 0) {
 
 function closeTraining() {
   const cardIndex = trainingSession?.cardIndex ?? lastTrainingCardIndex;
+  const returnAnchor = trainingReturnAnchor;
   trainingOverlay.hidden = true;
   trainingSession = null;
+  trainingReturnAnchor = null;
   trainingAudio.pause();
   recordingAudio.pause();
   if (trainingRecorder && trainingRecorder.state !== "inactive") trainingRecorder.stop();
-  if (Number.isInteger(cardIndex)) scrollToCard(cardIndex);
+  if (!restoreCardScrollAnchor(returnAnchor) && Number.isInteger(cardIndex)) scrollToCard(cardIndex);
 }
 
 async function getTrainingMicStream() {
@@ -3150,6 +3154,7 @@ function moveTraining(step) {
   trainingSession.startedAt = Date.now();
   trainingSession.scores = Array(nextLines.length).fill(null);
   lastTrainingCardIndex = nextCardIndex;
+  trainingReturnAnchor = captureCardScrollAnchor(nextCardIndex) || { cardIndex: nextCardIndex, topInViewport: 14 };
   renderTraining();
 }
 
@@ -4197,7 +4202,10 @@ cardsEl.addEventListener("click", async event => {
     return;
   }
   if (trainBtn) {
-    openTraining(Number(trainBtn.dataset.train), "read");
+    event.preventDefault();
+    event.stopPropagation();
+    const cardIndex = Number(trainBtn.dataset.train);
+    openTraining(cardIndex, "read", 0, captureCardScrollAnchor(cardIndex));
     return;
   }
   if (stageBtn) {
@@ -4219,7 +4227,7 @@ cardsEl.addEventListener("click", async event => {
         alert("本句播放失败。错误：" + err.message.slice(0, 240));
       }
     } else if (stage === "recite") {
-      openTraining(cardIndex, "recite", sentenceIndex);
+      openTraining(cardIndex, "recite", sentenceIndex, scrollAnchor);
     }
     return;
   }

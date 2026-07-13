@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v37-card-anchor-scroll";
+const CACHE_NAME = "tcf-oral-v38-training-return-anchor";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
