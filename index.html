@@ -1184,7 +1184,7 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
         <label for="levelSelect">默认难度</label>
         <select id="levelSelect">
           <option value="a2">A2 稳定版</option>
-          <option value="b2" selected>B2 稳过版</option>
+          <option value="b2" selected>B2 CEO定稿版</option>
           <option value="c1">C1 提升版</option>
         </select>
       </div>
@@ -1670,30 +1670,30 @@ templates.forEach((item, index) => {
 
 const levelLabels = {
   a2: "A2 稳定版",
-  b2: "B2 稳过版",
+  b2: "B2 CEO定稿版",
   c1: "C1 提升版"
 };
 
 const b2FinalDrafts = {
   "Présentation personnelle élégante": {
     fr: [
-      "Bonjour, je m'appelle Patrick et je viens de Chine.",
-      "Je vis actuellement au Canada, où j'essaie de m'adapter progressivement à mon nouvel environnement.",
-      "Sur le plan personnel et professionnel, je m'intéresse aux domaines qui mobilisent d'excellentes compétences en communication, un solide sens de l'organisation et une grande capacité d'adaptation.",
-      "Dans ma vie quotidienne, j'aime apprendre les langues, découvrir de nouvelles cultures et améliorer mon expression orale en français.",
-      "Aujourd'hui, mon objectif est de m'exprimer avec plus de clarté, de fluidité et de confiance."
+      "Bonjour, je m'appelle Patrick, je viens de Chine et je vis actuellement au Canada.",
+      "Sur le plan professionnel, je dirige une entreprise de commerce, ce qui m'amène à communiquer avec différents partenaires et à prendre des décisions concrètes.",
+      "À mon âge et avec mon expérience, je vois le français comme un outil d'intégration, mais aussi comme une compétence utile pour mieux comprendre l'environnement canadien.",
+      "Bien sûr, il fait partie de mon projet d'immigration, mais je ne le considère pas seulement comme une exigence administrative.",
+      "Mon objectif est donc de parler avec plus de clarté, de confiance et de naturel."
     ],
-    zh: ["您好，我叫 Patrick，来自中国。", "我现在生活在加拿大，并努力逐步适应新的环境。", "在个人和职业方面，我对需要优秀沟通能力、扎实组织意识和较强适应能力的领域感兴趣。", "在日常生活中，我喜欢学习语言、了解新的文化，并提高自己的法语口语表达。", "现在，我的目标是表达得更清楚、更流利、更自信。"]
+    zh: ["您好，我叫 Patrick，来自中国，目前生活在加拿大。", "在职业方面，我经营一家贸易公司，这让我需要和不同合作伙伴沟通，并做出具体决策。", "以我的年龄和经验来看，法语是融入社会的工具，也是更好理解加拿大环境的实用能力。", "当然，它也是我移民计划的一部分，但我不把它只看成行政要求。", "所以我的目标是表达得更清楚、更自信、更自然。"]
   },
   "Études, travail, projet": {
     fr: [
-      "Mon parcours est assez varié, car j'ai toujours essayé d'apprendre de nouvelles compétences.",
-      "Dans le travail, ce qui m'intéresse le plus, c'est de résoudre des problèmes concrets et de progresser grâce à l'expérience.",
-      "Je pense qu'un bon projet professionnel doit être à la fois réaliste, stable et ouvert à l'évolution.",
-      "À moyen terme, j'aimerais construire une situation plus solide au Canada.",
-      "C'est aussi pour cette raison que je continue à améliorer mon français, car la langue est un outil essentiel d'intégration."
+      "Mon parcours professionnel est lié au commerce, à la négociation et à la gestion d'une entreprise.",
+      "Dans mon travail, je pense que la créativité et la capacité à suivre l'évolution du marché sont devenues essentielles.",
+      "Aujourd'hui, l'intelligence artificielle peut aider une entreprise à organiser ses idées, à améliorer ses processus et à gagner du temps.",
+      "J'utilise déjà des outils comme Claude ou Codex pour créer des méthodes de travail plus personnalisées et plus efficaces.",
+      "À moyen terme, mon projet est de continuer à développer mon activité tout en m'adaptant plus solidement à la société canadienne."
     ],
-    zh: ["我的经历比较多样，因为我一直尝试学习新的能力。", "在工作中，我最感兴趣的是解决实际问题，并通过经验不断进步。", "我认为一个好的职业计划应该既现实、稳定，又能够继续发展。", "从中期来看，我希望在加拿大建立更稳固的生活和发展状态。", "这也是我继续提高法语的原因，因为语言是融入社会的重要工具。"]
+    zh: ["我的职业经历和贸易、谈判以及企业管理有关。", "在我的工作中，我认为创造力和跟上市场变化的能力已经变得非常重要。", "现在，人工智能可以帮助企业整理思路、优化流程并节省时间。", "我已经使用 Claude 或 Codex 这类工具，来建立更定制化、更高效的工作方法。", "从中期来看，我的计划是在继续发展事业的同时，更稳固地适应加拿大社会。"]
   },
   "Ville, quartier, logement": {
     fr: [
@@ -1707,33 +1707,33 @@ const b2FinalDrafts = {
   },
   "Loisirs et personnalité": {
     fr: [
-      "Pendant mon temps libre, je préfère les activités qui me permettent de me concentrer et de progresser régulièrement.",
-      "Par exemple, apprendre le français demande de la mémoire, de l'écoute et une certaine discipline.",
-      "J'aime aussi marcher, écouter des contenus en français ou organiser mes idées.",
-      "Ces habitudes m'aident à garder un rythme de vie plus équilibré.",
-      "Je dirais que je suis une personne plutôt curieuse, persévérante et ouverte aux nouvelles expériences."
+      "Pendant mon temps libre, je préfère les activités qui me permettent de rester lucide et de mieux organiser mes idées.",
+      "J'aime lire, marcher, écouter des contenus en français et réfléchir à mes projets avec un peu de recul.",
+      "Pour moi, apprendre une langue à l'âge adulte demande surtout de la régularité, de la méthode et une vraie motivation personnelle.",
+      "Je ne cherche pas seulement à mémoriser des phrases, mais à construire progressivement une façon plus naturelle de m'exprimer.",
+      "Je dirais que je suis une personne curieuse, pragmatique et ouverte aux outils modernes quand ils peuvent réellement être utiles."
     ],
-    zh: ["空闲时，我更喜欢能让我集中注意力并持续进步的活动。", "例如，学习法语需要记忆、听力和一定的自律。", "我也喜欢散步、听法语内容或整理自己的想法。", "这些习惯帮助我保持更平衡的生活节奏。", "我会说自己是一个比较好奇、坚持，也愿意接受新经验的人。"]
+    zh: ["空闲时，我更喜欢能让我保持清醒、整理思路的活动。", "我喜欢阅读、散步、听法语内容，也喜欢稍微拉开距离思考自己的项目。", "对我来说，成年人学语言更需要规律、方法和真正的个人动力。", "我不只是想背句子，而是逐步建立更自然的表达方式。", "我会说自己是一个好奇、务实，并且愿意使用真正有价值的新工具的人。"]
   },
   "Pourquoi le Canada / le français": {
     fr: [
-      "J'apprends le français parce que je veux mieux communiquer dans la société où je vis.",
-      "Au Canada, le français représente une compétence utile, aussi bien dans la vie quotidienne que dans la vie professionnelle.",
-      "Il permet également de mieux comprendre une autre culture et une autre manière de penser.",
-      "Même si l'apprentissage demande du temps et des efforts, chaque progrès me donne plus de confiance.",
-      "À mes yeux, parler français n'est pas seulement un objectif scolaire, mais aussi un moyen de devenir plus autonome."
+      "J'apprends le français parce que mon projet au Canada est sérieux et qu'il demande une vraie capacité d'adaptation.",
+      "Pour être honnête, le français a aussi une valeur pratique dans mon parcours d'immigration.",
+      "Mais je préfère le voir de manière plus large : c'est une façon de mieux comprendre la société dans laquelle je veux vivre.",
+      "Dans un pays où le bilinguisme et l'intégration culturelle comptent beaucoup, il me semble raisonnable de m'adapter à cette réalité.",
+      "Pour moi, apprendre le français n'est donc pas un simple exercice scolaire, mais une décision stratégique et personnelle."
     ],
-    zh: ["我学习法语，是因为我想在自己生活的社会中更好地沟通。", "在加拿大，法语是一项实用能力，在日常生活和职业生活中都很有用。", "它也能帮助我理解另一种文化和另一种思维方式。", "虽然学习需要时间和努力，但每一点进步都会让我更有信心。", "在我看来，说法语不只是学习目标，也是让我更独立的方式。"]
+    zh: ["我学习法语，是因为我在加拿大的规划是认真的，也需要真正的适应能力。", "坦白说，法语在我的移民路径中也有实际价值。", "但我更愿意从更大的角度看它：这是理解我想生活的社会的一种方式。", "在一个双语和文化融入都很重要的国家，我认为顺应这个现实是合理的。", "所以对我来说，学法语不是简单的学校练习，而是一个战略性和个人性的决定。"]
   },
   "Réponses courtes prêtes à sortir": {
     fr: [
-      "Je préfère travailler en équipe lorsque les rôles sont clairs et que chacun sait ce qu'il doit faire.",
-      "Je suis quelqu'un de persévérant, car quand un objectif est important, je peux avancer lentement mais régulièrement.",
-      "Le week-end, j'essaie de trouver un équilibre entre le repos, les tâches personnelles et les activités utiles.",
-      "Si je devais choisir une qualité importante, je dirais l'adaptabilité.",
-      "Dans un nouveau pays, savoir s'adapter permet de mieux comprendre les situations et de réagir avec plus de calme."
+      "Je préfère travailler avec des personnes fiables, lorsque les responsabilités sont claires et que la communication reste directe.",
+      "Je suis quelqu'un de persévérant, car dans les affaires comme dans l'apprentissage, les résultats viennent rarement immédiatement.",
+      "Le week-end, j'essaie de trouver un équilibre entre le repos, la famille, la réflexion et quelques tâches importantes.",
+      "Si je devais choisir une qualité essentielle, je dirais l'adaptabilité.",
+      "Dans le commerce comme dans un nouveau pays, savoir s'adapter permet de mieux comprendre les situations et de réagir avec plus de calme."
     ],
-    zh: ["如果分工清楚、每个人知道自己该做什么，我更喜欢团队合作。", "我是比较坚持的人：当一个目标重要时，我可以慢慢但稳定地推进。", "周末我会努力在休息、个人事务和有用的活动之间找到平衡。", "如果要选择一个重要品质，我会说是适应能力。", "在一个新的国家，懂得适应能让人更好理解情况，也更冷静地回应。"]
+    zh: ["我更喜欢和可靠的人合作，前提是责任清楚、沟通直接。", "我是比较坚持的人，因为无论做生意还是学习，结果都很少立刻出现。", "周末我会努力在休息、家庭、思考和一些重要事务之间找到平衡。", "如果要选择一个核心品质，我会说是适应能力。", "无论在贸易中，还是在一个新的国家，懂得适应都能让人更好理解情况，也更冷静地回应。"]
   },
   "礼貌进入情境": {
     fr: [
@@ -4062,7 +4062,7 @@ function legacyDownloadedFileName(text) {
 function localAudioName(item, cardIndex, sentence, sentenceIndex, level = activeLevel) {
   const titleSlug = legacyDownloadedFileName(item.title);
   const sentenceSlug = level === "c1" ? legacyDownloadedFileName(sentence) : safeFileName(sentence);
-  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=9`;
+  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=10`;
   return level === "c1" ? `audio/${fileName}` : `audio/${level}/${fileName}`;
 }
 

@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v43-disable-audio-compressor";
+const CACHE_NAME = "tcf-oral-v44-ceo-b2-final-audio";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
