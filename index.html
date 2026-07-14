@@ -747,6 +747,30 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   line-height: 1.5;
 }
 .tache1-material-note strong { color: #563816; }
+.archived-material {
+  margin: 14px 0;
+  border: 1px solid #dde5dd;
+  border-radius: 10px;
+  background: #f8faf7;
+}
+.archived-material summary {
+  padding: 11px 13px;
+  cursor: pointer;
+  color: #5b675e;
+  font-size: 13px;
+  font-weight: 800;
+}
+.archived-material-body {
+  display: grid;
+  gap: 10px;
+  padding: 0 13px 13px;
+}
+.archived-material-line {
+  padding-top: 10px;
+  border-top: 1px solid #e3e9e3;
+}
+.archived-material-fr { color: #3c4940; font-size: 14px; line-height: 1.5; }
+.archived-material-zh { margin-top: 3px; color: var(--muted); font-size: 12px; }
 .training-overlay {
   position: fixed;
   inset: 0;
@@ -2119,13 +2143,12 @@ const levelLabels = {
 const b2FinalDrafts = {
   "Présentation personnelle élégante": {
     fr: [
-      "Bonjour, je m'appelle Patrick, je viens de Chine et je vis actuellement au Canada.",
-      "Sur le plan professionnel, je dirige une entreprise de commerce, ce qui m'amène à communiquer avec différents partenaires et à prendre des décisions concrètes.",
-      "À mon âge et avec mon expérience, je vois le français comme un outil d'intégration, mais aussi comme une compétence utile pour mieux comprendre l'environnement canadien.",
-      "Bien sûr, il fait partie de mon projet d'immigration, mais je ne le considère pas seulement comme une exigence administrative.",
-      "Mon objectif est donc de parler avec plus de clarté, de confiance et de naturel."
+      "Bonjour, je m'appelle Patrick.",
+      "Je viens de Chine et je vis actuellement au Canada.",
+      "Je dirige une entreprise de commerce.",
+      "J'apprends le français pour mieux communiquer et mieux m'intégrer au Canada."
     ],
-    zh: ["您好，我叫 Patrick，来自中国，目前生活在加拿大。", "在职业方面，我经营一家贸易公司，这让我需要和不同合作伙伴沟通，并做出具体决策。", "以我的年龄和经验来看，法语是融入社会的工具，也是更好理解加拿大环境的实用能力。", "当然，它也是我移民计划的一部分，但我不把它只看成行政要求。", "所以我的目标是表达得更清楚、更自信、更自然。"]
+    zh: ["您好，我叫 Patrick。", "我来自中国，目前生活在加拿大。", "我经营一家贸易公司。", "我学习法语是为了更好地沟通并融入加拿大。"]
   },
   "Études, travail, projet": {
     fr: [
@@ -2483,6 +2506,25 @@ const b2FinalDrafts = {
       "Pour conclure, en résumé, il faut chercher un équilibre."
     ],
     zh: ["用于让步：话虽如此；同时；必须承认。", "用于论证：重要的是；不能忘记的是；这说明。", "用于总结：总之；因此；需要寻找平衡。"]
+  }
+};
+
+const archivedTache1Materials = {
+  "Présentation personnelle élégante": {
+    fr: [
+      "Bonjour, je m'appelle Patrick, je viens de Chine et je vis actuellement au Canada.",
+      "Sur le plan professionnel, je dirige une entreprise de commerce, ce qui m'amène à communiquer avec différents partenaires et à prendre des décisions concrètes.",
+      "À mon âge et avec mon expérience, je vois le français comme un outil d'intégration, mais aussi comme une compétence utile pour mieux comprendre l'environnement canadien.",
+      "Bien sûr, il fait partie de mon projet d'immigration, mais je ne le considère pas seulement comme une exigence administrative.",
+      "Mon objectif est donc de parler avec plus de clarté, de confiance et de naturel."
+    ],
+    zh: [
+      "您好，我叫 Patrick，来自中国，目前生活在加拿大。",
+      "在职业方面，我经营一家贸易公司，这让我需要和不同合作伙伴沟通，并做出具体决策。",
+      "以我的年龄和经验来看，法语是融入社会的工具，也是更好理解加拿大环境的实用能力。",
+      "当然，它也是我移民计划的一部分，但我不把它只看成行政要求。",
+      "所以我的目标是表达得更清楚、更自信、更自然。"
+    ]
   }
 };
 
@@ -4176,6 +4218,22 @@ function renderAnalysis(item, content, level = activeLevel) {
   </details>`;
 }
 
+function renderArchivedTache1Material(item, level) {
+  if (level !== "b2") return "";
+  const material = archivedTache1Materials[item.title];
+  if (!material) return "";
+  const lines = material.fr.map((fr, index) => `
+    <div class="archived-material-line">
+      <div class="archived-material-fr" lang="fr">${escapeHtml(fr)}</div>
+      <div class="archived-material-zh">${escapeHtml(material.zh[index] || "")}</div>
+    </div>
+  `).join("");
+  return `<details class="archived-material">
+    <summary>原5句扩展素材（已移出主答案，按需选句）</summary>
+    <div class="archived-material-body">${lines}</div>
+  </details>`;
+}
+
 function renderCards(options = {}) {
   const preserveScroll = Boolean(options.preserveScroll);
   const scrollAnchor = options.scrollAnchor || null;
@@ -4206,6 +4264,11 @@ function renderCards(options = {}) {
     const level = cardLevel(index);
     const content = variantFor(item, level);
     const mastery = cardMasteryStats(content, index, level);
+    const isB2ShortIntroduction = level === "b2" && item.title === "Présentation personnelle élégante";
+    const displayTitle = isB2ShortIntroduction ? "老师问：Pouvez-vous vous présenter ?" : item.title;
+    const displayCn = isB2ShortIntroduction
+      ? "B2考场短答：姓名、来源与现居地、工作、学习法语的原因；约20秒，说完等待追问。"
+      : item.cn;
     return `
     <article class="card" id="card-${index}" data-card-index="${index}">
       <div class="meta">
@@ -4215,13 +4278,14 @@ function renderCards(options = {}) {
         <select class="card-level" data-card-level="${index}" aria-label="切换本卡难度">${levelOptions(level)}</select>
         <span class="mastery-summary">读 ${mastery.read} · 背 ${mastery.recite} · 熟 ${mastery.mastered}</span>
       </div>
-      <h2>${item.title}</h2>
-      <p class="cn">${item.cn}</p>
-      ${item.type === "tache1" ? `<div class="tache1-material-note"><strong>使用方法：</strong>这是扩展表达素材，不是一次性完整答案。老师问一个问题时，只挑与当前问题直接相关的2—4句回答。</div>` : ""}
+      <h2>${escapeHtml(displayTitle)}</h2>
+      <p class="cn">${escapeHtml(displayCn)}</p>
+      ${item.type === "tache1" ? `<div class="tache1-material-note"><strong>使用方法：</strong>${isB2ShortIntroduction ? "下面4句就是本题主答案，可完整说完；然后停下来等老师追问。" : "这是扩展表达素材，不是一次性完整答案。老师问一个问题时，只挑与当前问题直接相关的2—4句回答。"}</div>` : ""}
       <div class="sentence-toolbar" aria-label="本卡句子选择">
         <button type="button" data-toggle-sentences="${index}">${allSentencesEnabled(content, index, level) ? "全不选" : "全选"}</button>
       </div>
       <div class="fr" id="text-${index}">${renderBilingual(content, index, level)}</div>
+      ${renderArchivedTache1Material(item, level)}
       ${renderAnalysis(item, content, level)}
       <div class="actions">
         <button data-train="${index}">进入训练</button>
