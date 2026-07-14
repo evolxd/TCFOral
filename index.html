@@ -627,6 +627,17 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
 }
 .dialogue-topic-wrap select { width: 100%; }
 .dialogue-lab-body { padding: 20px 22px 22px; }
+.dialogue-rule {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border: 1px solid #ecd8b8;
+  border-radius: 11px;
+  background: #fff9ee;
+  color: #6d4b25;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.dialogue-rule strong { color: #573918; }
 .dialogue-progress {
   display: flex;
   align-items: center;
@@ -725,6 +736,17 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   background: #fff0ed;
   color: #843529;
 }
+.tache1-material-note {
+  margin: 12px 0 14px;
+  padding: 11px 13px;
+  border: 1px solid #ead8b8;
+  border-radius: 10px;
+  background: #fff9ef;
+  color: #6e4c25;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.tache1-material-note strong { color: #563816; }
 .training-overlay {
   position: fixed;
   inset: 0;
@@ -1351,6 +1373,7 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
         </div>
       </div>
       <div class="dialogue-lab-body">
+        <div class="dialogue-rule"><strong>考场最重要原则：</strong>每次只回答老师当前的问题，用2—4句、约15—20秒。说完停下来等追问；不要把下面的扩展材料一次全部背完。</div>
         <div class="dialogue-progress" id="dialogueProgress" aria-label="本组问答进度"></div>
         <div class="dialogue-bubble">
           <div class="dialogue-speaker">
@@ -1369,7 +1392,7 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
         </div>
         <div class="dialogue-coach" id="dialogueCoach"></div>
         <div class="dialogue-answer" id="dialogueAnswer" hidden>
-          <div class="dialogue-answer-label">参考回答 · 不是唯一答案</div>
+          <div class="dialogue-answer-label">考场短答（约20秒）· 不是唯一答案</div>
           <div class="dialogue-answer-fr" id="dialogueAnswerFr" lang="fr"></div>
           <div class="dialogue-answer-zh" id="dialogueAnswerZh"></div>
         </div>
@@ -1812,9 +1835,9 @@ const tache1Dialogues = [
         type: "开场问题",
         question: "Bonjour, pouvez-vous vous présenter, s'il vous plaît ?",
         zh: "您好，请您介绍一下自己。",
-        coach: "回答身份、来自哪里、现在住哪里；控制在3句左右，给老师留下可以追问的信息。",
-        answer: "Bonjour, je m'appelle Patrick. Je viens de Chine et je vis actuellement au Canada. Je dirige une entreprise de commerce.",
-        answerZh: "您好，我叫Patrick。我来自中国，目前生活在加拿大。我经营一家贸易公司。"
+        coach: "用4句回答：姓名、来自哪里和现居地、工作、学习法语的原因。控制在15—20秒，说完停下来等追问。",
+        answer: "Bonjour, je m'appelle Patrick. Je viens de Chine et je vis actuellement au Canada. Je dirige une entreprise de commerce. J'apprends le français pour mieux communiquer et mieux m'intégrer au Canada.",
+        answerZh: "您好，我叫Patrick。我来自中国，目前生活在加拿大。我经营一家贸易公司。我学习法语是为了更好地沟通并融入加拿大。"
       },
       {
         type: "身份追问",
@@ -4194,6 +4217,7 @@ function renderCards(options = {}) {
       </div>
       <h2>${item.title}</h2>
       <p class="cn">${item.cn}</p>
+      ${item.type === "tache1" ? `<div class="tache1-material-note"><strong>使用方法：</strong>这是扩展表达素材，不是一次性完整答案。老师问一个问题时，只挑与当前问题直接相关的2—4句回答。</div>` : ""}
       <div class="sentence-toolbar" aria-label="本卡句子选择">
         <button type="button" data-toggle-sentences="${index}">${allSentencesEnabled(content, index, level) ? "全不选" : "全选"}</button>
       </div>
