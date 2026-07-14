@@ -4291,7 +4291,7 @@ function renderCards(options = {}) {
         <button data-train="${index}">进入训练</button>
         <button class="primary" data-speak="${index}">朗读</button>
         <button data-loop="${index}">循环播放</button>
-        <button data-next-loop="${index}">向下循环</button>
+        <button data-next-loop="${index}">下一卡 ▶</button>
         <button data-download="${index}">下载本卡音频</button>
         <a href="${googleTranslateUrl(content.fr)}" target="_blank" rel="noopener"><button>Google 发音</button></a>
         <span class="rate-pill" data-rate-label="${index}">x${currentPlaybackRate().toFixed(2)}</span>
@@ -4559,7 +4559,7 @@ function stopLoopUi() {
   }
   if (activeNextLoopButton) {
     activeNextLoopButton.classList.remove("loop-active");
-    activeNextLoopButton.textContent = "向下循环";
+    activeNextLoopButton.textContent = "下一卡 ▶";
     activeNextLoopButton = null;
   }
   clearPlaybackHighlights();
@@ -4866,35 +4866,6 @@ async function playSingleSentence(cardIndex, sentenceIndex) {
   });
 }
 
-async function startNextCardLoop(cardIndex, button) {
-  stopLoopUi();
-  activeNextLoopButton = button;
-  activeNextLoopButton.classList.add("loop-active");
-  activeNextLoopButton.textContent = "停止向下循环";
-
-  const playCard = async index => {
-    if (activeNextLoopButton !== button) return;
-    scrollToCard(index);
-    const player = cardsEl.querySelector(`[data-audio="${index}"]`) || audio;
-    await speakItem(templates[index], index, player, cardLevel(index), {
-      keepControls: true,
-      onComplete: () => {
-        if (activeNextLoopButton !== button) return;
-        const nextIndex = nextVisibleCardIndex(index);
-        nextCardLoopTimer = setTimeout(() => {
-          nextCardLoopTimer = null;
-          playCard(nextIndex).catch(err => {
-            stopLoopUi();
-            alert("循环下一题卡失败。错误：" + err.message.slice(0, 240));
-          });
-        }, currentLoopGapMs());
-      }
-    });
-  };
-
-  await playCard(cardIndex);
-}
-
 function downloadBlob(blob, fileName) {
   const url = URL.createObjectURL(blob);
   const link = document.createElement("a");
@@ -5046,19 +5017,17 @@ cardsEl.addEventListener("click", async event => {
   }
   if (nextLoopBtn) {
     try {
-      if (activeNextLoopButton === nextLoopBtn) {
-        activePlaybackToken += 1;
-        const index = Number(nextLoopBtn.dataset.nextLoop);
-        const player = cardsEl.querySelector(`[data-audio="${index}"]`) || audio;
-        player.pause();
-        stopLoopUi();
-        return;
-      }
       const index = Number(nextLoopBtn.dataset.nextLoop);
-      await startNextCardLoop(index, nextLoopBtn);
+      const nextIndex = nextVisibleCardIndex(index);
+      activePlaybackToken += 1;
+      if (activePlayer) activePlayer.pause();
+      stopLoopUi();
+      scrollToCard(nextIndex);
+      const player = cardsEl.querySelector(`[data-audio="${nextIndex}"]`) || audio;
+      await speakItem(templates[nextIndex], nextIndex, player, cardLevel(nextIndex));
     } catch (err) {
       stopLoopUi();
-      alert("循环下一题卡失败。错误：" + err.message.slice(0, 240));
+      alert("播放下一卡失败。错误：" + err.message.slice(0, 240));
     }
   }
   if (downloadBtn) {
