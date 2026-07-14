@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v44-ceo-b2-final-audio";
+const CACHE_NAME = "tcf-oral-v45-ceo-b2-analysis";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",

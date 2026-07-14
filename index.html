@@ -3305,12 +3305,12 @@ function analysisKey(item) {
 
 function cardStructureNote(item, content) {
   const key = analysisKey(item);
-  if (key.includes("presentation personnelle")) return "开场身份 → 所在地 → 职业兴趣 → 日常学习 → 口语目标。整段像一个成熟自我介绍，不急着堆经历。";
-  if (key.includes("etudes") || key.includes("travail")) return "经历变化 → 工作价值 → 中期计划 → 法语意义。重点是把“学法语”说成融入和自主能力。";
+  if (key.includes("presentation personnelle")) return "身份与所在地 → CEO 工作背景 → 法语的融入价值 → 移民现实但不狭隘 → 表达目标。重点是成熟、坦诚、有社会适应意识。";
+  if (key.includes("etudes") || key.includes("travail")) return "职业背景 → 商业能力 → AI 对工作的帮助 → 自己已在使用工具 → 加拿大中期规划。重点是把工作、技术和适应社会连起来。";
   if (key.includes("ville") || key.includes("logement")) return "居住环境 → 城市标准 → 生活质量结论。先说个人需求，再说城市条件，逻辑很稳。";
-  if (key.includes("loisirs")) return "兴趣类型 → 具体例子 → 对生活节奏的作用。不是简单说喜欢，而是解释它怎样塑造自己。";
-  if (key.includes("canada") || key.includes("francais")) return "学习原因 → 加拿大语境 → 努力后的收益。把语言从工具提升到文化和生活自由。";
-  if (key.includes("reponses courtes")) return "每句独立回答一个高频问题：合作、性格、周末、品质。适合当口语反射材料。";
+  if (key.includes("loisirs")) return "空闲活动 → 整理思路 → 成年人学语言的方法 → 不只背句子 → 好奇且务实的性格。重点是生活方式服务于长期目标。";
+  if (key.includes("canada") || key.includes("francais")) return "加拿大项目很认真 → 坦白承认移民价值 → 扩展到理解社会 → 顺应双语和文化融入 → 战略性个人选择。坦诚但不功利。";
+  if (key.includes("reponses courtes")) return "每句独立回答高频问题：可靠合作、坚持、周末平衡、适应能力。重点是成人职业语境，不像学生模板。";
   if (key.includes("entree") || key.includes("ouverture")) return "先感谢 → 说明自己不了解情况 → 提出具体问题 → 解释目的。Tâche 2 开场最稳。";
   if (key.includes("colocation") || key.includes("immeuble")) return "先问房屋本身 → 再问费用包含 → 最后防止意外支出。租房场景要具体，不能只问价格。";
   if (key.includes("cours") || key.includes("associations")) return "报名前确认流程 → 了解对象和水平 → 判断活动性质。重点是问出“适不适合我”。";
@@ -3346,35 +3346,52 @@ function curatedVocabularyNotes(item, level) {
   };
 
   if (key.includes("presentation personnelle")) {
-    add("sur le plan professionnel", "在职业方面；比 directement 说 travail 更成熟。");
-    add("à la fois... et...", "同时具备两个维度；适合说能力、条件、利弊。");
-    add("capacité d'adaptation", "适应能力；加拿大生活、工作、学习都能迁移。");
-    add("ma manière de m'exprimer", "我的表达方式；比 mon français 更细。");
+    add("je dirige une entreprise de commerce", "我经营/管理一家贸易公司；比 je travaille dans... 更符合 CEO 身份。");
+    add("ce qui m'amène à...", "这使我需要……；用工作事实自然引出能力和责任。");
+    add("prendre des décisions concrètes", "做出具体决策；职业成熟感强，适合管理者身份。");
+    add("à mon âge et avec mon expérience", "以我的年龄和经验来看；成人表达，不像学生自我介绍。");
+    add("un outil d'intégration", "融入社会的工具；把法语从考试需求提升到生活和社会适应。");
+    add("une exigence administrative", "行政要求；可以坦诚说移民现实，但表达要克制、正式。");
+    add("clarté, confiance et naturel", "清楚、自信、自然；三个名词并列，作为口语目标很稳。");
   } else if (key.includes("etudes") || key.includes("travail")) {
-    add("un parcours assez évolutif", "不断变化发展的经历；适合解释背景不单一。");
-    add("au lieu de rester dans une zone de confort", "不待在舒适区；经历类话题很加分。");
-    add("résoudre des problèmes concrets", "解决实际问题；工作价值表达。");
-    add("un outil d'intégration et d'autonomie", "融入和自主的工具；法语学习的高级理由。");
+    add("lié au commerce, à la négociation et à la gestion", "与贸易、谈判和管理有关；三个领域并列，职业轮廓清楚。");
+    add("la créativité", "创造力；商业语境里比 simplement travailler 更有主动性。");
+    add("suivre l'évolution du marché", "跟上市场变化；非常适合贸易公司和 CEO 视角。");
+    add("organiser ses idées", "整理思路；AI 对工作的实际价值，不空泛。");
+    add("améliorer ses processus", "优化流程；公司经营和工具化思维的高级表达。");
+    add("des méthodes de travail personnalisées et efficaces", "定制化且高效的工作方法；直接对应你使用 Claude/Codex 的真实场景。");
+    add("tout en m'adaptant plus solidement", "在……同时更稳固地适应；用 tout en 连接事业发展和社会融入。");
   } else if (key.includes("ville") || key.includes("quartier")) {
     add("un certain équilibre", "某种平衡；表达偏好时很自然。");
     add("qualité de vie", "生活质量；住房、城市、工作节奏都可用。");
     add("la facilité de se déplacer", "出行便利；城市题核心标准。");
     add("à la fois travailler... et se reposer...", "既能工作又能休息；结尾有生活逻辑。");
   } else if (key.includes("loisirs")) {
-    add("pendant mon temps libre", "空闲时间里；兴趣题稳定开头。");
-    add("me concentrer", "集中注意力；说明爱好带来的能力。");
-    add("une vraie discipline personnelle", "真正的自律；把学语言说得更有价值。");
-    add("garder un rythme de vie équilibré", "保持平衡生活节奏；生活方式题好结尾。");
+    add("rester lucide", "保持清醒判断；比 me détendre 更成熟，适合成年人。");
+    add("organiser mes idées", "整理自己的想法；可用于工作、学习和表达训练。");
+    add("avec un peu de recul", "稍微拉开距离来看问题；表示成熟反思，不是情绪化表达。");
+    add("à l'âge adulte", "在成年阶段；说明学习语言的现实难度和方法。");
+    add("de la régularité, de la méthode", "规律和方法；学习类话题很实用的名词并列。");
+    add("une vraie motivation personnelle", "真正的个人动力；解释为什么能长期坚持。");
+    add("construire progressivement une façon plus naturelle de m'exprimer", "逐步建立更自然的表达方式；比“背句子”更高级。");
+    add("curieuse, pragmatique et ouverte", "好奇、务实、开放；三个形容词概括性格，很适合自我介绍。");
   } else if (key.includes("canada") || key.includes("francais")) {
-    add("communiquer de manière fonctionnelle", "功能性沟通；说得出生活需求。");
-    add("une porte d'entrée vers une autre culture", "通往另一种文化的入口；语言题高级表达。");
-    add("chaque progrès donne plus de confiance", "每一点进步都带来信心；学习类话题很自然。");
-    add("plus de liberté dans la vie quotidienne", "日常生活中更多自由；比 juste utile 更有层次。");
+    add("mon projet au Canada est sérieux", "我在加拿大的规划是认真的；开头直接稳住动机。");
+    add("une vraie capacité d'adaptation", "真正的适应能力；移民、工作、生活三者都能覆盖。");
+    add("pour être honnête", "坦白说；可以承认现实动机，但语气自然不粗糙。");
+    add("une valeur pratique dans mon parcours d'immigration", "在移民路径中的实际价值；诚实但正式，不会显得只为加分。");
+    add("de manière plus large", "从更大的角度看；把功利目标提升到社会理解。");
+    add("le bilinguisme et l'intégration culturelle", "双语和文化融入；TCF Canada 语境非常贴合。");
+    add("une décision stratégique et personnelle", "一个战略性且个人性的决定；适合成熟商业人士的总结。");
   } else if (key.includes("reponses courtes")) {
-    add("lorsque les rôles sont clairs", "当分工清楚时；团队合作题高频条件。");
-    add("quelqu'un de persévérant", "一个有毅力的人；性格题好词。");
-    add("progression lente mais régulière", "缓慢但稳定的进步；适合学习和工作。");
-    add("l'adaptabilité", "适应能力；优点题非常实用。");
+    add("des personnes fiables", "可靠的人；合作话题里比 gentilles 更职业。");
+    add("les responsabilités sont claires", "责任清楚；管理者视角，比简单说团队合作更成熟。");
+    add("la communication reste directe", "沟通保持直接；商业合作中非常自然。");
+    add("dans les affaires comme dans l'apprentissage", "无论做生意还是学习；把职业经验迁移到语言学习。");
+    add("les résultats viennent rarement immédiatement", "结果很少立刻出现；解释坚持的原因，很成人化。");
+    add("un équilibre entre le repos, la famille, la réflexion", "休息、家庭和思考之间的平衡；周末回答不幼稚。");
+    add("savoir s'adapter", "懂得适应；新国家、商业环境、语言学习都能用。");
+    add("réagir avec plus de calme", "更冷静地回应；成熟性格表达。");
   } else if (key.includes("entree") || key.includes("ouverture")) {
     add("me renseigner", "向我说明情况；礼貌咨询常用。");
     add("fonctionnement ici", "这里的运作方式；新到一个地方时很真实。");
