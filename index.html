@@ -891,9 +891,6 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   display: block;
   line-height: 1.4;
 }
-.typing-user {
-  color: #6f3a2d;
-}
 .side {
   position: fixed;
   top: 0;
@@ -2960,25 +2957,39 @@ function diffLineHtml(target, user) {
   const targetTokens = tokenizeForDiff(target);
   const userTokens = tokenizeForDiff(user);
   const usedUser = new Set();
-  const usedTarget = new Set();
-  targetTokens.forEach((token, targetIndex) => {
+  targetTokens.forEach(token => {
     if (!token.norm) return;
     const userIndex = userTokens.findIndex((candidate, index) => !usedUser.has(index) && candidate.norm === token.norm);
     if (userIndex >= 0) {
       usedUser.add(userIndex);
-      usedTarget.add(targetIndex);
     }
   });
-  const render = (tokens, usedSet) => tokens.map((token, index) => {
-    const bad = token.norm && !usedSet.has(index);
+  const renderUser = tokens => tokens.map((token, index) => {
+    const bad = token.norm && !usedUser.has(index);
     return `<span class="diff-token${bad ? " bad" : ""}">${escapeHtml(token.raw)}</span>`;
   }).join(" ");
   return `<div class="diff-block">
     <span class="diff-label">目标句</span>
-    <div class="diff-text">${render(targetTokens, usedTarget)}</div>
+    <div class="diff-text">${escapeHtml(target)}</div>
     <span class="diff-label">你的输入</span>
-    <div class="diff-text">${render(userTokens, usedUser)}</div>
+    <div class="diff-text">${renderUser(userTokens)}</div>
   </div>`;
+}
+
+function typingDiffHtml(target, user) {
+  const targetTokens = tokenizeForDiff(target);
+  const userTokens = tokenizeForDiff(user);
+  const usedUser = new Set();
+  targetTokens.forEach(token => {
+    if (!token.norm) return;
+    const userIndex = userTokens.findIndex((candidate, index) => !usedUser.has(index) && candidate.norm === token.norm);
+    if (userIndex >= 0) usedUser.add(userIndex);
+  });
+  if (!userTokens.length) return "（空）";
+  return userTokens.map((token, index) => {
+    const bad = token.norm && !usedUser.has(index);
+    return `<span class="diff-token${bad ? " bad" : ""}">${escapeHtml(token.raw)}</span>`;
+  }).join(" ");
 }
 
 async function transcribeTrainingRecording(job) {
@@ -4004,11 +4015,11 @@ function checkTypingPractice(cardIndex) {
     return `<div class="typing-line ${ok ? "good" : "bad"}">
       <span class="typing-label">第 ${entries[index].index + 1} 句 · ${ok ? "正确" : `相似度 ${score}%`}</span>
       <span class="typing-target">${escapeHtml(target)}</span>
-      ${ok ? "" : `<span class="typing-label">你的输入</span><span class="typing-user">${escapeHtml(typed || "（空）")}</span>`}
+      ${ok ? "" : `<span class="typing-label">你的输入</span><span class="typing-user">${typingDiffHtml(target, typed)}</span>`}
     </div>`;
   }).join("");
   const extra = userLines.length > targetLines.length
-    ? `<div class="typing-line bad"><span class="typing-label">多出的内容</span><span class="typing-user">${escapeHtml(userLines.slice(targetLines.length).join(" "))}</span></div>`
+    ? `<div class="typing-line bad"><span class="typing-label">多出的内容</span><span class="typing-user">${typingDiffHtml("", userLines.slice(targetLines.length).join(" "))}</span></div>`
     : "";
   result.innerHTML = `<span class="typing-score">整体匹配 ${wholeScore}%</span>${rows}${extra}`;
 }
