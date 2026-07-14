@@ -591,6 +591,140 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   outline-offset: 3px;
   border-radius: 999px;
 }
+.dialogue-lab {
+  margin: 24px 0 30px;
+  border: 1px solid #cfded1;
+  border-radius: 18px;
+  overflow: hidden;
+  background: linear-gradient(145deg, #f7faf5, #eef5ee);
+  box-shadow: 0 14px 34px rgba(35, 67, 49, .09);
+}
+.dialogue-lab-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 18px;
+  align-items: start;
+  padding: 20px 22px 16px;
+  border-bottom: 1px solid #d7e3d8;
+}
+.dialogue-kicker {
+  margin: 0 0 5px;
+  color: #3e704f;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.dialogue-lab-head h2 { margin: 0; font-size: 24px; }
+.dialogue-lab-head .cn { margin: 7px 0 0; max-width: 680px; }
+.dialogue-topic-wrap { min-width: 190px; }
+.dialogue-topic-wrap label {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+.dialogue-topic-wrap select { width: 100%; }
+.dialogue-lab-body { padding: 20px 22px 22px; }
+.dialogue-progress {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.dialogue-progress span {
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: #cbd8cc;
+}
+.dialogue-progress span.active { width: 28px; background: #3f7251; }
+.dialogue-progress-label {
+  margin-left: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+}
+.dialogue-bubble {
+  position: relative;
+  padding: 17px 18px;
+  border: 1px solid #d8e3d9;
+  border-radius: 14px;
+  background: #fff;
+}
+.dialogue-speaker {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  color: #3f6e4e;
+  font-size: 12px;
+  font-weight: 850;
+}
+.dialogue-question {
+  font-size: clamp(20px, 2.4vw, 28px);
+  line-height: 1.35;
+  color: #173824;
+}
+.dialogue-translation { margin-top: 7px; color: var(--muted); font-size: 14px; }
+.dialogue-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 9px;
+  margin-top: 14px;
+}
+.dialogue-timer {
+  min-width: 76px;
+  color: #315a40;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  font-weight: 850;
+}
+.dialogue-recording {
+  display: none;
+  width: min(420px, 100%);
+  margin-top: 12px;
+}
+.dialogue-recording.has-audio { display: block; }
+.dialogue-coach {
+  margin-top: 15px;
+  padding: 12px 14px;
+  border-left: 3px solid #8fac95;
+  border-radius: 0 10px 10px 0;
+  background: rgba(255,255,255,.65);
+  color: #425247;
+  font-size: 14px;
+}
+.dialogue-answer {
+  margin-top: 15px;
+  padding: 16px 17px;
+  border: 1px solid #d7e3d7;
+  border-radius: 13px;
+  background: #fff;
+}
+.dialogue-answer[hidden] { display: none; }
+.dialogue-answer-label {
+  margin-bottom: 8px;
+  color: #8a6034;
+  font-size: 12px;
+  font-weight: 850;
+}
+.dialogue-answer-fr { color: #263d2e; font-size: 17px; line-height: 1.6; }
+.dialogue-answer-zh { margin-top: 8px; color: var(--muted); font-size: 14px; }
+.dialogue-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 16px;
+}
+.dialogue-nav-right { display: flex; flex-wrap: wrap; gap: 9px; justify-content: end; }
+.dialogue-record-active {
+  border-color: #a6493b;
+  background: #fff0ed;
+  color: #843529;
+}
 .training-overlay {
   position: fixed;
   inset: 0;
@@ -1146,6 +1280,12 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   .accent-wrap {
     display: none !important;
   }
+  .dialogue-lab-head { display: block; padding: 17px 16px 14px; }
+  .dialogue-topic-wrap { margin-top: 14px; min-width: 0; }
+  .dialogue-lab-body { padding: 16px; }
+  .dialogue-nav { align-items: stretch; }
+  .dialogue-nav-right { flex: 1; }
+  .dialogue-nav-right button { flex: 1 1 120px; }
   .settings-toggle {
     right: 12px;
     top: 12px;
@@ -1165,7 +1305,7 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
 <div class="app">
   <aside class="rail">
     <p class="brand">TCF Canada Oral<br>Practice</p>
-    <p class="sub">面向口语考试的句型材料、逐句音频与结构提示。</p>
+    <p class="sub">面向口语考试的互动问答、句型材料、逐句音频与结构提示。</p>
     <input id="search" class="search" placeholder="搜索主题、场景或表达">
     <div class="filters" id="filters"></div>
     <p class="small">训练顺序：先熟悉句子骨架，再替换主题词；朗读时保持清晰、稳定、自然的节奏。</p>
@@ -1194,9 +1334,56 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
         <div class="progress-track"><span class="progress-fill" id="sessionProgressFill"></span></div>
       </div>
       <div class="stat"><b id="visibleCount">0</b><span>当前材料</span></div>
-      <div class="stat"><b>2' / 4'30</b><span>Tâche 2 / Tâche 3</span></div>
+      <div class="stat"><b>2' / 4'30</b><span>Tâche 1 / Tâche 3</span></div>
       <div class="stat"><b>A2 / B2 / C1</b><span>每张卡可单独切换</span></div>
     </div>
+
+    <section class="dialogue-lab" id="dialogueLab" aria-labelledby="dialogueLabTitle">
+      <div class="dialogue-lab-head">
+        <div>
+          <p class="dialogue-kicker">Tâche 1 · 2分钟无准备</p>
+          <h2 id="dialogueLabTitle">老师问什么，我答什么</h2>
+          <p class="cn">先听考官问句，立即回答，再查看参考答案。每组包含连续追问，不再只背一段固定自我介绍。</p>
+        </div>
+        <div class="dialogue-topic-wrap">
+          <label for="dialogueTopic">本轮主题</label>
+          <select id="dialogueTopic" aria-label="选择互动问答主题"></select>
+        </div>
+      </div>
+      <div class="dialogue-lab-body">
+        <div class="dialogue-progress" id="dialogueProgress" aria-label="本组问答进度"></div>
+        <div class="dialogue-bubble">
+          <div class="dialogue-speaker">
+            <span>考官 · L'examinateur</span>
+            <span id="dialogueQuestionType">开场问题</span>
+          </div>
+          <div class="dialogue-question" id="dialogueQuestion" lang="fr"></div>
+          <div class="dialogue-translation" id="dialogueTranslation"></div>
+          <div class="dialogue-actions">
+            <button type="button" class="primary" id="dialoguePlay">▶ 播放老师问句</button>
+            <button type="button" id="dialogueTimerStart">20秒开口计时</button>
+            <button type="button" id="dialogueRecord">● 录下我的回答</button>
+            <span class="dialogue-timer" id="dialogueTimer" aria-live="polite">准备好就开口</span>
+          </div>
+          <audio class="dialogue-recording" id="dialogueRecording" controls preload="metadata"></audio>
+        </div>
+        <div class="dialogue-coach" id="dialogueCoach"></div>
+        <div class="dialogue-answer" id="dialogueAnswer" hidden>
+          <div class="dialogue-answer-label">参考回答 · 不是唯一答案</div>
+          <div class="dialogue-answer-fr" id="dialogueAnswerFr" lang="fr"></div>
+          <div class="dialogue-answer-zh" id="dialogueAnswerZh"></div>
+        </div>
+        <div class="dialogue-nav">
+          <button type="button" id="dialoguePrev">← 上一问</button>
+          <div class="dialogue-nav-right">
+            <button type="button" id="dialogueRandom">随机换一组</button>
+            <button type="button" id="dialogueReveal">查看参考回答</button>
+            <button type="button" class="primary" id="dialogueNext">下一问 →</button>
+          </div>
+        </div>
+        <audio id="dialogueQuestionAudio" preload="metadata"></audio>
+      </div>
+    </section>
 
     <section>
       <div class="section-title">
@@ -1617,9 +1804,244 @@ const templates = [
   }
 ];
 
+const tache1Dialogues = [
+  {
+    theme: "自我介绍",
+    rounds: [
+      {
+        type: "开场问题",
+        question: "Bonjour, pouvez-vous vous présenter, s'il vous plaît ?",
+        zh: "您好，请您介绍一下自己。",
+        coach: "回答身份、来自哪里、现在住哪里；控制在3句左右，给老师留下可以追问的信息。",
+        answer: "Bonjour, je m'appelle Patrick. Je viens de Chine et je vis actuellement au Canada. Je dirige une entreprise de commerce.",
+        answerZh: "您好，我叫Patrick。我来自中国，目前生活在加拿大。我经营一家贸易公司。"
+      },
+      {
+        type: "身份追问",
+        question: "Depuis combien de temps vivez-vous au Canada ?",
+        zh: "您在加拿大生活多久了？",
+        coach: "先直接说时间，再补充一个来到加拿大后的感受。请把时间替换成你的真实情况。",
+        answer: "Je vis au Canada depuis quelque temps. Au début, j'ai dû m'adapter à un nouvel environnement, mais aujourd'hui je m'y sens de plus en plus à l'aise.",
+        answerZh: "我在加拿大生活一段时间了。刚开始我需要适应新的环境，但现在越来越自在了。"
+      },
+      {
+        type: "个人追问",
+        question: "Comment vous décririez-vous en quelques mots ?",
+        zh: "您会用几个词怎样形容自己？",
+        coach: "选择两个真实品质，并用一个原因或工作中的例子证明。",
+        answer: "Je dirais que je suis persévérant et adaptable. Quand j'ai un objectif important, je progresse régulièrement et j'essaie de trouver des solutions concrètes.",
+        answerZh: "我认为自己有毅力、适应能力强。当我有重要目标时，我会稳定推进，并努力寻找具体的解决办法。"
+      }
+    ]
+  },
+  {
+    theme: "工作与经历",
+    rounds: [
+      {
+        type: "工作问题",
+        question: "Que faites-vous dans la vie ?",
+        zh: "您是做什么工作的？",
+        coach: "说清职业，再补充一项日常工作内容。不要只回答一个职位名称。",
+        answer: "Je dirige une entreprise de commerce. Mon travail consiste notamment à communiquer avec différents partenaires et à prendre des décisions concrètes.",
+        answerZh: "我经营一家贸易公司。我的工作主要包括与不同合作伙伴沟通并作出具体决策。"
+      },
+      {
+        type: "工作追问",
+        question: "Qu'est-ce que vous aimez le plus dans votre travail ?",
+        zh: "您最喜欢工作中的什么？",
+        coach: "表达一个偏好，再解释为什么。",
+        answer: "J'aime surtout le fait que mon travail soit varié. Chaque situation est différente, donc je dois communiquer, m'organiser et m'adapter rapidement.",
+        answerZh: "我最喜欢这份工作的多样性。每种情况都不同，所以我需要沟通、组织并迅速适应。"
+      },
+      {
+        type: "能力追问",
+        question: "Quelle qualité est importante dans votre métier ?",
+        zh: "您的工作中哪种品质很重要？",
+        coach: "品质＋原因＋一个实际结果，三步回答。",
+        answer: "À mon avis, l'adaptabilité est essentielle. Elle permet de mieux réagir aux imprévus et de maintenir une bonne relation avec les partenaires.",
+        answerZh: "我认为适应能力非常重要。它能帮助人更好地应对突发情况，并与合作伙伴保持良好关系。"
+      }
+    ]
+  },
+  {
+    theme: "法语学习",
+    rounds: [
+      {
+        type: "学习问题",
+        question: "Pourquoi apprenez-vous le français ?",
+        zh: "您为什么学习法语？",
+        coach: "给出真实动机，并说明法语在哪个生活场景中有用。",
+        answer: "J'apprends le français parce que je vis au Canada. Cette langue est utile dans la vie quotidienne et professionnelle, et elle m'aide aussi à mieux m'intégrer.",
+        answerZh: "我学习法语是因为我生活在加拿大。法语对日常生活和工作都很有用，也能帮助我更好地融入。"
+      },
+      {
+        type: "方法追问",
+        question: "Comment pratiquez-vous le français au quotidien ?",
+        zh: "您每天怎样练习法语？",
+        coach: "列举两种具体方法，不要只说“我每天学习”。",
+        answer: "J'écoute des phrases en français et je les répète à voix haute. J'essaie aussi de parler régulièrement afin de gagner en fluidité et en confiance.",
+        answerZh: "我会听法语句子并大声重复，也会尽量经常开口，以提高流利度和信心。"
+      },
+      {
+        type: "困难追问",
+        question: "Qu'est-ce qui est le plus difficile pour vous en français ?",
+        zh: "对您来说，法语最难的是什么？",
+        coach: "说一个困难，再说你正在采用的解决办法。",
+        answer: "Le plus difficile pour moi est de répondre spontanément. Pour progresser, je m'entraîne à écouter une question et à formuler immédiatement une réponse courte et claire.",
+        answerZh: "对我来说最难的是即时回答。为了进步，我训练自己听到问题后立刻组织一个简短清楚的回答。"
+      }
+    ]
+  },
+  {
+    theme: "日常生活",
+    rounds: [
+      {
+        type: "生活问题",
+        question: "À quoi ressemble une journée habituelle pour vous ?",
+        zh: "您平常的一天是怎样的？",
+        coach: "按照早上、白天、晚上讲三件事，不需要描述所有细节。",
+        answer: "En général, je commence ma journée assez tôt. Je m'occupe de mon travail pendant la journée, puis le soir, je prends du temps pour ma famille et pour apprendre le français.",
+        answerZh: "通常我一天开始得比较早。白天我处理工作，晚上会留出时间陪伴家人和学习法语。"
+      },
+      {
+        type: "习惯追问",
+        question: "Comment organisez-vous votre temps ?",
+        zh: "您怎样安排自己的时间？",
+        coach: "说你的做法以及这样做带来的好处。",
+        answer: "J'essaie de définir mes priorités à l'avance. Cela me permet de rester efficace tout en gardant du temps pour ma vie personnelle.",
+        answerZh: "我会尽量提前确定优先事项。这样既能保持效率，也能为个人生活留出时间。"
+      },
+      {
+        type: "变化追问",
+        question: "Y a-t-il une habitude que vous aimeriez changer ?",
+        zh: "有没有一个您想改变的习惯？",
+        coach: "说一个不太私密的小习惯，并说明改善计划。",
+        answer: "J'aimerais être plus régulier dans ma pratique du français. Même quinze minutes par jour seraient plus efficaces qu'une longue séance de temps en temps.",
+        answerZh: "我希望自己练习法语时更有规律。每天哪怕十五分钟，也比偶尔进行一次很长的练习更有效。"
+      }
+    ]
+  },
+  {
+    theme: "周末与爱好",
+    rounds: [
+      {
+        type: "爱好问题",
+        question: "Que faites-vous pendant votre temps libre ?",
+        zh: "您空闲时做什么？",
+        coach: "说一两项真实活动，再解释它们给你带来的感受。",
+        answer: "Pendant mon temps libre, j'aime apprendre les langues et découvrir de nouvelles cultures. Ces activités me permettent de rester curieux et d'élargir ma façon de voir les choses.",
+        answerZh: "空闲时我喜欢学习语言和了解新的文化。这些活动让我保持好奇，也能拓宽看问题的方式。"
+      },
+      {
+        type: "周末追问",
+        question: "Que faites-vous habituellement le week-end ?",
+        zh: "您周末通常做什么？",
+        coach: "使用habituellement/en général，说休息、家庭或学习中的两项。",
+        answer: "Le week-end, j'essaie de trouver un équilibre entre le repos, le temps en famille et mes projets personnels. Je réserve aussi un moment à la pratique du français.",
+        answerZh: "周末我努力在休息、陪伴家人和个人计划之间取得平衡，也会留出一些时间练习法语。"
+      },
+      {
+        type: "偏好追问",
+        question: "Préférez-vous rester chez vous ou sortir ? Pourquoi ?",
+        zh: "您更喜欢待在家还是外出？为什么？",
+        coach: "先明确偏好，也可以说“这取决于情况”，然后举一个场景。",
+        answer: "Cela dépend de la semaine. Après une période chargée, je préfère rester chez moi pour me reposer, mais j'aime aussi sortir pour découvrir un nouvel endroit avec ma famille.",
+        answerZh: "这取决于一周的情况。忙碌之后我更喜欢在家休息，但我也喜欢和家人外出探索新的地方。"
+      }
+    ]
+  },
+  {
+    theme: "家庭",
+    rounds: [
+      {
+        type: "家庭问题",
+        question: "Pouvez-vous me parler de votre famille ?",
+        zh: "您能介绍一下您的家庭吗？",
+        coach: "只说你愿意公开的信息：家庭对你的意义、平时一起做什么。",
+        answer: "Ma famille occupe une place très importante dans ma vie. Nous essayons de passer du temps ensemble et de nous soutenir dans nos projets.",
+        answerZh: "家庭在我的生活中非常重要。我们会努力共度时间，并在各自的计划中互相支持。"
+      },
+      {
+        type: "活动追问",
+        question: "Qu'aimez-vous faire ensemble ?",
+        zh: "你们喜欢一起做什么？",
+        coach: "举一个简单真实的共同活动，并说明为什么喜欢。",
+        answer: "Nous aimons partager un repas ou découvrir un nouvel endroit. Ce sont des moments simples, mais ils nous permettent de parler et de rester proches.",
+        answerZh: "我们喜欢一起吃饭或探索一个新地方。这些时刻虽然简单，却让我们能够交流并保持亲近。"
+      },
+      {
+        type: "价值追问",
+        question: "Quelle valeur familiale est importante pour vous ?",
+        zh: "哪一种家庭价值对您很重要？",
+        coach: "选一个价值，例如尊重、支持或沟通，再说明理由。",
+        answer: "Pour moi, la communication est essentielle. Quand on parle ouvertement, il est plus facile de comprendre les besoins de chacun et d'éviter les malentendus.",
+        answerZh: "对我来说沟通至关重要。大家坦诚交流时，更容易理解彼此的需要并避免误会。"
+      }
+    ]
+  },
+  {
+    theme: "加拿大生活",
+    rounds: [
+      {
+        type: "居住问题",
+        question: "Qu'est-ce que vous aimez dans la vie au Canada ?",
+        zh: "您喜欢加拿大生活的哪些方面？",
+        coach: "选择一个具体方面，例如多元文化、自然环境或生活方式，并解释。",
+        answer: "J'apprécie particulièrement la diversité culturelle du Canada. On peut rencontrer des personnes de différents horizons et apprendre à voir les choses autrement.",
+        answerZh: "我特别欣赏加拿大的文化多样性。人们可以遇到来自不同背景的人，并学习用不同方式看待事物。"
+      },
+      {
+        type: "适应追问",
+        question: "Avez-vous rencontré des difficultés en vous installant ici ?",
+        zh: "您在这里安顿时遇到过困难吗？",
+        coach: "简短承认困难，再重点说你如何适应，保持回答积极。",
+        answer: "Oui, il faut du temps pour comprendre un nouvel environnement et de nouvelles habitudes. J'essaie de rester ouvert, de poser des questions et d'apprendre progressivement.",
+        answerZh: "有，理解新的环境和生活习惯需要时间。我努力保持开放、多提问并逐步学习。"
+      },
+      {
+        type: "比较追问",
+        question: "Qu'est-ce qui est différent entre le Canada et votre pays d'origine ?",
+        zh: "加拿大和您的祖国有什么不同？",
+        coach: "只比较一个中性的生活方面，避免绝对化判断。",
+        answer: "Le rythme de vie et les habitudes de communication peuvent être différents. Je ne dirais pas qu'un système est meilleur que l'autre, mais cette différence demande une certaine adaptation.",
+        answerZh: "生活节奏和沟通习惯可能有所不同。我不会说哪一种更好，但这种差异确实需要适应。"
+      }
+    ]
+  },
+  {
+    theme: "未来计划",
+    rounds: [
+      {
+        type: "计划问题",
+        question: "Quels sont vos projets pour l'avenir ?",
+        zh: "您未来有什么计划？",
+        coach: "说一个短期目标和一个较长期方向，内容保持具体。",
+        answer: "À court terme, je voudrais améliorer mon français oral. À plus long terme, j'aimerais l'utiliser avec confiance dans ma vie quotidienne et professionnelle au Canada.",
+        answerZh: "短期内我想提高法语口语。长期来看，我希望能在加拿大的日常生活和工作中自信地使用法语。"
+      },
+      {
+        type: "目标追问",
+        question: "Comment allez-vous atteindre cet objectif ?",
+        zh: "您准备怎样实现这个目标？",
+        coach: "给出两项能执行的行动，例如频率、方法或练习场景。",
+        answer: "Je vais pratiquer un peu chaque jour et travailler surtout la compréhension des questions. Je veux également enregistrer mes réponses pour repérer mes hésitations.",
+        answerZh: "我会每天练习一点，尤其训练听懂问题。我也想录下自己的回答，以发现犹豫的地方。"
+      },
+      {
+        type: "动机追问",
+        question: "Pourquoi ce projet est-il important pour vous ?",
+        zh: "为什么这个计划对您很重要？",
+        coach: "把目标和真实生活联系起来：沟通、融入、工作或信心。",
+        answer: "Ce projet est important parce que la langue facilite la communication et l'intégration. Progresser en français me donnera aussi davantage d'autonomie et de confiance.",
+        answerZh: "这个计划很重要，因为语言能促进沟通和融入。法语进步也会让我更加独立和自信。"
+      }
+    ]
+  }
+];
+
 const categoryLabels = {
   all: "全部",
-  tache1: "Tâche 1 自我介绍",
+  tache1: "Tâche 1 背诵材料（保留）",
   tache2: "Tâche 2 互动问答",
   tache3: "Tâche 3 观点表达",
   questions: "常用问题",
@@ -2342,7 +2764,171 @@ const searchEl = document.querySelector("#search");
 const visibleCount = document.querySelector("#visibleCount");
 const resetBtn = document.querySelector("#resetBtn");
 const levelSelect = document.querySelector("#levelSelect");
+const dialogueTopic = document.querySelector("#dialogueTopic");
+const dialogueProgress = document.querySelector("#dialogueProgress");
+const dialogueQuestionType = document.querySelector("#dialogueQuestionType");
+const dialogueQuestion = document.querySelector("#dialogueQuestion");
+const dialogueTranslation = document.querySelector("#dialogueTranslation");
+const dialogueCoach = document.querySelector("#dialogueCoach");
+const dialogueAnswer = document.querySelector("#dialogueAnswer");
+const dialogueAnswerFr = document.querySelector("#dialogueAnswerFr");
+const dialogueAnswerZh = document.querySelector("#dialogueAnswerZh");
+const dialoguePlay = document.querySelector("#dialoguePlay");
+const dialogueTimerStart = document.querySelector("#dialogueTimerStart");
+const dialogueRecord = document.querySelector("#dialogueRecord");
+const dialogueTimer = document.querySelector("#dialogueTimer");
+const dialogueRecording = document.querySelector("#dialogueRecording");
+const dialogueQuestionAudio = document.querySelector("#dialogueQuestionAudio");
+const dialoguePrev = document.querySelector("#dialoguePrev");
+const dialogueRandom = document.querySelector("#dialogueRandom");
+const dialogueReveal = document.querySelector("#dialogueReveal");
+const dialogueNext = document.querySelector("#dialogueNext");
 levelSelect.value = activeLevel;
+
+let dialogueThemeIndex = Math.min(
+  tache1Dialogues.length - 1,
+  Math.max(0, Number(localStorage.getItem("tcf_dialogue_theme")) || 0)
+);
+let dialogueRoundIndex = 0;
+let dialogueTimerInterval = null;
+let dialogueRecorder = null;
+let dialogueRecorderStream = null;
+let dialogueRecorderChunks = [];
+let dialogueRecordingUrl = "";
+let dialogueDiscardRecording = false;
+
+function currentDialogueRound() {
+  return tache1Dialogues[dialogueThemeIndex].rounds[dialogueRoundIndex];
+}
+
+function resetDialogueMedia() {
+  if (dialogueTimerInterval) {
+    clearInterval(dialogueTimerInterval);
+    dialogueTimerInterval = null;
+  }
+  dialogueTimer.textContent = "准备好就开口";
+  if (dialogueRecorder && dialogueRecorder.state === "recording") {
+    dialogueDiscardRecording = true;
+    dialogueRecorder.stop();
+  }
+  if (dialogueRecorderStream) {
+    dialogueRecorderStream.getTracks().forEach(track => track.stop());
+    dialogueRecorderStream = null;
+  }
+  dialogueRecorder = null;
+  dialogueRecord.classList.remove("dialogue-record-active");
+  dialogueRecord.textContent = "● 录下我的回答";
+  dialogueQuestionAudio.pause();
+  dialogueRecording.pause();
+  dialogueRecording.removeAttribute("src");
+  dialogueRecording.classList.remove("has-audio");
+  if (dialogueRecordingUrl) {
+    URL.revokeObjectURL(dialogueRecordingUrl);
+    dialogueRecordingUrl = "";
+  }
+}
+
+function renderDialogue() {
+  const set = tache1Dialogues[dialogueThemeIndex];
+  const round = set.rounds[dialogueRoundIndex];
+  dialogueTopic.innerHTML = tache1Dialogues.map((item, index) =>
+    `<option value="${index}" ${index === dialogueThemeIndex ? "selected" : ""}>${escapeHtml(item.theme)}</option>`
+  ).join("");
+  dialogueProgress.innerHTML = set.rounds.map((_, index) =>
+    `<span class="${index === dialogueRoundIndex ? "active" : ""}" aria-hidden="true"></span>`
+  ).join("") + `<div class="dialogue-progress-label">第 ${dialogueRoundIndex + 1} 问 / 共 ${set.rounds.length} 问</div>`;
+  dialogueQuestionType.textContent = round.type;
+  dialogueQuestion.textContent = round.question;
+  dialogueTranslation.textContent = round.zh;
+  dialogueCoach.innerHTML = `<strong>回答思路：</strong>${escapeHtml(round.coach)}`;
+  dialogueAnswerFr.textContent = round.answer;
+  dialogueAnswerZh.textContent = round.answerZh;
+  dialogueAnswer.hidden = true;
+  dialogueReveal.textContent = "查看参考回答";
+  dialoguePrev.disabled = dialogueRoundIndex === 0;
+  dialogueNext.textContent = dialogueRoundIndex === set.rounds.length - 1 ? "下一组 →" : "下一问 →";
+  localStorage.setItem("tcf_dialogue_theme", String(dialogueThemeIndex));
+}
+
+function moveDialogue(direction) {
+  resetDialogueMedia();
+  const rounds = tache1Dialogues[dialogueThemeIndex].rounds;
+  if (direction < 0) {
+    dialogueRoundIndex = Math.max(0, dialogueRoundIndex - 1);
+  } else if (dialogueRoundIndex < rounds.length - 1) {
+    dialogueRoundIndex += 1;
+  } else {
+    dialogueThemeIndex = (dialogueThemeIndex + 1) % tache1Dialogues.length;
+    dialogueRoundIndex = 0;
+  }
+  renderDialogue();
+}
+
+function startDialogueTimer() {
+  if (dialogueTimerInterval) clearInterval(dialogueTimerInterval);
+  let remaining = 20;
+  dialogueTimer.textContent = `${remaining}秒`;
+  dialogueTimerInterval = setInterval(() => {
+    remaining -= 1;
+    dialogueTimer.textContent = remaining > 0 ? `${remaining}秒` : "时间到，完成这一答";
+    if (remaining <= 0) {
+      clearInterval(dialogueTimerInterval);
+      dialogueTimerInterval = null;
+    }
+  }, 1000);
+}
+
+async function toggleDialogueRecording() {
+  if (dialogueRecorder && dialogueRecorder.state === "recording") {
+    dialogueRecorder.stop();
+    return;
+  }
+  if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+    throw new Error("当前浏览器不支持录音，请使用HTTPS页面并允许麦克风权限。");
+  }
+  if (typeof stopActiveTrainingRecording === "function") stopActiveTrainingRecording();
+  dialogueQuestionAudio.pause();
+  speechSynthesis.cancel();
+  dialogueDiscardRecording = false;
+  dialogueRecording.pause();
+  dialogueRecording.removeAttribute("src");
+  dialogueRecording.classList.remove("has-audio");
+  if (dialogueRecordingUrl) {
+    URL.revokeObjectURL(dialogueRecordingUrl);
+    dialogueRecordingUrl = "";
+  }
+  const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+  const chunks = [];
+  const recorder = new MediaRecorder(stream);
+  dialogueRecorderStream = stream;
+  dialogueRecorderChunks = chunks;
+  dialogueRecorder = recorder;
+  recorder.addEventListener("dataavailable", event => {
+    if (event.data.size) chunks.push(event.data);
+  });
+  recorder.addEventListener("stop", () => {
+    stream.getTracks().forEach(track => track.stop());
+    if (recorder !== dialogueRecorder || dialogueDiscardRecording) {
+      if (recorder === dialogueRecorder) dialogueDiscardRecording = false;
+      return;
+    }
+    const mimeType = recorder.mimeType || "audio/webm";
+    const blob = new Blob(chunks, { type: mimeType });
+    if (dialogueRecordingUrl) URL.revokeObjectURL(dialogueRecordingUrl);
+    dialogueRecordingUrl = URL.createObjectURL(blob);
+    dialogueRecording.src = dialogueRecordingUrl;
+    dialogueRecording.classList.add("has-audio");
+    dialogueRecorderStream = null;
+    dialogueRecorder = null;
+    dialogueRecord.classList.remove("dialogue-record-active");
+    dialogueRecord.textContent = "● 重新录回答";
+    dialogueTimer.textContent = "已录好，可以回听";
+  }, { once: true });
+  recorder.start();
+  dialogueRecord.classList.add("dialogue-record-active");
+  dialogueRecord.textContent = "■ 停止录音";
+  startDialogueTimer();
+}
 
 function cardLevelKey(cardIndex) {
   return `tcf_card_level_${cardIndex}`;
@@ -4484,6 +5070,50 @@ trainingOverlay.addEventListener("click", event => {
   if (event.target === trainingOverlay) closeTraining();
 });
 
+dialogueTopic.addEventListener("change", () => {
+  resetDialogueMedia();
+  dialogueThemeIndex = Number(dialogueTopic.value) || 0;
+  dialogueRoundIndex = 0;
+  renderDialogue();
+});
+dialoguePlay.addEventListener("click", async () => {
+  const original = dialoguePlay.textContent;
+  dialoguePlay.disabled = true;
+  dialoguePlay.textContent = "正在播放…";
+  try {
+    await speakText(currentDialogueRound().question, dialogueQuestionAudio);
+  } catch {
+    speakWithBrowserFrench(currentDialogueRound().question);
+  } finally {
+    dialoguePlay.disabled = false;
+    dialoguePlay.textContent = original;
+  }
+});
+dialogueTimerStart.addEventListener("click", startDialogueTimer);
+dialogueRecord.addEventListener("click", () => {
+  toggleDialogueRecording().catch(err => {
+    dialogueRecord.classList.remove("dialogue-record-active");
+    dialogueRecord.textContent = "● 录下我的回答";
+    dialogueTimer.textContent = err.message.slice(0, 80);
+  });
+});
+dialogueReveal.addEventListener("click", () => {
+  dialogueAnswer.hidden = !dialogueAnswer.hidden;
+  dialogueReveal.textContent = dialogueAnswer.hidden ? "查看参考回答" : "收起参考回答";
+});
+dialoguePrev.addEventListener("click", () => moveDialogue(-1));
+dialogueNext.addEventListener("click", () => moveDialogue(1));
+dialogueRandom.addEventListener("click", () => {
+  resetDialogueMedia();
+  let next = dialogueThemeIndex;
+  while (tache1Dialogues.length > 1 && next === dialogueThemeIndex) {
+    next = Math.floor(Math.random() * tache1Dialogues.length);
+  }
+  dialogueThemeIndex = next;
+  dialogueRoundIndex = 0;
+  renderDialogue();
+});
+
 searchEl.addEventListener("input", renderCards);
 levelSelect.addEventListener("change", () => {
   activeLevel = levelSelect.value;
@@ -4539,10 +5169,12 @@ window.addEventListener("scroll", saveScrollPosition, { passive: true });
 window.addEventListener("beforeunload", () => {
   localStorage.setItem("tcf_last_scroll_y", String(Math.max(0, Math.round(window.scrollY))));
   stopTrainingMicStream();
+  resetDialogueMedia();
 });
 
 loadSettings();
 syncProviderFields();
+renderDialogue();
 renderFilters();
 renderTrainingModes();
 renderCards();
