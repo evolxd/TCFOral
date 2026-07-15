@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v52-embedded-teacher-questions";
+const CACHE_NAME = "tcf-oral-v53-dialogue-loop";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",

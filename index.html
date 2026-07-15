@@ -4849,6 +4849,7 @@ function usePlayer(player) {
 }
 
 function stopLoopUi() {
+  speechSynthesis.cancel();
   if (loopDelayTimer) {
     clearTimeout(loopDelayTimer);
     loopDelayTimer = null;
@@ -5069,13 +5070,17 @@ function speakBrowserTextAndWait(text) {
   });
 }
 
-async function playTeacherQuestion(cardIndex, questionIndex = 0) {
+const teacherQuestionAudioCache = new Map();
+
+async function playTeacherQuestion(cardIndex, questionIndex = 0, options = {}) {
   const question = tache1QuestionForCard(cardIndex, questionIndex);
-  if (!question) return;
+  if (!question) return true;
   const player = cardsEl.querySelector(`[data-audio="${cardIndex}"]`) || audio;
   const target = usePlayer(player);
-  activePlaybackToken += 1;
-  stopLoopUi();
+  const playbackToken = Number.isInteger(options.playbackToken)
+    ? options.playbackToken
+    : activePlaybackToken += 1;
+  if (!options.keepControls) stopLoopUi();
   target.pause();
   target.onended = null;
   target.onerror = null;
@@ -5083,10 +5088,15 @@ async function playTeacherQuestion(cardIndex, questionIndex = 0) {
   if (questionEl) questionEl.scrollIntoView({ behavior: "smooth", block: "center" });
   if (provider.value === "browser") {
     await speakBrowserTextAndWait(question.fr);
-    return;
+    return playbackToken === activePlaybackToken;
   }
   try {
-    const blob = await getTtsBlob(question.fr);
+    const cacheKey = `${provider.value}|${voiceId.value}|${currentPlaybackRate()}|${question.fr}`;
+    let blob = teacherQuestionAudioCache.get(cacheKey);
+    if (!blob) {
+      blob = await getTtsBlob(question.fr);
+      teacherQuestionAudioCache.set(cacheKey, blob);
+    }
     const url = URL.createObjectURL(blob);
     target.src = url;
     applyPlaybackRate(target);
@@ -5106,6 +5116,7 @@ async function playTeacherQuestion(cardIndex, questionIndex = 0) {
     target.onerror = null;
     await speakBrowserTextAndWait(question.fr);
   }
+  return playbackToken === activePlaybackToken;
 }
 
 function safeFileName(text) {
@@ -5150,7 +5161,9 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
   const urls = entries.map(entry => localAudioName(item, cardIndex, entry.line, entry.index, level));
   let current = 0;
   const hosted = location.hostname.includes("github.io");
-  const playbackToken = activePlaybackToken += 1;
+  const playbackToken = Number.isInteger(options.playbackToken)
+    ? options.playbackToken
+    : activePlaybackToken += 1;
   const loop = Boolean(options.loop);
   if (loop) {
     stopLoopUi();
@@ -5215,6 +5228,75 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
     }
   };
   playCurrent();
+}
+
+async function playCardDialogue(item, cardIndex, player = audio, level = activeLevel, options = {}) {
+  const target = usePlayer(player);
+  const entries = selectedSentenceEntries(item, cardIndex, level);
+  if (!entries.length) {
+    alert("这张卡片的句子都取消勾选了。请至少勾选一句再朗读。");
+    return;
+  }
+
+  activePlaybackToken += 1;
+  target.pause();
+  stopLoopUi();
+  const playbackToken = activePlaybackToken;
+  const loop = Boolean(options.loop);
+
+  if (loop) {
+    activeLoopButton = options.button || null;
+    if (activeLoopButton) {
+      activeLoopButton.classList.add("loop-active");
+      activeLoopButton.textContent = "停止循环";
+    }
+  }
+
+  const questions = item.type === "tache1"
+    ? (tache1CardQuestions[item.title] || [])
+    : [];
+  const segments = questions.length > 1
+    ? entries.map(entry => ({ questionIndex: entry.index, entries: [entry] }))
+    : [{ questionIndex: 0, entries }];
+
+  const finishCycle = () => {
+    if (playbackToken !== activePlaybackToken) return;
+    if (loop) {
+      if (loopDelayTimer) clearTimeout(loopDelayTimer);
+      loopDelayTimer = setTimeout(() => {
+        loopDelayTimer = null;
+        if (playbackToken === activePlaybackToken) playSegment(0);
+      }, currentLoopGapMs());
+      return;
+    }
+    stopLoopUi();
+    clearPlaybackHighlights();
+  };
+
+  const playSegment = async segmentIndex => {
+    if (playbackToken !== activePlaybackToken) return;
+    if (segmentIndex >= segments.length) {
+      finishCycle();
+      return;
+    }
+    const segment = segments[segmentIndex];
+    const question = tache1QuestionForCard(cardIndex, segment.questionIndex);
+    if (question) {
+      const completed = await playTeacherQuestion(cardIndex, segment.questionIndex, {
+        keepControls: true,
+        playbackToken
+      });
+      if (!completed || playbackToken !== activePlaybackToken) return;
+    }
+    await speakItem(item, cardIndex, target, level, {
+      entriesOverride: segment.entries,
+      keepControls: true,
+      playbackToken,
+      onComplete: () => playSegment(segmentIndex + 1)
+    });
+  };
+
+  await playSegment(0);
 }
 
 async function playSingleSentence(cardIndex, sentenceIndex) {
@@ -5369,7 +5451,7 @@ cardsEl.addEventListener("click", async event => {
     try {
       const index = Number(speakBtn.dataset.speak);
       const player = cardsEl.querySelector(`[data-audio="${index}"]`) || audio;
-      await speakItem(templates[index], index, player, cardLevel(index));
+      await playCardDialogue(templates[index], index, player, cardLevel(index));
     } catch (err) {
       alert("TTS 请求失败。可以先检查 key、voice_id、余额，或改用浏览器自带语音。错误：" + err.message.slice(0, 240));
     }
@@ -5386,7 +5468,7 @@ cardsEl.addEventListener("click", async event => {
       }
       const index = Number(loopBtn.dataset.loop);
       const player = cardsEl.querySelector(`[data-audio="${index}"]`) || audio;
-      await speakItem(templates[index], index, player, cardLevel(index), { loop: true, button: loopBtn });
+      await playCardDialogue(templates[index], index, player, cardLevel(index), { loop: true, button: loopBtn });
     } catch (err) {
       stopLoopUi();
       alert("循环播放失败。错误：" + err.message.slice(0, 240));
@@ -5400,9 +5482,8 @@ cardsEl.addEventListener("click", async event => {
       if (activePlayer) activePlayer.pause();
       stopLoopUi();
       scrollToCard(nextIndex);
-      await playTeacherQuestion(nextIndex, 0);
       const player = cardsEl.querySelector(`[data-audio="${nextIndex}"]`) || audio;
-      await speakItem(templates[nextIndex], nextIndex, player, cardLevel(nextIndex));
+      await playCardDialogue(templates[nextIndex], nextIndex, player, cardLevel(nextIndex));
     } catch (err) {
       stopLoopUi();
       alert("播放下一卡失败。错误：" + err.message.slice(0, 240));
