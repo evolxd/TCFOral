@@ -340,6 +340,30 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   display: grid;
   gap: 10px;
 }
+.embedded-question {
+  margin-bottom: 9px;
+  padding: 12px 13px;
+  border-left: 4px solid #527b60;
+  border-radius: 0 10px 10px 0;
+  background: #eef5ee;
+}
+.embedded-question-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 5px;
+  color: #476250;
+  font-size: 12px;
+  font-weight: 850;
+}
+.embedded-question-head button {
+  min-height: 30px;
+  padding: 4px 9px;
+  font-size: 12px;
+}
+.embedded-question-fr { color: #183924; font-size: 17px; font-weight: 750; line-height: 1.45; }
+.embedded-question-zh { margin-top: 4px; color: var(--muted); font-size: 13px; }
 .sentence-toolbar {
   display: flex;
   gap: 8px;
@@ -2310,6 +2334,30 @@ const zhLines = [
   ["用于表达让步：话虽如此；还需要说明的是；认为……会过于简单。", "用于展开论证：我认为决定性的地方在于；不能忽视的是；这一观点尤其在……时可以得到验证。", "用于总结：归根结底；真正的关键在于；答案与其说取决于 A，不如说取决于 B。"]
 ];
 
+const tache1CardQuestions = {
+  "Présentation personnelle élégante": [
+    { fr: "Bonjour, pouvez-vous vous présenter, s'il vous plaît ?", zh: "您好，请您介绍一下自己。" }
+  ],
+  "Études, travail, projet": [
+    { fr: "Pouvez-vous me parler de votre travail et de vos projets pour l'avenir ?", zh: "您能谈谈您的工作和未来计划吗？" }
+  ],
+  "Ville, quartier, logement": [
+    { fr: "Pouvez-vous me parler de l'endroit où vous habitez ?", zh: "您能介绍一下您居住的地方吗？" }
+  ],
+  "Loisirs et personnalité": [
+    { fr: "Que faites-vous pendant votre temps libre ?", zh: "您空闲时间做什么？" }
+  ],
+  "Pourquoi le Canada / le français": [
+    { fr: "Pourquoi apprenez-vous le français ?", zh: "您为什么学习法语？" }
+  ],
+  "Réponses courtes prêtes à sortir": [
+    { fr: "Préférez-vous travailler seul ou en équipe ?", zh: "您更喜欢独自工作还是团队合作？" },
+    { fr: "Comment vous décririez-vous en quelques mots ?", zh: "您会用几个词怎样形容自己？" },
+    { fr: "Que faites-vous habituellement le week-end ?", zh: "您周末通常做什么？" },
+    { fr: "Quelle qualité est importante pour vous ?", zh: "哪一种品质对您很重要？" }
+  ]
+};
+
 templates.forEach((item, index) => {
   item.zh = item.zh || zhLines[index - 6] || [];
 });
@@ -3505,8 +3553,9 @@ function cardMasteryStats(content, cardIndex, level = activeLevel) {
   return stats;
 }
 
-function renderBilingual(content, cardIndex, level = cardLevel(cardIndex)) {
+function renderBilingual(item, content, cardIndex, level = cardLevel(cardIndex)) {
   const frLines = splitFrench(content.fr);
+  const questions = item.type === "tache1" ? (tache1CardQuestions[item.title] || []) : [];
   return `<div class="sentence-list">${frLines.map((line, index) => {
     const zh = content.zh[index] ? `<div class="sentence-zh">${escapeHtml(content.zh[index])}</div>` : "";
     const checked = isSentenceEnabled(cardIndex, index, level) ? "checked" : "";
@@ -3514,7 +3563,13 @@ function renderBilingual(content, cardIndex, level = cardLevel(cardIndex)) {
     const muted = checked ? "" : " is-muted";
     const stageClass = stage === "mastered" ? " is-mastered" : stage === "recite" ? " is-reciting" : "";
     const sentenceId = `sentence-${level}-${cardIndex}-${index}`;
-    return `<div class="sentence-pair${muted}${stageClass}" data-sentence-pair-card="${cardIndex}" data-sentence-pair-index="${index}">
+    const question = questions.length === 1 ? (index === 0 ? questions[0] : null) : questions[index];
+    const questionHtml = question ? `<div class="embedded-question" data-teacher-question-card="${cardIndex}" data-teacher-question-index="${index}">
+      <div class="embedded-question-head"><span>老师问 · L'examinateur</span><button type="button" data-play-teacher-question="${cardIndex}" data-question-index="${index}">▶ 播放问句</button></div>
+      <div class="embedded-question-fr" lang="fr">${escapeHtml(question.fr)}</div>
+      <div class="embedded-question-zh">${escapeHtml(question.zh)}</div>
+    </div>` : "";
+    return `${questionHtml}<div class="sentence-pair${muted}${stageClass}" data-sentence-pair-card="${cardIndex}" data-sentence-pair-index="${index}">
       <input id="${sentenceId}" class="sentence-check" type="checkbox" data-sentence-card="${cardIndex}" data-sentence-index="${index}" ${checked}>
       <label class="sentence-body" for="${sentenceId}"><div class="sentence-fr">${escapeHtml(line)}</div>${zh}</label>
       <div class="stage-control" role="group" aria-label="句子熟练度">
@@ -4515,7 +4570,7 @@ function renderCards(options = {}) {
     const content = variantFor(item, level);
     const mastery = cardMasteryStats(content, index, level);
     const isB2ShortIntroduction = level === "b2" && item.title === "Présentation personnelle élégante";
-    const displayTitle = isB2ShortIntroduction ? "老师问：Pouvez-vous vous présenter ?" : item.title;
+    const displayTitle = isB2ShortIntroduction ? "自我介绍 · 20秒短答" : item.title;
     const displayCn = isB2ShortIntroduction
       ? "B2考场短答：姓名、来源与现居地、工作、学习法语的原因；约20秒，说完等待追问。"
       : item.cn;
@@ -4534,7 +4589,7 @@ function renderCards(options = {}) {
       <div class="sentence-toolbar" aria-label="本卡句子选择">
         <button type="button" data-toggle-sentences="${index}">${allSentencesEnabled(content, index, level) ? "全不选" : "全选"}</button>
       </div>
-      <div class="fr" id="text-${index}">${renderBilingual(content, index, level)}</div>
+      <div class="fr" id="text-${index}">${renderBilingual(item, content, index, level)}</div>
       ${renderArchivedTache1Material(item, level)}
       ${renderAnalysis(item, content, level)}
       <div class="actions">
@@ -4995,6 +5050,64 @@ async function speakText(text, player = audio) {
   await target.play();
 }
 
+function tache1QuestionForCard(cardIndex, questionIndex = 0) {
+  const item = templates[cardIndex];
+  if (!item || item.type !== "tache1") return null;
+  const questions = tache1CardQuestions[item.title] || [];
+  return questions[questionIndex] || questions[0] || null;
+}
+
+function speakBrowserTextAndWait(text) {
+  return new Promise((resolve, reject) => {
+    speechSynthesis.cancel();
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "fr-FR";
+    utter.rate = currentPlaybackRate();
+    utter.onend = () => resolve();
+    utter.onerror = event => reject(new Error(event.error || "浏览器语音播放失败"));
+    speechSynthesis.speak(utter);
+  });
+}
+
+async function playTeacherQuestion(cardIndex, questionIndex = 0) {
+  const question = tache1QuestionForCard(cardIndex, questionIndex);
+  if (!question) return;
+  const player = cardsEl.querySelector(`[data-audio="${cardIndex}"]`) || audio;
+  const target = usePlayer(player);
+  activePlaybackToken += 1;
+  stopLoopUi();
+  target.pause();
+  target.onended = null;
+  target.onerror = null;
+  const questionEl = cardsEl.querySelector(`[data-teacher-question-card="${cardIndex}"][data-teacher-question-index="${questionIndex}"]`);
+  if (questionEl) questionEl.scrollIntoView({ behavior: "smooth", block: "center" });
+  if (provider.value === "browser") {
+    await speakBrowserTextAndWait(question.fr);
+    return;
+  }
+  try {
+    const blob = await getTtsBlob(question.fr);
+    const url = URL.createObjectURL(blob);
+    target.src = url;
+    applyPlaybackRate(target);
+    await new Promise((resolve, reject) => {
+      target.onended = () => {
+        URL.revokeObjectURL(url);
+        resolve();
+      };
+      target.onerror = () => {
+        URL.revokeObjectURL(url);
+        reject(new Error("老师问句语音无法播放"));
+      };
+      target.play().catch(reject);
+    });
+  } catch {
+    target.onended = null;
+    target.onerror = null;
+    await speakBrowserTextAndWait(question.fr);
+  }
+}
+
 function safeFileName(text) {
   const cleaned = text
     .normalize("NFD")
@@ -5176,6 +5289,7 @@ trainingModesEl.addEventListener("click", event => {
 });
 
 cardsEl.addEventListener("click", async event => {
+  const teacherQuestionBtn = event.target.closest("[data-play-teacher-question]");
   const trainBtn = event.target.closest("[data-train]");
   const speakBtn = event.target.closest("[data-speak]");
   const loopBtn = event.target.closest("[data-loop]");
@@ -5186,6 +5300,19 @@ cardsEl.addEventListener("click", async event => {
   const accentBtn = event.target.closest("[data-accent]");
   const selectSentencesBtn = event.target.closest("[data-toggle-sentences]");
   const stageBtn = event.target.closest("[data-stage-card]");
+  if (teacherQuestionBtn) {
+    event.preventDefault();
+    event.stopPropagation();
+    try {
+      await playTeacherQuestion(
+        Number(teacherQuestionBtn.dataset.playTeacherQuestion),
+        Number(teacherQuestionBtn.dataset.questionIndex) || 0
+      );
+    } catch (err) {
+      alert("老师问句播放失败。错误：" + err.message.slice(0, 200));
+    }
+    return;
+  }
   if (selectSentencesBtn) {
     event.preventDefault();
     event.stopPropagation();
@@ -5273,6 +5400,7 @@ cardsEl.addEventListener("click", async event => {
       if (activePlayer) activePlayer.pause();
       stopLoopUi();
       scrollToCard(nextIndex);
+      await playTeacherQuestion(nextIndex, 0);
       const player = cardsEl.querySelector(`[data-audio="${nextIndex}"]`) || audio;
       await speakItem(templates[nextIndex], nextIndex, player, cardLevel(nextIndex));
     } catch (err) {
