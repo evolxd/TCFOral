@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v53-dialogue-loop";
+const CACHE_NAME = "tcf-oral-v54-b2-dialogue-selection";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",

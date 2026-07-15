@@ -341,29 +341,39 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   gap: 10px;
 }
 .embedded-question {
-  margin-bottom: 9px;
-  padding: 12px 13px;
-  border-left: 4px solid #527b60;
-  border-radius: 0 10px 10px 0;
-  background: #eef5ee;
+  border-color: #dfe9df;
+  background: #f7faf6;
 }
 .embedded-question-head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  margin-bottom: 5px;
+  margin-bottom: 2px;
   color: #476250;
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 850;
 }
 .embedded-question-head button {
-  min-height: 30px;
-  padding: 4px 9px;
+  min-height: 28px;
+  padding: 3px 8px;
   font-size: 12px;
 }
-.embedded-question-fr { color: #183924; font-size: 17px; font-weight: 750; line-height: 1.45; }
-.embedded-question-zh { margin-top: 4px; color: var(--muted); font-size: 13px; }
+.embedded-question-fr { color: #183924; font-size: 16px; font-weight: 700; line-height: 1.42; }
+.embedded-question-zh { margin-top: 2px; color: var(--muted); font-size: 13px; }
+.embedded-question.is-muted .embedded-question-fr,
+.embedded-question.is-muted .embedded-question-zh,
+.embedded-question.is-muted .embedded-question-head { color: #9aa39b; }
+.teacher-play {
+  align-self: center;
+  min-height: 30px;
+  padding: 4px 9px;
+  white-space: nowrap;
+  font-size: 12px;
+}
+.b2-key-points {
+  margin: -2px 0 9px;
+  color: #4f5f53;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.b2-key-points strong { color: #284a32; }
 .sentence-toolbar {
   display: flex;
   gap: 8px;
@@ -2358,6 +2368,15 @@ const tache1CardQuestions = {
   ]
 };
 
+const tache1B2KeyPoints = {
+  "Présentation personnelle élégante": "身份与来源｜现居加拿大｜贸易公司负责人｜学习法语的目的",
+  "Études, travail, projet": "目前工作｜核心能力｜AI实际例子｜加拿大中期计划",
+  "Ville, quartier, logement": "居住环境｜个人偏好｜具体便利｜理想社区标准",
+  "Loisirs et personnalité": "真实爱好｜带来的好处｜具体习惯｜性格特点",
+  "Pourquoi le Canada / le français": "实际目的｜移民需求｜社会融入｜长期表达目标",
+  "Réponses courtes prêtes à sortir": "先直接表态｜说明原因｜加入个人细节｜必要时作出让步"
+};
+
 templates.forEach((item, index) => {
   item.zh = item.zh || zhLines[index - 6] || [];
 });
@@ -2371,62 +2390,57 @@ const levelLabels = {
 const b2FinalDrafts = {
   "Présentation personnelle élégante": {
     fr: [
-      "Bonjour, je m'appelle Patrick.",
-      "Je viens de Chine et je vis actuellement au Canada.",
-      "Je dirige une entreprise de commerce.",
-      "J'apprends le français pour mieux communiquer et mieux m'intégrer au Canada."
+      "Bonjour, je m'appelle Patrick, je viens de Chine et je vis actuellement au Canada.",
+      "Sur le plan professionnel, je dirige une entreprise de commerce, ce qui m'amène à échanger avec différents partenaires et à prendre des décisions concrètes.",
+      "J'apprends le français à la fois pour mieux communiquer au quotidien et pour m'intégrer plus durablement dans la société canadienne.",
+      "Mon objectif est de pouvoir m'exprimer avec davantage de précision et de spontanéité, aussi bien dans ma vie personnelle que professionnelle."
     ],
-    zh: ["您好，我叫 Patrick。", "我来自中国，目前生活在加拿大。", "我经营一家贸易公司。", "我学习法语是为了更好地沟通并融入加拿大。"]
+    zh: ["您好，我叫 Patrick，来自中国，目前生活在加拿大。", "在职业方面，我经营一家贸易公司，这让我需要与不同合作伙伴沟通并做出具体决策。", "我学习法语，既是为了在日常生活中更好地沟通，也是为了更长久地融入加拿大社会。", "我的目标是无论在个人生活还是职业环境中，都能表达得更准确、更自然。"]
   },
   "Études, travail, projet": {
     fr: [
-      "Mon parcours professionnel est lié au commerce, à la négociation et à la gestion d'une entreprise.",
-      "Dans mon travail, je pense que la créativité et la capacité à suivre l'évolution du marché sont devenues essentielles.",
-      "Aujourd'hui, l'intelligence artificielle peut aider une entreprise à organiser ses idées, à améliorer ses processus et à gagner du temps.",
-      "J'utilise déjà des outils comme Claude ou Codex pour créer des méthodes de travail plus personnalisées et plus efficaces.",
-      "À moyen terme, mon projet est de continuer à développer mon activité tout en m'adaptant plus solidement à la société canadienne."
+      "Je dirige une entreprise de commerce, où je m'occupe notamment de la négociation, de la coordination avec les partenaires et des décisions importantes.",
+      "Ce travail exige de la créativité, mais aussi une grande capacité d'adaptation, car le marché évolue rapidement.",
+      "Par exemple, j'utilise certains outils d'intelligence artificielle pour mieux organiser l'information, améliorer mes méthodes de travail et gagner du temps.",
+      "À moyen terme, je souhaite continuer à développer mon activité tout en construisant un projet plus stable au Canada."
     ],
-    zh: ["我的职业经历和贸易、谈判以及企业管理有关。", "在我的工作中，我认为创造力和跟上市场变化的能力已经变得非常重要。", "现在，人工智能可以帮助企业整理思路、优化流程并节省时间。", "我已经使用 Claude 或 Codex 这类工具，来建立更定制化、更高效的工作方法。", "从中期来看，我的计划是在继续发展事业的同时，更稳固地适应加拿大社会。"]
+    zh: ["我经营一家贸易公司，主要负责谈判、与合作伙伴协调以及重要决策。", "这份工作既需要创造力，也需要很强的适应能力，因为市场变化很快。", "例如，我会使用一些人工智能工具来更好地整理信息、改进工作方法并节省时间。", "从中期来看，我希望继续发展事业，同时在加拿大建立一个更稳定的发展规划。"]
   },
   "Ville, quartier, logement": {
     fr: [
-      "J'habite dans un environnement plutôt calme, ce qui me convient bien au quotidien.",
-      "J'apprécie une ville lorsqu'elle est pratique, sûre et agréable à vivre.",
-      "Pour moi, un bon quartier doit faciliter les déplacements, les courses et les démarches importantes.",
-      "J'aime aussi avoir accès à des espaces verts, car cela permet de se détendre après une journée chargée.",
-      "En général, je cherche un équilibre entre le confort, la tranquillité et la proximité des services."
+      "J'habite dans un quartier plutôt calme, ce qui me convient bien, tout en restant assez proche des services essentiels.",
+      "Ce que j'apprécie surtout, c'est de pouvoir me déplacer facilement et de vivre dans un environnement sûr et agréable.",
+      "Par exemple, la proximité des commerces, des transports et des espaces verts rend la vie quotidienne beaucoup plus pratique.",
+      "Pour moi, un bon quartier doit offrir un équilibre entre la tranquillité, le confort et l'accès aux services."
     ],
-    zh: ["我住在一个比较安静的环境里，这很适合我的日常生活。", "我喜欢一座城市既方便、安全，又适合居住。", "对我来说，一个好的社区应该方便出行、购物和办理重要事务。", "我也喜欢附近有绿地，因为忙碌一天后可以放松。", "总体来说，我追求的是舒适、安静和服务便利之间的平衡。"]
+    zh: ["我住在一个比较安静的社区，这很适合我，同时距离基本生活服务也不算远。", "我最看重的是出行方便，以及居住环境安全舒适。", "例如，附近有商店、公共交通和绿地，会让日常生活方便很多。", "对我来说，一个好的社区应该在安静、舒适和服务便利之间取得平衡。"]
   },
   "Loisirs et personnalité": {
     fr: [
-      "Pendant mon temps libre, je préfère les activités qui me permettent de rester lucide et de mieux organiser mes idées.",
-      "J'aime lire, marcher, écouter des contenus en français et réfléchir à mes projets avec un peu de recul.",
-      "Pour moi, apprendre une langue à l'âge adulte demande surtout de la régularité, de la méthode et une vraie motivation personnelle.",
-      "Je ne cherche pas seulement à mémoriser des phrases, mais à construire progressivement une façon plus naturelle de m'exprimer.",
-      "Je dirais que je suis une personne curieuse, pragmatique et ouverte aux outils modernes quand ils peuvent réellement être utiles."
+      "Pendant mon temps libre, j'aime surtout lire, marcher et écouter des contenus en français.",
+      "Ces activités me permettent de me détendre tout en continuant à apprendre de manière régulière.",
+      "Par exemple, j'écoute souvent des émissions sur l'économie ou la technologie, puis je note quelques expressions utiles.",
+      "Je dirais que ces habitudes reflètent assez bien ma personnalité : je suis curieux, persévérant et plutôt pragmatique."
     ],
-    zh: ["空闲时，我更喜欢能让我保持清醒、整理思路的活动。", "我喜欢阅读、散步、听法语内容，也喜欢稍微拉开距离思考自己的项目。", "对我来说，成年人学语言更需要规律、方法和真正的个人动力。", "我不只是想背句子，而是逐步建立更自然的表达方式。", "我会说自己是一个好奇、务实，并且愿意使用真正有价值的新工具的人。"]
+    zh: ["空闲时，我主要喜欢阅读、散步和听法语内容。", "这些活动让我能够放松，同时保持规律学习。", "例如，我经常听经济或科技类节目，然后记下一些实用表达。", "我觉得这些习惯很能体现我的性格：我好奇、坚持，而且比较务实。"]
   },
   "Pourquoi le Canada / le français": {
     fr: [
-      "J'apprends le français parce que mon projet au Canada est sérieux et qu'il demande une vraie capacité d'adaptation.",
-      "Pour être honnête, le français a aussi une valeur pratique dans mon parcours d'immigration.",
-      "Mais je préfère le voir de manière plus large : c'est une façon de mieux comprendre la société dans laquelle je veux vivre.",
-      "Dans un pays où le bilinguisme et l'intégration culturelle comptent beaucoup, il me semble raisonnable de m'adapter à cette réalité.",
-      "Pour moi, apprendre le français n'est donc pas un simple exercice scolaire, mais une décision stratégique et personnelle."
+      "J'apprends le français parce que je veux mieux communiquer et construire un projet durable au Canada.",
+      "Bien sûr, cette langue a aussi une valeur pratique dans mon parcours d'immigration, mais ma motivation ne se limite pas à un examen.",
+      "Le français me permet de mieux comprendre la société dans laquelle je vis et de devenir plus autonome au quotidien.",
+      "Même si les progrès demandent des efforts réguliers, mon objectif est de pouvoir m'exprimer spontanément dans ma vie personnelle et professionnelle."
     ],
-    zh: ["我学习法语，是因为我在加拿大的规划是认真的，也需要真正的适应能力。", "坦白说，法语在我的移民路径中也有实际价值。", "但我更愿意从更大的角度看它：这是理解我想生活的社会的一种方式。", "在一个双语和文化融入都很重要的国家，我认为顺应这个现实是合理的。", "所以对我来说，学法语不是简单的学校练习，而是一个战略性和个人性的决定。"]
+    zh: ["我学习法语，是因为我想更好地沟通，并在加拿大建立长期的发展规划。", "当然，法语在我的移民过程中也有实际价值，但我的动力不只是一场考试。", "法语能让我更好地理解我所生活的社会，并在日常生活中更加独立。", "虽然进步需要持续努力，但我的目标是在个人和职业生活中都能自然地表达。"]
   },
   "Réponses courtes prêtes à sortir": {
     fr: [
-      "Je préfère travailler avec des personnes fiables, lorsque les responsabilités sont claires et que la communication reste directe.",
-      "Je suis quelqu'un de persévérant, car dans les affaires comme dans l'apprentissage, les résultats viennent rarement immédiatement.",
-      "Le week-end, j'essaie de trouver un équilibre entre le repos, la famille, la réflexion et quelques tâches importantes.",
-      "Si je devais choisir une qualité essentielle, je dirais l'adaptabilité.",
-      "Dans le commerce comme dans un nouveau pays, savoir s'adapter permet de mieux comprendre les situations et de réagir avec plus de calme."
+      "Je préfère travailler en équipe lorsque les responsabilités sont claires, car une communication directe permet d'avancer plus efficacement, même si je travaille seul quand j'ai besoin de concentration.",
+      "Je me décrirais comme quelqu'un de persévérant et de pragmatique, car dans les affaires comme dans l'apprentissage, j'accepte de progresser étape par étape.",
+      "Le week-end, j'essaie de trouver un équilibre entre le repos, la famille et quelques activités utiles, notamment la marche et l'apprentissage du français.",
+      "Si je devais choisir une qualité essentielle, je dirais l'adaptabilité, parce qu'elle permet de mieux réagir aux changements, aussi bien dans le commerce que dans un nouveau pays."
     ],
-    zh: ["我更喜欢和可靠的人合作，前提是责任清楚、沟通直接。", "我是比较坚持的人，因为无论做生意还是学习，结果都很少立刻出现。", "周末我会努力在休息、家庭、思考和一些重要事务之间找到平衡。", "如果要选择一个核心品质，我会说是适应能力。", "无论在贸易中，还是在一个新的国家，懂得适应都能让人更好理解情况，也更冷静地回应。"]
+    zh: ["如果职责清楚，我更喜欢团队合作，因为直接沟通能让工作推进得更高效；不过需要专注时，我也会独立工作。", "我会形容自己是一个坚持而务实的人，因为无论做生意还是学习，我都能接受一步一步地进步。", "周末我会在休息、家庭和一些有益活动之间寻找平衡，尤其是散步和学习法语。", "如果要选择一种核心品质，我会说是适应能力，因为无论在贸易中还是来到一个新国家，它都能让人更好地应对变化。"]
   },
   "礼貌进入情境": {
     fr: [
@@ -3461,6 +3475,10 @@ function sentencePracticeKey(cardIndex, sentenceIndex, level = activeLevel) {
   return `tcf_sentence_enabled_${level}_${cardIndex}_${sentenceIndex}`;
 }
 
+function teacherQuestionPracticeKey(cardIndex, questionIndex, level = activeLevel) {
+  return `tcf_teacher_question_enabled_${level}_${cardIndex}_${questionIndex}`;
+}
+
 function typingPracticeKey(cardIndex, level = activeLevel) {
   return `tcf_typing_practice_${level}_${cardIndex}`;
 }
@@ -3489,9 +3507,28 @@ function setSentenceEnabled(cardIndex, sentenceIndex, enabled, level = activeLev
   localStorage.setItem(sentencePracticeKey(cardIndex, sentenceIndex, level), enabled ? "1" : "0");
 }
 
-function allSentencesEnabled(content, cardIndex, level = activeLevel) {
+function isTeacherQuestionEnabled(cardIndex, questionIndex, level = activeLevel) {
+  return localStorage.getItem(teacherQuestionPracticeKey(cardIndex, questionIndex, level)) !== "0";
+}
+
+function setTeacherQuestionEnabled(cardIndex, questionIndex, enabled, level = activeLevel) {
+  localStorage.setItem(teacherQuestionPracticeKey(cardIndex, questionIndex, level), enabled ? "1" : "0");
+}
+
+function allCardAudioEnabled(item, content, cardIndex, level = activeLevel) {
   const lines = splitFrench(content.fr);
-  return lines.length > 0 && lines.every((_, sentenceIndex) => isSentenceEnabled(cardIndex, sentenceIndex, level));
+  const sentencesEnabled = lines.length > 0 && lines.every((_, sentenceIndex) => isSentenceEnabled(cardIndex, sentenceIndex, level));
+  const questions = item.type === "tache1" ? (tache1CardQuestions[item.title] || []) : [];
+  const questionsEnabled = questions.every((_, questionIndex) => isTeacherQuestionEnabled(cardIndex, questionIndex, level));
+  return sentencesEnabled && questionsEnabled;
+}
+
+function syncCardSelectionButton(cardIndex) {
+  const item = templates[cardIndex];
+  const level = cardLevel(cardIndex);
+  const content = variantFor(item, level);
+  const button = cardsEl.querySelector(`[data-toggle-sentences="${cardIndex}"]`);
+  if (button) button.textContent = allCardAudioEnabled(item, content, cardIndex, level) ? "全不选" : "全选";
 }
 
 function sentenceStage(cardIndex, sentenceIndex, level = activeLevel) {
@@ -3564,10 +3601,16 @@ function renderBilingual(item, content, cardIndex, level = cardLevel(cardIndex))
     const stageClass = stage === "mastered" ? " is-mastered" : stage === "recite" ? " is-reciting" : "";
     const sentenceId = `sentence-${level}-${cardIndex}-${index}`;
     const question = questions.length === 1 ? (index === 0 ? questions[0] : null) : questions[index];
-    const questionHtml = question ? `<div class="embedded-question" data-teacher-question-card="${cardIndex}" data-teacher-question-index="${index}">
-      <div class="embedded-question-head"><span>老师问 · L'examinateur</span><button type="button" data-play-teacher-question="${cardIndex}" data-question-index="${index}">▶ 播放问句</button></div>
-      <div class="embedded-question-fr" lang="fr">${escapeHtml(question.fr)}</div>
-      <div class="embedded-question-zh">${escapeHtml(question.zh)}</div>
+    const questionEnabled = question ? isTeacherQuestionEnabled(cardIndex, index, level) : false;
+    const questionId = `teacher-question-${level}-${cardIndex}-${index}`;
+    const questionHtml = question ? `<div class="sentence-pair embedded-question${questionEnabled ? "" : " is-muted"}" data-teacher-question-card="${cardIndex}" data-teacher-question-index="${index}">
+      <input id="${questionId}" class="sentence-check" type="checkbox" data-teacher-card="${cardIndex}" data-question-index="${index}" ${questionEnabled ? "checked" : ""}>
+      <label class="sentence-body" for="${questionId}">
+        <div class="embedded-question-head">老师问 · L'examinateur</div>
+        <div class="embedded-question-fr" lang="fr">${escapeHtml(question.fr)}</div>
+        <div class="embedded-question-zh">${escapeHtml(question.zh)}</div>
+      </label>
+      <button class="teacher-play" type="button" data-play-teacher-question="${cardIndex}" data-question-index="${index}" aria-label="播放老师问句">▶ 问句</button>
     </div>` : "";
     return `${questionHtml}<div class="sentence-pair${muted}${stageClass}" data-sentence-pair-card="${cardIndex}" data-sentence-pair-index="${index}">
       <input id="${sentenceId}" class="sentence-check" type="checkbox" data-sentence-card="${cardIndex}" data-sentence-index="${index}" ${checked}>
@@ -4586,8 +4629,9 @@ function renderCards(options = {}) {
       <h2>${escapeHtml(displayTitle)}</h2>
       <p class="cn">${escapeHtml(displayCn)}</p>
       ${item.type === "tache1" ? `<div class="tache1-material-note"><strong>使用方法：</strong>${isB2ShortIntroduction ? "下面4句就是本题主答案，可完整说完；然后停下来等老师追问。" : "这是扩展表达素材，不是一次性完整答案。老师问一个问题时，只挑与当前问题直接相关的2—4句回答。"}</div>` : ""}
+      ${item.type === "tache1" && level === "b2" && tache1B2KeyPoints[item.title] ? `<div class="b2-key-points"><strong>回答关键点：</strong>${escapeHtml(tache1B2KeyPoints[item.title])}</div>` : ""}
       <div class="sentence-toolbar" aria-label="本卡句子选择">
-        <button type="button" data-toggle-sentences="${index}">${allSentencesEnabled(content, index, level) ? "全不选" : "全选"}</button>
+        <button type="button" data-toggle-sentences="${index}">${allCardAudioEnabled(item, content, index, level) ? "全不选" : "全选"}</button>
       </div>
       <div class="fr" id="text-${index}">${renderBilingual(item, content, index, level)}</div>
       ${renderArchivedTache1Material(item, level)}
@@ -5058,6 +5102,11 @@ function tache1QuestionForCard(cardIndex, questionIndex = 0) {
   return questions[questionIndex] || questions[0] || null;
 }
 
+function localTeacherQuestionAudioName(cardIndex, questionIndex, question) {
+  const fileName = `teacher-tache1-${String(cardIndex + 1).padStart(2, "0")}-${String(questionIndex + 1).padStart(2, "0")}-${safeFileName(question.fr)}.mp3?v=11`;
+  return `audio/b2/${fileName}`;
+}
+
 function speakBrowserTextAndWait(text) {
   return new Promise((resolve, reject) => {
     speechSynthesis.cancel();
@@ -5086,6 +5135,19 @@ async function playTeacherQuestion(cardIndex, questionIndex = 0, options = {}) {
   target.onerror = null;
   const questionEl = cardsEl.querySelector(`[data-teacher-question-card="${cardIndex}"][data-teacher-question-index="${questionIndex}"]`);
   if (questionEl) questionEl.scrollIntoView({ behavior: "smooth", block: "center" });
+  try {
+    target.src = localTeacherQuestionAudioName(cardIndex, questionIndex, question);
+    applyPlaybackRate(target);
+    await new Promise((resolve, reject) => {
+      target.onended = resolve;
+      target.onerror = () => reject(new Error("本地老师问句音频不可用"));
+      target.play().catch(reject);
+    });
+    return playbackToken === activePlaybackToken;
+  } catch {
+    target.onended = null;
+    target.onerror = null;
+  }
   if (provider.value === "browser") {
     await speakBrowserTextAndWait(question.fr);
     return playbackToken === activePlaybackToken;
@@ -5233,8 +5295,14 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
 async function playCardDialogue(item, cardIndex, player = audio, level = activeLevel, options = {}) {
   const target = usePlayer(player);
   const entries = selectedSentenceEntries(item, cardIndex, level);
-  if (!entries.length) {
-    alert("这张卡片的句子都取消勾选了。请至少勾选一句再朗读。");
+  const questions = item.type === "tache1"
+    ? (tache1CardQuestions[item.title] || [])
+    : [];
+  const hasEnabledQuestion = questions.some((_, questionIndex) =>
+    isTeacherQuestionEnabled(cardIndex, questionIndex, level)
+  );
+  if (!entries.length && !hasEnabledQuestion) {
+    alert("这张卡片没有勾选任何音频。请至少勾选老师问句或一句回答。");
     return;
   }
 
@@ -5252,11 +5320,13 @@ async function playCardDialogue(item, cardIndex, player = audio, level = activeL
     }
   }
 
-  const questions = item.type === "tache1"
-    ? (tache1CardQuestions[item.title] || [])
-    : [];
   const segments = questions.length > 1
-    ? entries.map(entry => ({ questionIndex: entry.index, entries: [entry] }))
+    ? questions.map((_, questionIndex) => ({
+        questionIndex,
+        entries: entries.filter(entry => entry.index === questionIndex)
+      })).filter(segment =>
+        segment.entries.length || isTeacherQuestionEnabled(cardIndex, segment.questionIndex, level)
+      )
     : [{ questionIndex: 0, entries }];
 
   const finishCycle = () => {
@@ -5281,12 +5351,16 @@ async function playCardDialogue(item, cardIndex, player = audio, level = activeL
     }
     const segment = segments[segmentIndex];
     const question = tache1QuestionForCard(cardIndex, segment.questionIndex);
-    if (question) {
+    if (question && isTeacherQuestionEnabled(cardIndex, segment.questionIndex, level)) {
       const completed = await playTeacherQuestion(cardIndex, segment.questionIndex, {
         keepControls: true,
         playbackToken
       });
       if (!completed || playbackToken !== activePlaybackToken) return;
+    }
+    if (!segment.entries.length) {
+      playSegment(segmentIndex + 1);
+      return;
     }
     await speakItem(item, cardIndex, target, level, {
       entriesOverride: segment.entries,
@@ -5401,10 +5475,14 @@ cardsEl.addEventListener("click", async event => {
     const cardIndex = Number(selectSentencesBtn.dataset.toggleSentences);
     const scrollAnchor = captureCardScrollAnchor(cardIndex);
     const level = cardLevel(cardIndex);
-    const content = variantFor(templates[cardIndex], level);
-    const checked = !allSentencesEnabled(content, cardIndex, level);
+    const item = templates[cardIndex];
+    const content = variantFor(item, level);
+    const checked = !allCardAudioEnabled(item, content, cardIndex, level);
     splitFrench(content.fr).forEach((_, sentenceIndex) => {
       setSentenceEnabled(cardIndex, sentenceIndex, checked, level);
+    });
+    (tache1CardQuestions[item.title] || []).forEach((_, questionIndex) => {
+      setTeacherQuestionEnabled(cardIndex, questionIndex, checked, level);
     });
     if (activeLoopButton || activeNextLoopButton) {
       activePlaybackToken += 1;
@@ -5526,12 +5604,27 @@ cardsEl.addEventListener("change", event => {
     window.scrollTo({ top, left: 0 });
     return;
   }
+  const teacherBox = event.target.closest("[data-teacher-card]");
+  if (teacherBox) {
+    const cardIndex = Number(teacherBox.dataset.teacherCard);
+    const questionIndex = Number(teacherBox.dataset.questionIndex);
+    setTeacherQuestionEnabled(cardIndex, questionIndex, teacherBox.checked, cardLevel(cardIndex));
+    teacherBox.closest(".embedded-question")?.classList.toggle("is-muted", !teacherBox.checked);
+    syncCardSelectionButton(cardIndex);
+    if (activeLoopButton) {
+      activePlaybackToken += 1;
+      if (activePlayer) activePlayer.pause();
+      stopLoopUi();
+    }
+    return;
+  }
   const box = event.target.closest("[data-sentence-card]");
   if (!box) return;
   const cardIndex = Number(box.dataset.sentenceCard);
   const sentenceIndex = Number(box.dataset.sentenceIndex);
   setSentenceEnabled(cardIndex, sentenceIndex, box.checked, cardLevel(cardIndex));
   box.closest(".sentence-pair")?.classList.toggle("is-muted", !box.checked);
+  syncCardSelectionButton(cardIndex);
   if (activeLoopButton) {
     activePlaybackToken += 1;
     if (activePlayer) activePlayer.pause();
