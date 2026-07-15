@@ -673,12 +673,43 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   font-size: 12px;
   font-weight: 850;
 }
+.dialogue-step-label {
+  margin: 10px 0 5px;
+  color: #7a6751;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: .03em;
+}
 .dialogue-question {
   font-size: clamp(20px, 2.4vw, 28px);
   line-height: 1.35;
   color: #173824;
 }
 .dialogue-translation { margin-top: 7px; color: var(--muted); font-size: 14px; }
+.dialogue-support-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 14px;
+}
+.dialogue-support-card {
+  padding: 13px 14px;
+  border: 1px solid #d8e3d9;
+  border-radius: 11px;
+  background: rgba(255,255,255,.78);
+}
+.dialogue-support-title {
+  margin-bottom: 6px;
+  color: #4d7058;
+  font-size: 12px;
+  font-weight: 850;
+}
+.dialogue-support-value {
+  color: #263d2e;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.dialogue-support-value[lang="fr"] { font-size: 16px; }
 .dialogue-actions {
   display: flex;
   flex-wrap: wrap;
@@ -1329,6 +1360,7 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   .dialogue-lab-head { display: block; padding: 17px 16px 14px; }
   .dialogue-topic-wrap { margin-top: 14px; min-width: 0; }
   .dialogue-lab-body { padding: 16px; }
+  .dialogue-support-grid { grid-template-columns: 1fr; }
   .dialogue-nav { align-items: stretch; }
   .dialogue-nav-right { flex: 1; }
   .dialogue-nav-right button { flex: 1 1 120px; }
@@ -1404,7 +1436,9 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
             <span>考官 · L'examinateur</span>
             <span id="dialogueQuestionType">开场问题</span>
           </div>
+          <div class="dialogue-step-label">① 他读什么 · 法语原问句</div>
           <div class="dialogue-question" id="dialogueQuestion" lang="fr"></div>
+          <div class="dialogue-step-label">② 是什么意思 · 中文理解</div>
           <div class="dialogue-translation" id="dialogueTranslation"></div>
           <div class="dialogue-actions">
             <button type="button" class="primary" id="dialoguePlay">▶ 播放老师问句</button>
@@ -1413,6 +1447,20 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
             <span class="dialogue-timer" id="dialogueTimer" aria-live="polite">准备好就开口</span>
           </div>
           <audio class="dialogue-recording" id="dialogueRecording" controls preload="metadata"></audio>
+        </div>
+        <div class="dialogue-support-grid">
+          <div class="dialogue-support-card">
+            <div class="dialogue-support-title">先抓关键词</div>
+            <div class="dialogue-support-value" id="dialogueKeyword"></div>
+          </div>
+          <div class="dialogue-support-card">
+            <div class="dialogue-support-title">③ 我如何接话</div>
+            <div class="dialogue-support-value" id="dialogueStarter" lang="fr"></div>
+          </div>
+          <div class="dialogue-support-card">
+            <div class="dialogue-support-title">④ 本题万能公式</div>
+            <div class="dialogue-support-value" id="dialogueFormula"></div>
+          </div>
         </div>
         <div class="dialogue-coach" id="dialogueCoach"></div>
         <div class="dialogue-answer" id="dialogueAnswer" hidden>
@@ -1423,9 +1471,10 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
         <div class="dialogue-nav">
           <button type="button" id="dialoguePrev">← 上一问</button>
           <div class="dialogue-nav-right">
-            <button type="button" id="dialogueRandom">随机换一组</button>
+            <button type="button" id="dialogueRandom">换主题</button>
+            <button type="button" id="dialogueDiverge">临时发散</button>
             <button type="button" id="dialogueReveal">查看参考回答</button>
-            <button type="button" class="primary" id="dialogueNext">下一问 →</button>
+            <button type="button" class="primary" id="dialogueNext">继续追问 →</button>
           </div>
         </div>
         <audio id="dialogueQuestionAudio" preload="metadata"></audio>
@@ -2083,6 +2132,137 @@ const tache1Dialogues = [
         answerZh: "这个计划很重要，因为语言能促进沟通和融入。法语进步也会让我更加独立和自信。"
       }
     ]
+  }
+];
+
+const tache1DivergentQuestions = [
+  {
+    theme: "自我介绍", type: "临时发散 · 个性",
+    question: "Vous êtes plutôt une personne calme ou dynamique ?",
+    zh: "您是比较沉稳的人，还是比较有活力的人？",
+    coach: "先明确选择，再说明在什么情况下会表现出这个特点。",
+    answer: "Je suis plutôt une personne calme, surtout lorsque je dois prendre une décision. Cela ne m'empêche pas d'être dynamique quand un projet demande de l'énergie.",
+    answerZh: "我属于比较沉稳的人，尤其是在需要作决定时。不过，当一个项目需要投入精力时，我也会很有行动力。"
+  },
+  {
+    theme: "自我介绍", type: "临时发散 · 经历",
+    question: "De quelle réussite personnelle êtes-vous le plus fier ?",
+    zh: "您最为哪一项个人成就感到自豪？",
+    coach: "选择一件容易解释的小事，说结果以及它为什么重要。",
+    answer: "Je suis fier d'avoir construit progressivement mon projet professionnel. Cette expérience m'a appris à être patient, responsable et adaptable.",
+    answerZh: "我为自己逐步建立职业项目感到自豪。这段经历让我学会了耐心、责任感和适应能力。"
+  },
+  {
+    theme: "工作与经历", type: "临时发散 · 变化",
+    question: "Avez-vous déjà pensé à changer de métier ?",
+    zh: "您是否考虑过换职业？",
+    coach: "可以回答是或否，再说明条件和原因，不必讲很长。",
+    answer: "Oui, j'y ai déjà pensé, car il est important de rester ouvert aux nouvelles possibilités. Cependant, je préfère un changement progressif et bien préparé.",
+    answerZh: "是的，我考虑过，因为对新的可能性保持开放很重要。不过，我更喜欢循序渐进、准备充分的改变。"
+  },
+  {
+    theme: "工作与经历", type: "临时发散 · 问题处理",
+    question: "Que faites-vous lorsqu'un problème imprévu arrive au travail ?",
+    zh: "工作中突然出现问题时，您会怎么做？",
+    coach: "按顺序说：先了解情况，再决定优先事项，最后沟通解决。",
+    answer: "Je commence par comprendre la situation et identifier la priorité. Ensuite, je parle avec les personnes concernées afin de trouver une solution concrète.",
+    answerZh: "我会先了解情况并确定优先事项，然后与相关人员沟通，寻找具体的解决方案。"
+  },
+  {
+    theme: "法语学习", type: "临时发散 · 学习偏好",
+    question: "Préférez-vous apprendre le français seul ou avec d'autres personnes ?",
+    zh: "您更喜欢独自学习法语，还是和别人一起学习？",
+    coach: "明确偏好，但可以补充另一种方式的优点。",
+    answer: "Je préfère combiner les deux. Seul, je peux travailler à mon rythme, mais avec d'autres personnes, je développe davantage ma spontanéité.",
+    answerZh: "我更喜欢结合两种方式。独自学习时可以按照自己的节奏，和别人一起时则能更好地训练即时表达。"
+  },
+  {
+    theme: "法语学习", type: "临时发散 · 使用场景",
+    question: "Dans quelle situation aimeriez-vous parler français avec plus d'aisance ?",
+    zh: "您希望在哪种情况下更自如地说法语？",
+    coach: "说一个真实场景，再说明它对你的作用。",
+    answer: "J'aimerais parler avec plus d'aisance dans les situations professionnelles. Cela me permettrait de mieux expliquer mes idées et de communiquer avec davantage de confiance.",
+    answerZh: "我希望在工作场景中更自如地说法语。这样我能更好地解释自己的想法，也能更有信心地交流。"
+  },
+  {
+    theme: "日常生活", type: "临时发散 · 作息",
+    question: "Êtes-vous plutôt du matin ou du soir ?",
+    zh: "您更喜欢早上活动还是晚上活动？",
+    coach: "先选择，再用一个日常习惯证明。",
+    answer: "Je suis plutôt du matin, car je me concentre mieux au début de la journée. J'essaie donc de traiter les tâches importantes assez tôt.",
+    answerZh: "我更喜欢早上，因为一天开始时我的注意力更好，所以我会尽量较早处理重要事情。"
+  },
+  {
+    theme: "日常生活", type: "临时发散 · 家务",
+    question: "Quelle tâche quotidienne aimez-vous le moins ?",
+    zh: "您最不喜欢哪一项日常事务？",
+    coach: "说一项普通事务，解释原因，再说你如何处理。",
+    answer: "J'aime moins les tâches répétitives, parce qu'elles prennent du temps. Pour les gérer, j'essaie de les planifier et de les terminer sans les repousser.",
+    answerZh: "我不太喜欢重复性的事务，因为它们很花时间。为了处理好，我会尽量提前安排，不把它们拖延。"
+  },
+  {
+    theme: "周末与爱好", type: "临时发散 · 新爱好",
+    question: "Y a-t-il une nouvelle activité que vous aimeriez essayer ?",
+    zh: "有没有一项您想尝试的新活动？",
+    coach: "说活动、原因以及准备什么时候尝试。",
+    answer: "J'aimerais essayer une activité qui me permette de rencontrer davantage de francophones. Ce serait à la fois agréable et utile pour pratiquer la langue.",
+    answerZh: "我想尝试一种能让我认识更多法语使用者的活动。这样既有趣，也有助于练习语言。"
+  },
+  {
+    theme: "周末与爱好", type: "临时发散 · 社交",
+    question: "Avec qui passez-vous généralement votre temps libre ?",
+    zh: "您通常和谁一起度过空闲时间？",
+    coach: "直接说人，再补充通常一起做什么。",
+    answer: "Je passe généralement mon temps libre avec ma famille. Nous aimons partager un repas, discuter ou découvrir un nouvel endroit.",
+    answerZh: "我通常和家人一起度过空闲时间。我们喜欢一起吃饭、聊天或探索一个新地方。"
+  },
+  {
+    theme: "家庭", type: "临时发散 · 平衡",
+    question: "Est-il facile de concilier le travail et la vie de famille ?",
+    zh: "兼顾工作和家庭生活容易吗？",
+    coach: "先承认现实，再说一种保持平衡的方法。",
+    answer: "Ce n'est pas toujours facile, surtout pendant les périodes chargées. Pour garder un équilibre, j'essaie de bien organiser mes priorités et de réserver du temps à ma famille.",
+    answerZh: "这并不总是容易，尤其是在忙碌时期。为了保持平衡，我会安排好优先事项，并为家庭留出时间。"
+  },
+  {
+    theme: "家庭", type: "临时发散 · 影响",
+    question: "Quelle personne vous a beaucoup influencé dans votre vie ?",
+    zh: "生活中哪一个人对您影响很大？",
+    coach: "说人物关系、影响你的品质以及一个结果。",
+    answer: "Une personne de ma famille m'a beaucoup influencé par son sens des responsabilités. Grâce à elle, j'ai appris à rester sérieux et persévérant face aux difficultés.",
+    answerZh: "家里有一个人以强烈的责任感影响了我。受其影响，我学会了在困难面前保持认真和坚持。"
+  },
+  {
+    theme: "加拿大生活", type: "临时发散 · 探索",
+    question: "Quel endroit du Canada aimeriez-vous découvrir ?",
+    zh: "您想探索加拿大的哪个地方？",
+    coach: "说地点或地区类型，再解释吸引你的原因。",
+    answer: "J'aimerais découvrir davantage de régions naturelles du Canada. Les paysages sont très variés, et ce serait une bonne occasion de mieux connaître le pays.",
+    answerZh: "我想更多地探索加拿大的自然地区。这里的景观非常多样，这也是更好了解这个国家的机会。"
+  },
+  {
+    theme: "加拿大生活", type: "临时发散 · 气候",
+    question: "Comment trouvez-vous l'hiver au Canada ?",
+    zh: "您觉得加拿大的冬天怎么样？",
+    coach: "说感受、困难以及你的适应方法。",
+    answer: "L'hiver est assez long et parfois difficile, mais on s'y adapte progressivement. Je pense qu'une bonne organisation et des activités adaptées rendent cette saison plus agréable.",
+    answerZh: "冬天比较漫长，有时也很难适应，但人会逐渐习惯。我认为做好安排并选择合适的活动，会让冬季更愉快。"
+  },
+  {
+    theme: "未来计划", type: "临时发散 · 调整",
+    question: "Que ferez-vous si votre projet ne se passe pas comme prévu ?",
+    zh: "如果您的计划没有按预期发展，您会怎么办？",
+    coach: "表现适应能力：分析原因、调整方法、继续前进。",
+    answer: "Je commencerai par analyser les raisons du problème. Ensuite, j'adapterai mon plan, car un objectif important demande parfois plus de temps que prévu.",
+    answerZh: "我会先分析问题的原因，然后调整计划，因为重要目标有时需要比预期更多的时间。"
+  },
+  {
+    theme: "未来计划", type: "临时发散 · 梦想",
+    question: "Avez-vous un rêve que vous aimeriez réaliser un jour ?",
+    zh: "您有没有一个希望有一天实现的梦想？",
+    coach: "说一个适度具体的梦想，再说明它为什么有意义。",
+    answer: "J'aimerais construire une vie stable tout en continuant à apprendre et à découvrir de nouvelles choses. Pour moi, réussir signifie progresser sans perdre l'équilibre personnel.",
+    answerZh: "我希望建立稳定的生活，同时继续学习和探索新事物。对我来说，成功意味着在不断进步的同时不失去个人生活的平衡。"
   }
 ];
 
@@ -2835,6 +3015,9 @@ const dialogueQuestionType = document.querySelector("#dialogueQuestionType");
 const dialogueQuestion = document.querySelector("#dialogueQuestion");
 const dialogueTranslation = document.querySelector("#dialogueTranslation");
 const dialogueCoach = document.querySelector("#dialogueCoach");
+const dialogueKeyword = document.querySelector("#dialogueKeyword");
+const dialogueStarter = document.querySelector("#dialogueStarter");
+const dialogueFormula = document.querySelector("#dialogueFormula");
 const dialogueAnswer = document.querySelector("#dialogueAnswer");
 const dialogueAnswerFr = document.querySelector("#dialogueAnswerFr");
 const dialogueAnswerZh = document.querySelector("#dialogueAnswerZh");
@@ -2846,6 +3029,7 @@ const dialogueRecording = document.querySelector("#dialogueRecording");
 const dialogueQuestionAudio = document.querySelector("#dialogueQuestionAudio");
 const dialoguePrev = document.querySelector("#dialoguePrev");
 const dialogueRandom = document.querySelector("#dialogueRandom");
+const dialogueDiverge = document.querySelector("#dialogueDiverge");
 const dialogueReveal = document.querySelector("#dialogueReveal");
 const dialogueNext = document.querySelector("#dialogueNext");
 levelSelect.value = activeLevel;
@@ -2861,9 +3045,60 @@ let dialogueRecorderStream = null;
 let dialogueRecorderChunks = [];
 let dialogueRecordingUrl = "";
 let dialogueDiscardRecording = false;
+let dialogueDivergentRound = null;
+let lastDivergentQuestion = "";
 
 function currentDialogueRound() {
-  return tache1Dialogues[dialogueThemeIndex].rounds[dialogueRoundIndex];
+  return dialogueDivergentRound || tache1Dialogues[dialogueThemeIndex].rounds[dialogueRoundIndex];
+}
+
+function dialogueQuestionSupport(question) {
+  const q = question.trim().toLowerCase();
+  if (q.startsWith("pourquoi")) return {
+    keyword: "Pourquoi = 为什么：必须给出原因",
+    starter: "La raison principale, c'est que…",
+    formula: "直接原因 → 具体场景 → 带来的好处"
+  };
+  if (q.startsWith("depuis") || q.includes("depuis combien")) return {
+    keyword: "Depuis combien de temps = 多久了",
+    starter: "Cela fait… que… / Je… depuis…",
+    formula: "时间 → 当初的变化 → 现在的感受"
+  };
+  if (q.startsWith("comment")) return {
+    keyword: "Comment = 怎么样 / 如何",
+    starter: "En général, je…",
+    formula: "总体做法 → 一个具体步骤 → 结果"
+  };
+  if (q.includes("préférez-vous") || q.startsWith("êtes-vous plutôt")) return {
+    keyword: "Préférez-vous / plutôt = 偏好或选择",
+    starter: "Personnellement, je préfère…",
+    formula: "明确选择 → 说明原因 → 举一个日常例子"
+  };
+  if (q.startsWith("avez-vous") || q.startsWith("y a-t-il") || q.startsWith("est-il")) return {
+    keyword: "封闭式问句：先回答 Oui / Non / Pas toujours",
+    starter: "Oui, … / Non, … / Pas toujours, …",
+    formula: "先给结论 → 解释原因 → 补充条件"
+  };
+  if (q.startsWith("quel") || q.startsWith("quelle") || q.startsWith("quels") || q.startsWith("qu'est-ce")) return {
+    keyword: "Quel / Quelle / Qu'est-ce que = 什么 / 哪一个",
+    starter: "Je dirais que… / Pour moi, c'est…",
+    formula: "直接点名 → 解释原因 → 说明影响"
+  };
+  if (q.startsWith("que faites-vous") || q.startsWith("à quoi")) return {
+    keyword: "Que faites-vous = 您做什么",
+    starter: "En général, je… / Dans la vie, je…",
+    formula: "直接回答 → 两个具体细节 → 简短感受"
+  };
+  if (q.startsWith("pouvez-vous") || q.startsWith("parlez-moi")) return {
+    keyword: "Pouvez-vous / Parlez-moi = 请介绍或描述",
+    starter: "Bien sûr. Je…",
+    formula: "身份或事实 → 两个相关细节 → 当前目标"
+  };
+  return {
+    keyword: "先抓疑问词和主题名词，再决定回答方向",
+    starter: "Pour moi… / Je dirais que…",
+    formula: "直接回答 → 具体信息 → 原因或感受 → 停下来"
+  };
 }
 
 function resetDialogueMedia() {
@@ -2895,29 +3130,44 @@ function resetDialogueMedia() {
 
 function renderDialogue() {
   const set = tache1Dialogues[dialogueThemeIndex];
-  const round = set.rounds[dialogueRoundIndex];
+  const round = currentDialogueRound();
+  const support = dialogueQuestionSupport(round.question);
   dialogueTopic.innerHTML = tache1Dialogues.map((item, index) =>
     `<option value="${index}" ${index === dialogueThemeIndex ? "selected" : ""}>${escapeHtml(item.theme)}</option>`
   ).join("");
-  dialogueProgress.innerHTML = set.rounds.map((_, index) =>
-    `<span class="${index === dialogueRoundIndex ? "active" : ""}" aria-hidden="true"></span>`
-  ).join("") + `<div class="dialogue-progress-label">第 ${dialogueRoundIndex + 1} 问 / 共 ${set.rounds.length} 问</div>`;
+  dialogueProgress.innerHTML = dialogueDivergentRound
+    ? `<span class="active" aria-hidden="true"></span><div class="dialogue-progress-label">临时发散题 · ${escapeHtml(round.theme)}</div>`
+    : set.rounds.map((_, index) =>
+      `<span class="${index === dialogueRoundIndex ? "active" : ""}" aria-hidden="true"></span>`
+    ).join("") + `<div class="dialogue-progress-label">主线第 ${dialogueRoundIndex + 1} 问 / 共 ${set.rounds.length} 问</div>`;
   dialogueQuestionType.textContent = round.type;
   dialogueQuestion.textContent = round.question;
   dialogueTranslation.textContent = round.zh;
+  dialogueKeyword.textContent = support.keyword;
+  dialogueStarter.textContent = support.starter;
+  dialogueFormula.textContent = support.formula;
   dialogueCoach.innerHTML = `<strong>回答思路：</strong>${escapeHtml(round.coach)}`;
   dialogueAnswerFr.textContent = round.answer;
   dialogueAnswerZh.textContent = round.answerZh;
   dialogueAnswer.hidden = true;
   dialogueReveal.textContent = "查看参考回答";
-  dialoguePrev.disabled = dialogueRoundIndex === 0;
-  dialogueNext.textContent = dialogueRoundIndex === set.rounds.length - 1 ? "下一组 →" : "下一问 →";
+  dialoguePrev.disabled = !dialogueDivergentRound && dialogueRoundIndex === 0;
+  dialogueNext.textContent = dialogueDivergentRound
+    ? "返回主线追问 →"
+    : dialogueRoundIndex === set.rounds.length - 1 ? "进入下一主题 →" : "继续追问 →";
   localStorage.setItem("tcf_dialogue_theme", String(dialogueThemeIndex));
 }
 
 function moveDialogue(direction) {
   resetDialogueMedia();
   const rounds = tache1Dialogues[dialogueThemeIndex].rounds;
+  if (dialogueDivergentRound) {
+    dialogueDivergentRound = null;
+    if (direction < 0) {
+      renderDialogue();
+      return;
+    }
+  }
   if (direction < 0) {
     dialogueRoundIndex = Math.max(0, dialogueRoundIndex - 1);
   } else if (dialogueRoundIndex < rounds.length - 1) {
@@ -5129,6 +5379,7 @@ trainingOverlay.addEventListener("click", event => {
 
 dialogueTopic.addEventListener("change", () => {
   resetDialogueMedia();
+  dialogueDivergentRound = null;
   dialogueThemeIndex = Number(dialogueTopic.value) || 0;
   dialogueRoundIndex = 0;
   renderDialogue();
@@ -5162,12 +5413,24 @@ dialoguePrev.addEventListener("click", () => moveDialogue(-1));
 dialogueNext.addEventListener("click", () => moveDialogue(1));
 dialogueRandom.addEventListener("click", () => {
   resetDialogueMedia();
+  dialogueDivergentRound = null;
   let next = dialogueThemeIndex;
   while (tache1Dialogues.length > 1 && next === dialogueThemeIndex) {
     next = Math.floor(Math.random() * tache1Dialogues.length);
   }
   dialogueThemeIndex = next;
   dialogueRoundIndex = 0;
+  renderDialogue();
+});
+dialogueDiverge.addEventListener("click", () => {
+  resetDialogueMedia();
+  const currentQuestion = currentDialogueRound().question;
+  const candidates = tache1DivergentQuestions.filter(item =>
+    item.question !== currentQuestion && item.question !== lastDivergentQuestion
+  );
+  const pool = candidates.length ? candidates : tache1DivergentQuestions;
+  dialogueDivergentRound = pool[Math.floor(Math.random() * pool.length)];
+  lastDivergentQuestion = dialogueDivergentRound.question;
   renderDialogue();
 });
 

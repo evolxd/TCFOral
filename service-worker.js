@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v50-next-card-button";
+const CACHE_NAME = "tcf-oral-v51-tache1-training-system";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
