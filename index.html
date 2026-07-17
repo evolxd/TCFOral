@@ -5206,7 +5206,7 @@ function legacyDownloadedFileName(text) {
 function localAudioName(item, cardIndex, sentence, sentenceIndex, level = activeLevel) {
   const titleSlug = legacyDownloadedFileName(item.title);
   const sentenceSlug = level === "c1" ? legacyDownloadedFileName(sentence) : safeFileName(sentence);
-  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=10`;
+  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=12`;
   return level === "c1" ? `audio/${fileName}` : `audio/${level}/${fileName}`;
 }
 

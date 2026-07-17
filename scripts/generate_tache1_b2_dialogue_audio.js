@@ -6,7 +6,9 @@ const root = path.resolve(__dirname, "..");
 const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
 const config = JSON.parse(fs.readFileSync(path.join(root, "tts_config.json"), "utf8"));
 const outDir = path.join(root, "audio", "b2");
+const manifestPath = path.join(outDir, "tache1-dialogue-audio-manifest.json");
 const ffmpeg = "C:\\Users\\evolx\\node_modules\\@ffmpeg-installer\\win32-x64\\ffmpeg.exe";
+const knownLegacyCollisions = new Set(["answer:1:2", "answer:6:3", "answer:6:4"]);
 
 const titles = [
   "Présentation personnelle élégante",
@@ -93,13 +95,50 @@ async function main() {
     const titleSlug = legacyName(title);
     drafts[title].fr.forEach((sentence, sentenceIndex) => {
       const name = `tache1-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${safeName(sentence)}.mp3`;
-      tasks.push({ text: sentence, filePath: path.join(outDir, name) });
+      tasks.push({ key: `answer:${cardIndex + 1}:${sentenceIndex + 1}`, kind: "answer", title, position: sentenceIndex + 1, text: sentence, filePath: path.join(outDir, name) });
     });
     questions[title].forEach((question, questionIndex) => {
       const name = `teacher-tache1-${String(cardIndex + 1).padStart(2, "0")}-${String(questionIndex + 1).padStart(2, "0")}-${safeName(question.fr)}.mp3`;
-      tasks.push({ text: question.fr, filePath: path.join(outDir, name) });
+      tasks.push({ key: `teacher:${cardIndex + 1}:${questionIndex + 1}`, kind: "teacher", title, position: questionIndex + 1, text: question.fr, filePath: path.join(outDir, name) });
     });
   });
+
+  if (process.argv.includes("--report")) {
+    tasks.forEach(task => {
+      const modified = fs.existsSync(task.filePath) ? fs.statSync(task.filePath).mtime.toISOString() : "MISSING";
+      console.log(`${task.kind}\t${task.title}\t${task.position}\t${modified}\t${path.basename(task.filePath)}\t${task.text}`);
+    });
+    return;
+  }
+
+  let previousManifest = null;
+  if (fs.existsSync(manifestPath)) {
+    previousManifest = JSON.parse(fs.readFileSync(manifestPath, "utf8"));
+  }
+  const previousItems = previousManifest?.items || {};
+  const needsGeneration = tasks.filter(task => {
+    if (!fs.existsSync(task.filePath)) return true;
+    if (!previousManifest) return knownLegacyCollisions.has(task.key);
+    return previousItems[path.basename(task.filePath)]?.text !== task.text;
+  });
+  console.log(`Dialogue audio: ${needsGeneration.length} to generate or repair, ${tasks.length - needsGeneration.length} verified.`);
+  for (let index = 0; index < needsGeneration.length; index += 1) {
+    const task = needsGeneration[index];
+    console.log(`[${index + 1}/${needsGeneration.length}] repair ${task.key} ${path.basename(task.filePath)}`);
+    fs.writeFileSync(task.filePath, await synthesize(task.text));
+    normalizeAudio(task.filePath);
+    await sleep(450);
+  }
+
+  const manifest = {
+    version: 1,
+    generatedAt: new Date().toISOString(),
+    items: Object.fromEntries(tasks.map(task => [path.basename(task.filePath), {
+      key: task.key,
+      text: task.text
+    }]))
+  };
+  fs.writeFileSync(manifestPath, JSON.stringify(manifest, null, 2) + "\n", "utf8");
 
   const copyArg = process.argv.indexOf("--copy-to");
   if (copyArg >= 0) {
@@ -107,17 +146,8 @@ async function main() {
     if (!destination) throw new Error("--copy-to requires a destination directory");
     fs.mkdirSync(destination, { recursive: true });
     tasks.forEach(task => fs.copyFileSync(task.filePath, path.join(destination, path.basename(task.filePath))));
-    console.log(`Copied ${tasks.length} dialogue files to ${destination}.`);
-  }
-
-  const missing = tasks.filter(task => !fs.existsSync(task.filePath));
-  console.log(`Dialogue audio: ${missing.length} new, ${tasks.length - missing.length} already present.`);
-  for (let index = 0; index < missing.length; index += 1) {
-    const task = missing[index];
-    console.log(`[${index + 1}/${missing.length}] ${path.basename(task.filePath)}`);
-    fs.writeFileSync(task.filePath, await synthesize(task.text));
-    normalizeAudio(task.filePath);
-    await sleep(450);
+    fs.copyFileSync(manifestPath, path.join(destination, path.basename(manifestPath)));
+    console.log(`Copied ${tasks.length} dialogue files and manifest to ${destination}.`);
   }
 }
 

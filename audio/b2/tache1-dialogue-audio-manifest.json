@@ -1,0 +1,138 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-17T02:28:17.670Z",
+  "items": {
+    "tache1-01-pra-sentation-personnelle-a-la-gante-01-bonjour-je-m-appelle-patrick-je-viens-de-chine-et-je-vis-actuell.mp3": {
+      "key": "answer:1:1",
+      "text": "Bonjour, je m'appelle Patrick, je viens de Chine et je vis actuellement au Canada."
+    },
+    "tache1-01-pra-sentation-personnelle-a-la-gante-02-sur-le-plan-professionnel-je-dirige-une-entreprise-de-commerce-c.mp3": {
+      "key": "answer:1:2",
+      "text": "Sur le plan professionnel, je dirige une entreprise de commerce, ce qui m'amène à échanger avec différents partenaires et à prendre des décisions concrètes."
+    },
+    "tache1-01-pra-sentation-personnelle-a-la-gante-03-j-apprends-le-francais-a-la-fois-pour-mieux-communiquer-au-quoti.mp3": {
+      "key": "answer:1:3",
+      "text": "J'apprends le français à la fois pour mieux communiquer au quotidien et pour m'intégrer plus durablement dans la société canadienne."
+    },
+    "tache1-01-pra-sentation-personnelle-a-la-gante-04-mon-objectif-est-de-pouvoir-m-exprimer-avec-davantage-de-precisi.mp3": {
+      "key": "answer:1:4",
+      "text": "Mon objectif est de pouvoir m'exprimer avec davantage de précision et de spontanéité, aussi bien dans ma vie personnelle que professionnelle."
+    },
+    "teacher-tache1-01-01-bonjour-pouvez-vous-vous-presenter-s-il-vous-plait.mp3": {
+      "key": "teacher:1:1",
+      "text": "Bonjour, pouvez-vous vous présenter, s'il vous plaît ?"
+    },
+    "tache1-02-a-tudes-travail-projet-01-je-dirige-une-entreprise-de-commerce-ou-je-m-occupe-notamment-de.mp3": {
+      "key": "answer:2:1",
+      "text": "Je dirige une entreprise de commerce, où je m'occupe notamment de la négociation, de la coordination avec les partenaires et des décisions importantes."
+    },
+    "tache1-02-a-tudes-travail-projet-02-ce-travail-exige-de-la-creativite-mais-aussi-une-grande-capacite.mp3": {
+      "key": "answer:2:2",
+      "text": "Ce travail exige de la créativité, mais aussi une grande capacité d'adaptation, car le marché évolue rapidement."
+    },
+    "tache1-02-a-tudes-travail-projet-03-par-exemple-j-utilise-certains-outils-d-intelligence-artificiell.mp3": {
+      "key": "answer:2:3",
+      "text": "Par exemple, j'utilise certains outils d'intelligence artificielle pour mieux organiser l'information, améliorer mes méthodes de travail et gagner du temps."
+    },
+    "tache1-02-a-tudes-travail-projet-04-a-moyen-terme-je-souhaite-continuer-a-developper-mon-activite-to.mp3": {
+      "key": "answer:2:4",
+      "text": "À moyen terme, je souhaite continuer à développer mon activité tout en construisant un projet plus stable au Canada."
+    },
+    "teacher-tache1-02-01-pouvez-vous-me-parler-de-votre-travail-et-de-vos-projets-pour-l.mp3": {
+      "key": "teacher:2:1",
+      "text": "Pouvez-vous me parler de votre travail et de vos projets pour l'avenir ?"
+    },
+    "tache1-03-ville-quartier-logement-01-j-habite-dans-un-quartier-plutot-calme-ce-qui-me-convient-bien-t.mp3": {
+      "key": "answer:3:1",
+      "text": "J'habite dans un quartier plutôt calme, ce qui me convient bien, tout en restant assez proche des services essentiels."
+    },
+    "tache1-03-ville-quartier-logement-02-ce-que-j-apprecie-surtout-c-est-de-pouvoir-me-deplacer-facilemen.mp3": {
+      "key": "answer:3:2",
+      "text": "Ce que j'apprécie surtout, c'est de pouvoir me déplacer facilement et de vivre dans un environnement sûr et agréable."
+    },
+    "tache1-03-ville-quartier-logement-03-par-exemple-la-proximite-des-commerces-des-transports-et-des-esp.mp3": {
+      "key": "answer:3:3",
+      "text": "Par exemple, la proximité des commerces, des transports et des espaces verts rend la vie quotidienne beaucoup plus pratique."
+    },
+    "tache1-03-ville-quartier-logement-04-pour-moi-un-bon-quartier-doit-offrir-un-equilibre-entre-la-tranq.mp3": {
+      "key": "answer:3:4",
+      "text": "Pour moi, un bon quartier doit offrir un équilibre entre la tranquillité, le confort et l'accès aux services."
+    },
+    "teacher-tache1-03-01-pouvez-vous-me-parler-de-l-endroit-ou-vous-habitez.mp3": {
+      "key": "teacher:3:1",
+      "text": "Pouvez-vous me parler de l'endroit où vous habitez ?"
+    },
+    "tache1-04-loisirs-et-personnalita-01-pendant-mon-temps-libre-j-aime-surtout-lire-marcher-et-ecouter-d.mp3": {
+      "key": "answer:4:1",
+      "text": "Pendant mon temps libre, j'aime surtout lire, marcher et écouter des contenus en français."
+    },
+    "tache1-04-loisirs-et-personnalita-02-ces-activites-me-permettent-de-me-detendre-tout-en-continuant-a.mp3": {
+      "key": "answer:4:2",
+      "text": "Ces activités me permettent de me détendre tout en continuant à apprendre de manière régulière."
+    },
+    "tache1-04-loisirs-et-personnalita-03-par-exemple-j-ecoute-souvent-des-emissions-sur-l-economie-ou-la.mp3": {
+      "key": "answer:4:3",
+      "text": "Par exemple, j'écoute souvent des émissions sur l'économie ou la technologie, puis je note quelques expressions utiles."
+    },
+    "tache1-04-loisirs-et-personnalita-04-je-dirais-que-ces-habitudes-refletent-assez-bien-ma-personnalite.mp3": {
+      "key": "answer:4:4",
+      "text": "Je dirais que ces habitudes reflètent assez bien ma personnalité : je suis curieux, persévérant et plutôt pragmatique."
+    },
+    "teacher-tache1-04-01-que-faites-vous-pendant-votre-temps-libre.mp3": {
+      "key": "teacher:4:1",
+      "text": "Que faites-vous pendant votre temps libre ?"
+    },
+    "tache1-05-pourquoi-le-canada-le-frana-ais-01-j-apprends-le-francais-parce-que-je-veux-mieux-communiquer-et-co.mp3": {
+      "key": "answer:5:1",
+      "text": "J'apprends le français parce que je veux mieux communiquer et construire un projet durable au Canada."
+    },
+    "tache1-05-pourquoi-le-canada-le-frana-ais-02-bien-sur-cette-langue-a-aussi-une-valeur-pratique-dans-mon-parco.mp3": {
+      "key": "answer:5:2",
+      "text": "Bien sûr, cette langue a aussi une valeur pratique dans mon parcours d'immigration, mais ma motivation ne se limite pas à un examen."
+    },
+    "tache1-05-pourquoi-le-canada-le-frana-ais-03-le-francais-me-permet-de-mieux-comprendre-la-societe-dans-laquel.mp3": {
+      "key": "answer:5:3",
+      "text": "Le français me permet de mieux comprendre la société dans laquelle je vis et de devenir plus autonome au quotidien."
+    },
+    "tache1-05-pourquoi-le-canada-le-frana-ais-04-meme-si-les-progres-demandent-des-efforts-reguliers-mon-objectif.mp3": {
+      "key": "answer:5:4",
+      "text": "Même si les progrès demandent des efforts réguliers, mon objectif est de pouvoir m'exprimer spontanément dans ma vie personnelle et professionnelle."
+    },
+    "teacher-tache1-05-01-pourquoi-apprenez-vous-le-francais.mp3": {
+      "key": "teacher:5:1",
+      "text": "Pourquoi apprenez-vous le français ?"
+    },
+    "tache1-06-ra-ponses-courtes-pra-tes-a-sortir-01-je-prefere-travailler-en-equipe-lorsque-les-responsabilites-sont.mp3": {
+      "key": "answer:6:1",
+      "text": "Je préfère travailler en équipe lorsque les responsabilités sont claires, car une communication directe permet d'avancer plus efficacement, même si je travaille seul quand j'ai besoin de concentration."
+    },
+    "tache1-06-ra-ponses-courtes-pra-tes-a-sortir-02-je-me-decrirais-comme-quelqu-un-de-perseverant-et-de-pragmatique.mp3": {
+      "key": "answer:6:2",
+      "text": "Je me décrirais comme quelqu'un de persévérant et de pragmatique, car dans les affaires comme dans l'apprentissage, j'accepte de progresser étape par étape."
+    },
+    "tache1-06-ra-ponses-courtes-pra-tes-a-sortir-03-le-week-end-j-essaie-de-trouver-un-equilibre-entre-le-repos-la-f.mp3": {
+      "key": "answer:6:3",
+      "text": "Le week-end, j'essaie de trouver un équilibre entre le repos, la famille et quelques activités utiles, notamment la marche et l'apprentissage du français."
+    },
+    "tache1-06-ra-ponses-courtes-pra-tes-a-sortir-04-si-je-devais-choisir-une-qualite-essentielle-je-dirais-l-adaptab.mp3": {
+      "key": "answer:6:4",
+      "text": "Si je devais choisir une qualité essentielle, je dirais l'adaptabilité, parce qu'elle permet de mieux réagir aux changements, aussi bien dans le commerce que dans un nouveau pays."
+    },
+    "teacher-tache1-06-01-preferez-vous-travailler-seul-ou-en-equipe.mp3": {
+      "key": "teacher:6:1",
+      "text": "Préférez-vous travailler seul ou en équipe ?"
+    },
+    "teacher-tache1-06-02-comment-vous-decririez-vous-en-quelques-mots.mp3": {
+      "key": "teacher:6:2",
+      "text": "Comment vous décririez-vous en quelques mots ?"
+    },
+    "teacher-tache1-06-03-que-faites-vous-habituellement-le-week-end.mp3": {
+      "key": "teacher:6:3",
+      "text": "Que faites-vous habituellement le week-end ?"
+    },
+    "teacher-tache1-06-04-quelle-qualite-est-importante-pour-vous.mp3": {
+      "key": "teacher:6:4",
+      "text": "Quelle qualité est importante pour vous ?"
+    }
+  }
+}
