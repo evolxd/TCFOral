@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v57-teacher-loudness";
+const CACHE_NAME = "tcf-oral-v58-examiner-typography";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",

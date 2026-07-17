@@ -355,8 +355,8 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   padding: 3px 8px;
   font-size: 12px;
 }
-.embedded-question-fr { color: #183924; font-size: 16px; font-weight: 700; line-height: 1.42; }
-.embedded-question-zh { margin-top: 2px; color: var(--muted); font-size: 13px; }
+.embedded-question-fr { color: #183924; }
+.embedded-question-zh { color: var(--muted); }
 .embedded-question.is-muted .embedded-question-fr,
 .embedded-question.is-muted .embedded-question-zh,
 .embedded-question.is-muted .embedded-question-head { color: #9aa39b; }
@@ -3607,8 +3607,8 @@ function renderBilingual(item, content, cardIndex, level = cardLevel(cardIndex))
       <input id="${questionId}" class="sentence-check" type="checkbox" data-teacher-card="${cardIndex}" data-question-index="${index}" ${questionEnabled ? "checked" : ""}>
       <label class="sentence-body" for="${questionId}">
         <div class="embedded-question-head">老师问 · L'examinateur</div>
-        <div class="embedded-question-fr" lang="fr">${escapeHtml(question.fr)}</div>
-        <div class="embedded-question-zh">${escapeHtml(question.zh)}</div>
+        <div class="sentence-fr embedded-question-fr" lang="fr">${escapeHtml(question.fr)}</div>
+        <div class="sentence-zh embedded-question-zh">${escapeHtml(question.zh)}</div>
       </label>
       <button class="teacher-play" type="button" data-play-teacher-question="${cardIndex}" data-question-index="${index}" aria-label="播放老师问句">▶ 问句</button>
     </div>` : "";
