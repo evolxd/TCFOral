@@ -75,10 +75,28 @@ async function synthesize(text) {
 
 function normalizeAudio(filePath) {
   if (!fs.existsSync(ffmpeg)) throw new Error("ffmpeg not found");
+  const analysisFilter = "loudnorm=I=-18:TP=-1.5:LRA=11:print_format=json";
+  const analysis = spawnSync(ffmpeg, [
+    "-hide_banner", "-nostats", "-i", filePath,
+    "-af", analysisFilter, "-f", "null", "NUL"
+  ], { encoding: "utf8" });
+  if (analysis.status !== 0) throw new Error(analysis.stderr || `ffmpeg analysis failed for ${filePath}`);
+  const match = analysis.stderr.match(/\{\s*"input_i"[\s\S]*?\}/);
+  if (!match) throw new Error(`Cannot read loudness measurements for ${filePath}`);
+  const measured = JSON.parse(match[0]);
+  const inputI = Number(measured.input_i);
+  const inputTp = Number(measured.input_tp);
+  if (!Number.isFinite(inputI) || !Number.isFinite(inputTp)) {
+    throw new Error(`Invalid loudness measurements for ${filePath}`);
+  }
+  const loudnessGain = -18 - inputI;
+  const peakSafeGain = -1.5 - inputTp;
+  const gainDb = Math.min(loudnessGain, peakSafeGain);
+  const normalizeFilter = `volume=${gainDb.toFixed(2)}dB`;
   const tempPath = filePath.replace(/\.mp3$/i, ".normalized.mp3");
   const result = spawnSync(ffmpeg, [
     "-hide_banner", "-loglevel", "error", "-y", "-i", filePath,
-    "-af", "loudnorm=I=-18:TP=-1.5:LRA=11",
+    "-af", normalizeFilter,
     "-ar", "44100", "-b:a", "128k", tempPath
   ], { encoding: "utf8" });
   if (result.status !== 0) throw new Error(result.stderr || `ffmpeg failed for ${filePath}`);
@@ -128,6 +146,14 @@ async function main() {
     fs.writeFileSync(task.filePath, await synthesize(task.text));
     normalizeAudio(task.filePath);
     await sleep(450);
+  }
+
+  if (process.argv.includes("--normalize-teachers")) {
+    const teacherTasks = tasks.filter(task => task.kind === "teacher");
+    teacherTasks.forEach((task, index) => {
+      console.log(`[${index + 1}/${teacherTasks.length}] normalize teacher ${path.basename(task.filePath)}`);
+      normalizeAudio(task.filePath);
+    });
   }
 
   const manifest = {

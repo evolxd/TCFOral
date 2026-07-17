@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v56-verified-dialogue-audio";
+const CACHE_NAME = "tcf-oral-v57-teacher-loudness";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
