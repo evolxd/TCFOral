@@ -5233,6 +5233,7 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
     ? options.playbackToken
     : activePlaybackToken += 1;
   const loop = Boolean(options.loop);
+  const gapBetweenEntries = loop || Boolean(options.applyGap);
   if (loop) {
     stopLoopUi();
     activeLoopButton = options.button || null;
@@ -5264,7 +5265,7 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
   };
   const playNext = () => {
     if (playbackToken !== activePlaybackToken) return;
-    if (!loop) {
+    if (!gapBetweenEntries) {
       playCurrent();
       return;
     }
@@ -5377,6 +5378,7 @@ async function playCardDialogue(item, cardIndex, player = audio, level = activeL
     await speakItem(item, cardIndex, target, level, {
       entriesOverride: segment.entries,
       keepControls: true,
+      applyGap: loop,
       playbackToken,
       onComplete: () => playSegment(segmentIndex + 1)
     });
