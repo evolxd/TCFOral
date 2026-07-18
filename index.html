@@ -5357,12 +5357,18 @@ async function playCardDialogue(item, cardIndex, player = audio, level = activeL
     }
     const segment = segments[segmentIndex];
     const question = tache1QuestionForCard(cardIndex, segment.questionIndex);
+    let playedQuestion = false;
     if (question && isTeacherQuestionEnabled(cardIndex, segment.questionIndex, level)) {
       const completed = await playTeacherQuestion(cardIndex, segment.questionIndex, {
         keepControls: true,
         playbackToken
       });
       if (!completed || playbackToken !== activePlaybackToken) return;
+      playedQuestion = true;
+    }
+    if (loop && playedQuestion && segment.entries.length) {
+      await sleep(currentLoopGapMs());
+      if (playbackToken !== activePlaybackToken) return;
     }
     if (!segment.entries.length) {
       playSegment(segmentIndex + 1);
