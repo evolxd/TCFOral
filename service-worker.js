@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v60-answer-sentence-gap";
+const CACHE_NAME = "tcf-oral-v61-card-serial-number";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",

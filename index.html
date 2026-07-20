@@ -4626,6 +4626,7 @@ function renderCards(options = {}) {
     return `
     <article class="card" id="card-${index}" data-card-index="${index}">
       <div class="meta">
+        <span class="pill card-index">第 ${index + 1}/${templates.length} 题</span>
         <span class="pill ${item.type === "tache3" ? "red" : item.type === "connecteurs" || item.type === "questions" || item.type === "variations" ? "gold" : "blue"}">${categoryLabels[item.type]}</span>
         <span class="pill">${item.theme}</span>
         <span class="pill">${content.label}</span>
