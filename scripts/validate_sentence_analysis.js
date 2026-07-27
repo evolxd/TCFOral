@@ -4,6 +4,10 @@ const vm = require("vm");
 const html = fs.readFileSync("index.html", "utf8");
 const match = html.match(/<script(?:\s[^>]*)?>([\s\S]*?)<\/script>/i);
 if (!match) throw new Error("Inline script not found.");
+const analysisPanelCss = html.match(/\.sentence-analysis-panel\s*\{([\s\S]*?)\}/);
+if (!analysisPanelCss || !/white-space:\s*normal/.test(analysisPanelCss[1])) {
+  throw new Error("Sentence analysis panels must override inherited pre-wrapped whitespace.");
+}
 
 function makeElement(selector = "") {
   return {
