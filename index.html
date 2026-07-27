@@ -504,22 +504,23 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
 }
 .sentence-analysis-panel {
   grid-column: 2 / -1;
-  margin-top: 1px;
-  padding: 6px 9px;
-  border: 1px solid #dfe8df;
-  border-radius: 9px;
-  background: #fafcf9;
+  margin-top: 0;
+  padding: 4px 0 2px;
+  border: 0;
+  border-top: 1px solid #dfe8df;
+  border-radius: 0;
+  background: transparent;
 }
 .sentence-analysis-panel[hidden] { display: none; }
 .sentence-analysis-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  column-gap: 14px;
+  column-gap: 12px;
   row-gap: 0;
 }
 .sentence-analysis-block {
   min-width: 0;
-  padding: 3px 0;
+  padding: 1px 0;
   border: 0;
   border-radius: 0;
   background: transparent;
@@ -535,12 +536,12 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
 .sentence-analysis-text {
   display: inline;
   color: #46534a;
-  font-size: 13.5px;
-  line-height: 1.45;
+  font-size: 13.25px;
+  line-height: 1.36;
 }
 .sentence-analysis-text + .sentence-analysis-text {
   display: block;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 .sentence-analysis-term {
   color: #203d2a;
@@ -548,8 +549,8 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
 }
 .sentence-analysis-suggestion {
   grid-column: 1 / -1;
-  margin-top: 1px;
-  padding-top: 4px;
+  margin-top: 0;
+  padding-top: 2px;
   border-top: 1px solid #e7dec8;
 }
 .stage-btn.is-active[data-stage-value="recite"] {
@@ -4628,18 +4629,24 @@ function grammarRuleMatches(rule, line) {
 
 function buildSentenceGrammarVisibleKeys() {
   const visible = new Set();
-  const counts = new Map();
+  const states = new Map();
+  let cardOrdinal = 0;
   ["b2", "c1"].forEach(level => {
     templates.forEach((item, cardIndex) => {
+      const shownOnCard = new Set();
       const content = variantFor(item, level);
       splitFrench(content.fr).forEach((line, sentenceIndex) => {
         sentenceGrammarRules.forEach(rule => {
           if (!grammarRuleMatches(rule, line)) return;
-          const count = counts.get(rule.id) || 0;
-          if (count < 4) visible.add(`${level}:${cardIndex}:${sentenceIndex}:${rule.id}`);
-          counts.set(rule.id, count + 1);
+          const state = states.get(rule.id) || { shown: 0, lastCard: -2 };
+          const hasCardGap = cardOrdinal - state.lastCard >= 2;
+          if (state.shown >= 5 || shownOnCard.has(rule.id) || !hasCardGap) return;
+          visible.add(`${level}:${cardIndex}:${sentenceIndex}:${rule.id}`);
+          shownOnCard.add(rule.id);
+          states.set(rule.id, { shown: state.shown + 1, lastCard: cardOrdinal });
         });
       });
+      cardOrdinal += 1;
     });
   });
   return visible;
@@ -4691,32 +4698,21 @@ function sentenceGoodPatterns(line, item) {
   const notes = [];
   sentenceGoodPatternRules.forEach(([regex, phrase, explain]) => {
     regex.lastIndex = 0;
-    if (regex.test(line) && !notes.some(note => note.phrase === phrase)) notes.push({ phrase, explain });
+    const match = regex.exec(line);
+    if (match && !notes.some(note => note.phrase === phrase)) {
+      notes.push({ phrase, explain, example: sentenceExample(line, regex) });
+    }
   });
   analyzeSentence(line, item).forEach(note => {
     if (["提问骨架", "论证骨架", "表达骨架"].includes(note.phrase)) return;
     if (!notes.some(existing => existing.phrase.toLowerCase() === note.phrase.toLowerCase())) {
-      notes.push({ phrase: note.phrase, explain: note.explain });
+      notes.push({ phrase: note.phrase, explain: note.explain, example: sentenceExample(line) });
     }
   });
-  if (!notes.length) {
-    const clean = line.replace(/[?!]+$/, "").trim();
-    const firstClause = clean.split(/[,;:]/)[0].trim();
-    const words = clean.split(/\s+/);
-    const phrase = firstClause.length >= 12 && firstClause.length <= 72
-      ? firstClause
-      : `${words.slice(0, Math.min(8, words.length)).join(" ")}${words.length > 8 ? "…" : ""}`;
-    const explain = item.type === "tache2" || item.type === "questions"
-      ? "本句没有刻意堆高级结构；价值在于问题具体、语气自然，对方容易立即回答。建议把这一小段作为整体语块学习。"
-      : item.type === "tache3" || item.type === "variations"
-        ? "本句的优势是用准确动词组织完整判断，而不是堆抽象词。可整体保留骨架，再替换主题内容。"
-        : "这是母语者会使用的自然完整表达；重点不是单个难词，而是事实、细节和评价的组合方式。";
-    notes.push({ phrase, explain });
-  }
   return notes.slice(0, 3);
 }
 
-function sentenceReplacementFormula(line, item) {
+function sentenceReplacementFormula(line) {
   if (/^À mon avis,/i.test(line)) return "À mon avis, + [判断] + car/parce que + [理由]。替换观点和理由即可迁移到教育、科技、工作、环境等话题。";
   if (/\bce qui\b/i.test(line)) return "[完整事实], ce qui + [结果/好处/困难]。ce qui 指代前面整件事。";
   if (/\btout en\b/i.test(line)) return "[主要动作] tout en + participe présent + [同时进行的动作]。";
@@ -4728,8 +4724,7 @@ function sentenceReplacementFormula(line, item) {
   if (/\bj[’']aimerais\b/i.test(line)) return "J’aimerais + [动作原形] / J’aimerais savoir si + [完整问题]。";
   if (/\b(?:car|parce que|puisque)\b/i.test(line)) return "[结论或选择], car/parce que + [具体原因]。";
   if (/\?$/.test(line)) return "[礼貌提问框架] + [具体信息] + [范围或条件] ?";
-  if (item.type === "tache3" || item.type === "variations") return "[克制立场] + [理由] + [条件/限制]；替换主题词即可迁移。";
-  return "[主语] + [准确动词] + [具体内容] + [原因、结果或目标]。";
+  return "";
 }
 
 function sentenceExamRole(line, item, sentenceIndex, sentenceCount) {
@@ -4759,8 +4754,22 @@ function sentenceImprovementSuggestion(line, level) {
   return "";
 }
 
+function sentenceExample(line, regex = null, maxLength = 92) {
+  const clean = line.trim().replace(/\s+/g, " ");
+  if (!regex) return clean.length <= maxLength ? clean : `${clean.slice(0, maxLength).replace(/\s+\S*$/, "")}…`;
+  regex.lastIndex = 0;
+  const match = regex.exec(clean);
+  if (!match) return sentenceExample(clean, null, maxLength);
+  const padding = Math.max(18, Math.floor((maxLength - match[0].length) / 2));
+  const start = Math.max(0, match.index - padding);
+  const end = Math.min(clean.length, match.index + match[0].length + padding);
+  const excerpt = clean.slice(start, end).replace(/^\S*\s+/, start ? "" : match => match).replace(/\s+\S*$/, end < clean.length ? "" : match => match).trim();
+  return `${start ? "…" : ""}${excerpt}${end < clean.length ? "…" : ""}`;
+}
+
 function renderSentenceAnalysisBlock(label, notes, extraClass = "") {
-  const safeNotes = notes.length ? notes : ["本句没有新增的高风险语法点；重点放在表达组织和自然使用。"];
+  const safeNotes = notes.filter(note => typeof note === "string" && note.trim());
+  if (!safeNotes.length) return "";
   return `<div class="sentence-analysis-block${extraClass ? ` ${extraClass}` : ""}">
     <div class="sentence-analysis-label">${escapeHtml(label)}</div>
     ${safeNotes.map(note => `<div class="sentence-analysis-text">${note}</div>`).join("")}
@@ -4769,20 +4778,21 @@ function renderSentenceAnalysisBlock(label, notes, extraClass = "") {
 
 function renderSentenceAnalysis(item, line, cardIndex, sentenceIndex, level, sentenceCount) {
   if (level !== "b2" && level !== "c1") return "";
-  const patterns = sentenceGoodPatterns(line, item).map(note => `<span class="sentence-analysis-term">${escapeHtml(note.phrase)}</span>：${escapeHtml(note.explain)}`);
+  const patterns = sentenceGoodPatterns(line, item).map(note => `<span class="sentence-analysis-term">${escapeHtml(note.phrase)}</span>：本句 « ${escapeHtml(note.example)} » 中，${escapeHtml(note.explain)}`);
   const grammar = sentenceGrammarNotes(line, cardIndex, sentenceIndex, level);
-  const grammarNotes = grammar.map(rule => `<span class="sentence-analysis-term">${escapeHtml(rule.term)}</span>：${escapeHtml(rule.note)}`);
-  const errors = grammar.map(rule => escapeHtml(rule.error));
+  const grammarNotes = grammar.map(rule => `<span class="sentence-analysis-term">${escapeHtml(rule.term)}</span>：本句 « ${escapeHtml(sentenceExample(line, rule.regex))} » 中，${escapeHtml(rule.note)}`);
+  const errors = grammar.map(rule => `本句正确形式是 « ${escapeHtml(sentenceExample(line, rule.regex))} »。${escapeHtml(rule.error)}`);
+  const replacement = sentenceReplacementFormula(line);
   const suggestion = sentenceImprovementSuggestion(line, level);
   return `<div class="sentence-analysis-panel" data-sentence-analysis-panel="${cardIndex}-${sentenceIndex}" hidden>
     <div class="sentence-analysis-grid">
       ${renderSentenceAnalysisBlock("句子骨架", [escapeHtml(sentenceSkeleton(line))])}
       ${renderSentenceAnalysisBlock("好句型 · 为什么好", patterns)}
       ${renderSentenceAnalysisBlock("语法注意", grammarNotes)}
-      ${renderSentenceAnalysisBlock("替换公式", [escapeHtml(sentenceReplacementFormula(line, item))])}
+      ${renderSentenceAnalysisBlock("替换公式", replacement ? [`本句 « ${escapeHtml(sentenceExample(line))} » 可以套入：${escapeHtml(replacement)}`] : [])}
       ${renderSentenceAnalysisBlock("常见错误", errors)}
-      ${renderSentenceAnalysisBlock("考场作用", [escapeHtml(sentenceExamRole(line, item, sentenceIndex, sentenceCount))])}
-      ${suggestion ? renderSentenceAnalysisBlock("更地道 / 更高级的对照建议（不修改原句）", [escapeHtml(suggestion)], "sentence-analysis-suggestion") : ""}
+      ${renderSentenceAnalysisBlock("考场作用", [`本句 « ${escapeHtml(sentenceExample(line))} » 的作用是：${escapeHtml(sentenceExamRole(line, item, sentenceIndex, sentenceCount))}`])}
+      ${suggestion ? renderSentenceAnalysisBlock("更地道 / 更高级的对照建议（不修改原句）", [`原句 « ${escapeHtml(sentenceExample(line))} »。${escapeHtml(suggestion)}`], "sentence-analysis-suggestion") : ""}
     </div>
   </div>`;
 }
