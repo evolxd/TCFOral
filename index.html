@@ -5137,7 +5137,7 @@ function renderCards(options = {}) {
         <button data-train="${index}">进入训练</button>
         <button class="primary" data-speak="${index}">朗读</button>
         <button data-loop="${index}">循环播放</button>
-        <button data-next-loop="${index}">下一卡 ▶</button>
+        <button data-next-loop="${index}">下一步：朗读下一卡 ▶</button>
         <button data-download="${index}">下载本卡音频</button>
         <a href="${googleTranslateUrl(content.fr)}" target="_blank" rel="noopener"><button>Google 发音</button></a>
         <span class="rate-pill" data-rate-label="${index}">x${currentPlaybackRate().toFixed(2)}</span>
@@ -5371,6 +5371,14 @@ function currentLoopGapMs() {
   return Math.min(12, Math.max(0, seconds)) * 1000;
 }
 
+function schedulePlaybackGap(playbackToken, callback) {
+  if (loopDelayTimer) clearTimeout(loopDelayTimer);
+  loopDelayTimer = setTimeout(() => {
+    loopDelayTimer = null;
+    if (playbackToken === activePlaybackToken) callback();
+  }, currentLoopGapMs());
+}
+
 function applyPlaybackRate(player) {
   if (!player) return;
   const rate = currentPlaybackRate();
@@ -5406,7 +5414,7 @@ function stopLoopUi() {
   }
   if (activeNextLoopButton) {
     activeNextLoopButton.classList.remove("loop-active");
-    activeNextLoopButton.textContent = "下一卡 ▶";
+    activeNextLoopButton.textContent = "下一步：朗读下一卡 ▶";
     activeNextLoopButton = null;
   }
   clearPlaybackHighlights();
@@ -5756,15 +5764,7 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
   };
   const playNext = () => {
     if (playbackToken !== activePlaybackToken) return;
-    if (!loop) {
-      playCurrent();
-      return;
-    }
-    if (loopDelayTimer) clearTimeout(loopDelayTimer);
-    loopDelayTimer = setTimeout(() => {
-      loopDelayTimer = null;
-      if (playbackToken === activePlaybackToken) playCurrent();
-    }, currentLoopGapMs());
+    schedulePlaybackGap(playbackToken, playCurrent);
   };
   target.onended = () => {
     if (playbackToken !== activePlaybackToken) return;
@@ -5830,11 +5830,7 @@ async function playCardDialogue(item, cardIndex, player = audio, level = activeL
   const finishCycle = () => {
     if (playbackToken !== activePlaybackToken) return;
     if (loop) {
-      if (loopDelayTimer) clearTimeout(loopDelayTimer);
-      loopDelayTimer = setTimeout(() => {
-        loopDelayTimer = null;
-        if (playbackToken === activePlaybackToken) playSegment(0);
-      }, currentLoopGapMs());
+      schedulePlaybackGap(playbackToken, () => playSegment(0));
       return;
     }
     stopLoopUi();
@@ -5858,7 +5854,8 @@ async function playCardDialogue(item, cardIndex, player = audio, level = activeL
       if (!completed || playbackToken !== activePlaybackToken) return;
       playedQuestion = true;
     }
-    if (loop && playedQuestion && segment.entries.length) {
+    const hasAudioAfterQuestion = segment.entries.length || segmentIndex + 1 < segments.length;
+    if (playedQuestion && hasAudioAfterQuestion) {
       await sleep(currentLoopGapMs());
       if (playbackToken !== activePlaybackToken) return;
     }
@@ -5870,7 +5867,13 @@ async function playCardDialogue(item, cardIndex, player = audio, level = activeL
       entriesOverride: segment.entries,
       keepControls: true,
       playbackToken,
-      onComplete: () => playSegment(segmentIndex + 1)
+      onComplete: () => {
+        if (segmentIndex + 1 < segments.length) {
+          schedulePlaybackGap(playbackToken, () => playSegment(segmentIndex + 1));
+        } else {
+          playSegment(segmentIndex + 1);
+        }
+      }
     });
   };
 
