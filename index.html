@@ -461,17 +461,88 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   border: 1px solid #dce5dc;
   background: #f7faf6;
 }
+.sentence-controls-inline {
+  align-self: start;
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
 .stage-btn {
-  min-width: 34px;
-  height: 28px;
-  padding: 0 8px;
+  min-width: 46px;
+  height: 44px;
+  padding: 0 11px;
   border: 0;
   border-radius: 999px;
   background: transparent;
   color: #526054;
-  font-size: 13px;
+  font-size: 16px;
   font-weight: 700;
   cursor: pointer;
+}
+.stage-btn[data-stage-value="read"] {
+  min-width: 58px;
+  font-size: 24px;
+  font-weight: 850;
+}
+.sentence-analysis-toggle {
+  align-self: start;
+  min-width: 64px;
+  height: 50px;
+  padding: 0 12px;
+  border: 1px solid #ccd9ce;
+  border-radius: 12px;
+  background: #f5f8f4;
+  color: #31513a;
+  font-size: 15px;
+  font-weight: 800;
+  cursor: pointer;
+}
+.sentence-analysis-toggle:hover,
+.sentence-analysis-toggle[aria-expanded="true"] {
+  border-color: #78907c;
+  background: #eaf2e9;
+}
+.sentence-analysis-panel {
+  grid-column: 2 / -1;
+  margin-top: 2px;
+  padding: 11px 12px;
+  border: 1px solid #dfe8df;
+  border-radius: 12px;
+  background: #fafcf9;
+}
+.sentence-analysis-panel[hidden] { display: none; }
+.sentence-analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+.sentence-analysis-block {
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid #e4ebe3;
+  border-radius: 10px;
+  background: #fff;
+}
+.sentence-analysis-label {
+  margin-bottom: 5px;
+  color: #31513a;
+  font-size: 13px;
+  font-weight: 850;
+}
+.sentence-analysis-text {
+  color: #46534a;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+.sentence-analysis-text + .sentence-analysis-text { margin-top: 5px; }
+.sentence-analysis-term {
+  color: #203d2a;
+  font-weight: 760;
+}
+.sentence-analysis-suggestion {
+  grid-column: 1 / -1;
+  border-color: #e7dec8;
+  background: #fffaf0;
 }
 .stage-btn.is-active[data-stage-value="recite"] {
   background: #8a6a2f;
@@ -1348,11 +1419,27 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
     grid-column: 2;
     justify-self: start;
   }
-  .stage-btn {
-    min-width: 32px;
-    height: 28px;
-    font-size: 12px;
+  .sentence-controls-inline {
+    grid-column: 2;
+    justify-self: start;
+    flex-wrap: wrap;
   }
+  .stage-btn {
+    min-width: 44px;
+    height: 44px;
+    font-size: 15px;
+  }
+  .stage-btn[data-stage-value="read"] {
+    min-width: 58px;
+    font-size: 24px;
+  }
+  .sentence-analysis-toggle {
+    height: 50px;
+    min-width: 68px;
+  }
+  .sentence-analysis-panel { grid-column: 1 / -1; }
+  .sentence-analysis-grid { grid-template-columns: 1fr; }
+  .sentence-analysis-suggestion { grid-column: 1; }
   .mastery-summary {
     margin-left: 0;
   }
@@ -3603,6 +3690,8 @@ function renderBilingual(item, content, cardIndex, level = cardLevel(cardIndex))
     const question = questions.length === 1 ? (index === 0 ? questions[0] : null) : questions[index];
     const questionEnabled = question ? isTeacherQuestionEnabled(cardIndex, index, level) : false;
     const questionId = `teacher-question-${level}-${cardIndex}-${index}`;
+    const sentenceAnalysis = renderSentenceAnalysis(item, line, cardIndex, index, level, frLines.length);
+    const analysisToggle = sentenceAnalysis ? `<button class="sentence-analysis-toggle" type="button" data-sentence-analysis-toggle="${cardIndex}-${index}" aria-expanded="false">展开</button>` : "";
     const questionHtml = question ? `<div class="sentence-pair embedded-question${questionEnabled ? "" : " is-muted"}" data-teacher-question-card="${cardIndex}" data-teacher-question-index="${index}">
       <input id="${questionId}" class="sentence-check" type="checkbox" data-teacher-card="${cardIndex}" data-question-index="${index}" ${questionEnabled ? "checked" : ""}>
       <label class="sentence-body" for="${questionId}">
@@ -3615,13 +3704,17 @@ function renderBilingual(item, content, cardIndex, level = cardLevel(cardIndex))
     return `${questionHtml}<div class="sentence-pair${muted}${stageClass}" data-sentence-pair-card="${cardIndex}" data-sentence-pair-index="${index}">
       <input id="${sentenceId}" class="sentence-check" type="checkbox" data-sentence-card="${cardIndex}" data-sentence-index="${index}" ${checked}>
       <label class="sentence-body" for="${sentenceId}"><div class="sentence-fr">${escapeHtml(line)}</div>${zh}</label>
-      <div class="stage-control" role="group" aria-label="句子熟练度">
-        ${[
-          ["read", "读"],
-          ["recite", "背"],
-          ["mastered", "熟"]
-        ].map(([value, label]) => `<button class="stage-btn${stage === value ? " is-active" : ""}" type="button" data-stage-card="${cardIndex}" data-stage-index="${index}" data-stage-value="${value}">${label}</button>`).join("")}
+      <div class="sentence-controls-inline">
+        <div class="stage-control" role="group" aria-label="句子熟练度">
+          ${[
+            ["read", "读"],
+            ["recite", "背"],
+            ["mastered", "熟"]
+          ].map(([value, label]) => `<button class="stage-btn${stage === value ? " is-active" : ""}" type="button" data-stage-card="${cardIndex}" data-stage-index="${index}" data-stage-value="${value}">${label}</button>`).join("")}
+        </div>
+        ${analysisToggle}
       </div>
+      ${sentenceAnalysis}
     </div>`;
   }).join("")}</div>`;
 }
@@ -4306,6 +4399,368 @@ function analyzeSentence(line, item) {
   return notes.slice(0, 4);
 }
 
+const sentenceGrammarRules = [
+  {
+    id: "elision_de",
+    regex: /\bd[’'][aeiouyàâäéèêëîïôöùûüh]/i,
+    term: "省音 élision：de → d’",
+    note: "de 后面遇到元音或哑音 h 时写成 d’，这是拼写变化，不是另一个介词。",
+    error: "不要写成 de organisation、de apprendre；应写 d’organisation、d’apprendre。"
+  },
+  {
+    id: "elision_que_le",
+    regex: /\b(?:qu|l|j|n|s|m|t)[’'][aeiouyàâäéèêëîïôöùûüh]/i,
+    term: "元音前省音 élision",
+    note: "que、le/la、je、ne 等词在元音或哑音 h 前省去最后的元音并加撇号。",
+    error: "撇号后不能再保留被省掉的字母，例如不能写 que il、le environnement。"
+  },
+  {
+    id: "contraction_a",
+    regex: /\b(?:au|aux)\b/i,
+    term: "缩合冠词 article contracté：à + le/les",
+    note: "à + le 必须缩合为 au，à + les 必须缩合为 aux；阴性 la 和元音前 l’不缩合。",
+    error: "不要写 à le Canada、à les conditions；应写 au Canada、aux conditions。"
+  },
+  {
+    id: "contraction_de",
+    regex: /\b(?:du|des)\b/i,
+    term: "缩合冠词 article contracté：de + le/les",
+    note: "de + le 缩合为 du，de + les 缩合为 des；要和表示不定复数的 des 区分。",
+    error: "不要机械地把所有 de 都改成 du/des；只有后面确实带定冠词 le/les 时才缩合。"
+  },
+  {
+    id: "quantity_de",
+    regex: /\b(?:beaucoup|plus|moins|assez|trop|peu)\s+d(?:e|[’'])/i,
+    term: "数量表达 + de",
+    note: "beaucoup、plus、moins、assez、trop 等数量词后通常直接接 de/d’，不再添加 un、une、des。",
+    error: "常见错误是 beaucoup des avantages；泛指时应说 beaucoup d’avantages。"
+  },
+  {
+    id: "ce_qui",
+    regex: /\bce qui\b/i,
+    term: "关系代词 ce qui",
+    note: "ce qui 指代前面整件事，并在后面的从句中充当主语，适合自然引出结果或评价。",
+    error: "ce qui 后面不能再补一个重复主语；不要说 ce qui cela permet。"
+  },
+  {
+    id: "ce_que",
+    regex: /\bce qu(?:e|[’'])/i,
+    term: "关系代词 ce que",
+    note: "ce que 指代“……的事情/内容”，在后面的从句中充当直接宾语。",
+    error: "如果关系代词后直接接动词，通常检查是否应使用 ce qui；ce que 后面一般先出现主语。"
+  },
+  {
+    id: "relative_dont",
+    regex: /\bdont\b/i,
+    term: "关系代词 dont",
+    note: "dont 替代 de + 名词/人，用于动词、形容词或名词本来要求 de 的结构。",
+    error: "使用 dont 后不要再重复 de，例如不要说 dont j’ai besoin de。"
+  },
+  {
+    id: "relative_qui_que",
+    regex: /,?\s+(?:qui|que|qu[’'])\s+/i,
+    term: "关系代词 qui / que",
+    note: "qui 在从句里作主语，后面直接接动词；que 在从句里作宾语，后面通常接主语。",
+    error: "判断 qui/que 时不要看先行词是人还是物，要看它在从句中承担什么成分。"
+  },
+  {
+    id: "gerondif",
+    regex: /\btout en\s+\w+(?:ant)\b|\ben\s+\w+(?:ant)\b/i,
+    term: "副动词 gérondif：en + participe présent",
+    note: "en/tout en + 现在分词表示两个动作同时发生；tout en 还带有“同时兼顾”的平衡感。",
+    error: "副动词的逻辑主语必须与主句主语一致，否则句子会产生歧义。"
+  },
+  {
+    id: "meme_si",
+    regex: /\bmême si\b/i,
+    term: "让步结构 même si",
+    note: "même si 表示“即使/虽然”，后面通常使用直陈式 indicatif，而不是因为有“虽然”就自动使用虚拟式。",
+    error: "不要把 même si 和 bien que 混用：bien que 通常要求虚拟式，même si 通常不用。"
+  },
+  {
+    id: "condition_de",
+    regex: /\bà condition de\b/i,
+    term: "条件结构 à condition de",
+    note: "当前后动作的执行者相同时，用 à condition de + 不定式，简洁表达“条件是……”。",
+    error: "如果前后主语不同，不能硬接不定式，应考虑 à condition que + 虚拟式。"
+  },
+  {
+    id: "condition_que",
+    regex: /\bà condition qu[’']|\bpour qu[’']|\bafin qu[’']|\bbien qu[’']|\bil faut qu[’']/i,
+    term: "虚拟式 subjonctif 触发结构",
+    note: "条件、目的、让步或必要性结构后使用虚拟式，重点检查动词词形和主语变化。",
+    error: "不要只记中文意思；先识别触发词，再确认从句动词是否用了正确的虚拟式形式。"
+  },
+  {
+    id: "purpose_infinitive",
+    regex: /\b(?:afin de|pour|avant de|sans)\s+(?:ne\s+pas\s+)?[a-zàâäçéèêëîïôöùûüœ]+(?:er|ir|re)\b/i,
+    term: "介词 + infinitif（不定式）",
+    note: "当前后动作主语相同时，pour、afin de、avant de、sans 后用不定式表达目的、先后或方式。",
+    error: "如果从句换了主语，应改用 pour que、avant que 等从句结构，不能继续直接接不定式。"
+  },
+  {
+    id: "polite_conditional",
+    regex: /\b(?:pourriez-vous|pourrais-je|j’aimerais|j'aimerais|serait-il|voudriez-vous)\b/i,
+    term: "礼貌条件式 conditionnel de politesse",
+    note: "条件式在咨询和请求中降低命令感，是母语者非常高频的礼貌表达。",
+    error: "不要把礼貌条件式理解成过去时；它表达的是语气缓和，而不是过去发生的动作。"
+  },
+  {
+    id: "si_clause",
+    regex: /\bsi\s+(?:je|tu|il|elle|on|nous|vous|ils|elles|l[’']on)\b/i,
+    term: "si 条件从句",
+    note: "真实或可能条件常用 si + 直陈式；需要根据主句含义区分现在、未来和假设。",
+    error: "表达将来条件时，si 从句通常不用简单将来时；不要说 si je pourrai。"
+  },
+  {
+    id: "double_negation_scope",
+    regex: /\bne\s+[^,.!?;]+\s+(?:pas|plus|jamais|seulement)\b/i,
+    term: "否定范围 négation",
+    note: "ne…pas/plus/jamais/seulement 包住变位动词；复合时态中位置会随助动词变化。",
+    error: "不要把 ne…seulement 当成普通否定，它实际表示“只……”，常可与 seulement 的位置互换但语气不同。"
+  },
+  {
+    id: "a_la_fois",
+    regex: /\bà la fois\b[\s\S]*\bet\b/i,
+    term: "并列结构 à la fois… et…",
+    note: "à la fois… et… 把两个同等重要的方面并列起来，两个部分最好保持相同语法形式。",
+    error: "并列两端不要一边用名词、一边突然换成完整从句；形式失衡会让句子难听懂。"
+  },
+  {
+    id: "dune_part",
+    regex: /\bd[’']une part\b|\bd[’']un côté\b/i,
+    term: "成对连接词 connecteurs en paire",
+    note: "d’une part… d’autre part… / d’un côté… de l’autre… 用于组织正反两面，适合B2以上论证。",
+    error: "说出第一半后要完成第二半；只说 d’une part 而没有对应部分，会让结构悬空。"
+  },
+  {
+    id: "tandis_que",
+    regex: /\btandis que\b/i,
+    term: "对比连接 tandis que",
+    note: "tandis que 把两个事实并置形成对比，比连续使用 mais 更有层次。",
+    error: "tandis que 后必须接完整从句，不能只接一个孤立名词。"
+  },
+  {
+    id: "repondre_a",
+    regex: /\brépond(?:re|s|t|ons|ez|ent|u|ue|us|ues)\s+à\b/i,
+    term: "动词支配 repondre à",
+    note: "répondre 后通过介词 à 引出问题、请求或某个人；这是固定支配关系。",
+    error: "不要按中文直接说 répondre cette question；应说 répondre à cette question。"
+  },
+  {
+    id: "dependre_de",
+    regex: /\bdépend(?:re|s|ons|ez|ent)?\s+(?:beaucoup\s+)?d(?:e|[’'])/i,
+    term: "动词支配 dépendre de",
+    note: "dépendre de 表示“取决于”，后面的决定因素必须用 de/d’引出。",
+    error: "不要说 dépendre à；元音前记得写 d’，例如 dépendre de l’organisation。"
+  },
+  {
+    id: "permettre_de",
+    regex: /\bpermet(?:tre|s|tons|tez|tent)?(?:\s+à\s+[^,.!?]+)?\s+de\b/i,
+    term: "permettre de / permettre à quelqu’un de",
+    note: "permettre de + 不定式表示“使得能够”；指出具体受益者时用 permettre à quelqu’un de。",
+    error: "不要混成 permettre quelqu’un faire；人前要有 à，动作前要有 de。"
+  },
+  {
+    id: "se_limite_a",
+    regex: /\bse\s+limit(?:e|ent|er|ait|erait)?\s+à\b/i,
+    term: "se limiter à",
+    note: "se limiter à 表示“局限于”，à 后可接名词或不定式。",
+    error: "不要受中文影响改成 se limiter de；这里的固定介词是 à。"
+  },
+  {
+    id: "tenir_compte_de",
+    regex: /\btenir compte d(?:e|[’'])/i,
+    term: "固定搭配 tenir compte de",
+    note: "tenir compte de 表示“考虑到”，后面始终通过 de/d’引出需要考虑的因素。",
+    error: "不要漏掉 de，也不要说 prendre compte de；标准搭配是 tenir compte de。"
+  }
+];
+
+const sentenceGoodPatternRules = [
+  [/^À mon avis,/i, "À mon avis, + proposition", "母语者高频使用的观点开场；直接、自然，而且不会显得过度正式。"],
+  [/\bon ne peut pas\b/i, "on ne peut pas + infinitif", "用泛指主语 on 表达普遍判断，比直接说 je ne peux pas 更符合论证语境。"],
+  [/\bce qui\b/i, "…, ce qui + conséquence", "把前面整件事自然转成结果或评价，是口语中非常高频的长句连接方式。"],
+  [/\btout en\b/i, "verbe + tout en + participe présent", "同时表达两个目标，特别适合说明平衡、兼顾和限制。"],
+  [/\bmême si\b/i, "même si + concession", "主动承认例外或困难，使立场不绝对，明显符合B2以上的表达习惯。"],
+  [/\bà condition (?:de|que)\b/i, "à condition de/que…", "给观点增加适用条件，避免把方案说成万能答案。"],
+  [/\bd[’']une part\b|\bd[’']un côté\b/i, "d’une part… d’autre part…", "清楚标记论证的两面，让考官能立即听出结构。"],
+  [/\btandis que\b/i, "proposition, tandis que + proposition", "用并置完成对比，比反复使用 mais 更成熟。"],
+  [/\bil me semble\b/i, "Il me semble que…", "母语者常用的克制判断，比绝对断言更自然。"],
+  [/\bl[’']enjeu n[’']est pas seulement\b/i, "L’enjeu n’est pas seulement de…, mais de…", "把讨论从简单选择提升到真正关键点，是很强的总结骨架。"],
+  [/\bà première vue\b/i, "À première vue, …", "表示初步判断并保留修改空间，语气成熟。"],
+  [/\bsi je comprends bien\b/i, "Si je comprends bien, … c’est bien cela ?", "先复述再确认，是现实对话中极高频的互动结构。"],
+  [/\bpourriez-vous\b/i, "Pourriez-vous + infinitif… ?", "礼貌、清楚、适用范围广，是服务咨询中最稳的问句骨架。"],
+  [/\bj[’']aimerais\b/i, "J’aimerais + infinitif / nom", "比 je veux 柔和自然，可用于提出需求、目标或希望。"],
+  [/\bne (?:doit|devrait|peut) pas être confondu/i, "X ne doit pas être confondu avec Y", "用于区分两个容易混淆的概念，适合抽象话题和高级论证。"],
+  [/\bc[’']est pourquoi\b/i, "C’est pourquoi + conséquence", "明确告诉听者“下面是结论”，比单独使用 donc 更有组织感。"],
+  [/^Selon moi,/i, "Selon moi, + proposition", "母语者高频的观点标记，适合与 À mon avis 交替使用。"],
+  [/\bje préfère\b/i, "Je préfère + nom / infinitif", "直接表达偏好，后面补原因或条件就能形成稳定的口语答案。"],
+  [/\bje me décrirais comme\b/i, "Je me décrirais comme + adjectif", "比 je suis 更有自我评价的语气，适合回答性格类问题。"],
+  [/\bil (?:est|reste) (?:important|essentiel|indispensable|nécessaire) de\b/i, "Il est essentiel de + infinitif", "用无人称结构提出普遍原则，常见于观点题和总结。"],
+  [/\bjoue(?:nt)? un rôle\b/i, "jouer un rôle + adjectif", "母语者高频使用，比简单说 être important 更具体。"],
+  [/\brepose(?:nt)? sur\b/i, "reposer sur + nom", "准确表达“建立在……基础上”，适合社会、家庭、教育等抽象话题。"],
+  [/\bconsiste(?:nt)? à\b/i, "consister à + infinitif", "用于准确界定核心做法或关键任务，逻辑非常清楚。"],
+  [/\bne (?:se )?limite(?:nt)? pas à\b/i, "ne pas se limiter à…", "先否定狭窄理解，再扩展观点，是B2/C1常见的论证推进方式。"],
+  [/\bpermet(?:tent)? de\b/i, "permettre de + infinitif", "直接说明作用和结果，比笼统评价“很好”更有信息量。"],
+  [/\bavoir tendance à\b/i, "avoir tendance à + infinitif", "母语者常用来描述普遍倾向，语气比绝对判断更谨慎。"],
+  [/\bencore faut-il\b/i, "Encore faut-il + infinitif / que…", "在承认前句后补充必要条件，是明显的C1式限制表达。"],
+  [/\bnon seulement\b[\s\S]*\bmais\b/i, "non seulement… mais aussi…", "强调两个递进方面，结构清楚且在正式口语中高频。"],
+  [/\ben fonction de\b/i, "en fonction de + nom", "表示选择随条件变化，比 selon 更突出实际决策标准。"],
+  [/\bafin de\b/i, "afin de + infinitif", "明确标记目的，比单独使用 pour 稍正式，适合考试口语。"],
+  [/\bà mes yeux\b/i, "À mes yeux, + proposition", "自然表达个人判断，又比绝对断言保留更多主观空间。"]
+];
+
+let sentenceGrammarVisibleKeys = null;
+
+function grammarRuleMatches(rule, line) {
+  rule.regex.lastIndex = 0;
+  return rule.regex.test(line);
+}
+
+function buildSentenceGrammarVisibleKeys() {
+  const visible = new Set();
+  const counts = new Map();
+  ["b2", "c1"].forEach(level => {
+    templates.forEach((item, cardIndex) => {
+      const content = variantFor(item, level);
+      splitFrench(content.fr).forEach((line, sentenceIndex) => {
+        sentenceGrammarRules.forEach(rule => {
+          if (!grammarRuleMatches(rule, line)) return;
+          const count = counts.get(rule.id) || 0;
+          if (count < 4) visible.add(`${level}:${cardIndex}:${sentenceIndex}:${rule.id}`);
+          counts.set(rule.id, count + 1);
+        });
+      });
+    });
+  });
+  return visible;
+}
+
+function sentenceGrammarNotes(line, cardIndex, sentenceIndex, level) {
+  if (!sentenceGrammarVisibleKeys) sentenceGrammarVisibleKeys = buildSentenceGrammarVisibleKeys();
+  return sentenceGrammarRules
+    .filter(rule => grammarRuleMatches(rule, line) && sentenceGrammarVisibleKeys.has(`${level}:${cardIndex}:${sentenceIndex}:${rule.id}`))
+    .slice(0, 4);
+}
+
+function sentenceSkeleton(line, item) {
+  if (/\bsi je comprends bien\b/i.test(line)) return "理解确认（Si je comprends bien）→ 信息复述 → 反问确认。";
+  if (/\bce qui\b/i.test(line)) return "主句陈述事实 → ce qui 指代前面整件事 → 补充结果、作用或评价。";
+  if (/\bmême si\b/i.test(line)) return "主要立场/事实 → même si 引出让步或现实困难。";
+  if (/\bà condition (?:de|que)\b/i.test(line)) return "先表达态度或可能性 → à condition de/que 补充成立条件。";
+  if (/\btout en\b/i.test(line)) return "主要动作或目标 → tout en + 现在分词 → 同时兼顾第二个目标。";
+  if (/\bd[’']une part\b|\bd[’']un côté\b/i.test(line)) return "第一方面 → 对应连接词 → 第二方面；两边保持平行。";
+  if (/\btandis que\b/i.test(line)) return "事实/观点A → tandis que → 与A形成对比的完整事实/观点B。";
+  if (/\b(?:car|parce que|puisque)\b/i.test(line)) return "先给结论、事实或偏好 → 原因连接词 → 解释为什么。";
+  if (/\b(?:afin de|pour)\s+[a-zàâäçéèêëîïôöùûüœ]+(?:er|ir|re)\b/i.test(line)) return "主要动作 → 目的结构 → 说明这样做是为了什么。";
+  if (/\b(?:pourriez-vous|serait-il possible|j’aimerais savoir|j'aimerais savoir)\b/i.test(line)) return "礼貌请求框架 → 具体动作/信息 → 必要时补充条件或范围。";
+  if (/\?$/.test(line)) return "提问入口 → 具体信息点 → 限定条件；确保对方能给出明确答案。";
+  if (item.type === "tache3" || item.type === "variations") return "观点或判断 → 关键理由/限制 → 对社会或现实层面的含义。";
+  if (item.type === "tache2" || item.type === "questions") return "沟通目的 → 具体内容 → 让对方容易回应的落点。";
+  return "个人事实或选择 → 补充细节 → 说明原因、作用或目标。";
+}
+
+function sentenceGoodPatterns(line, item) {
+  const notes = [];
+  sentenceGoodPatternRules.forEach(([regex, phrase, explain]) => {
+    regex.lastIndex = 0;
+    if (regex.test(line) && !notes.some(note => note.phrase === phrase)) notes.push({ phrase, explain });
+  });
+  analyzeSentence(line, item).forEach(note => {
+    if (["提问骨架", "论证骨架", "表达骨架"].includes(note.phrase)) return;
+    if (!notes.some(existing => existing.phrase.toLowerCase() === note.phrase.toLowerCase())) {
+      notes.push({ phrase: note.phrase, explain: note.explain });
+    }
+  });
+  if (!notes.length) {
+    const clean = line.replace(/[?!]+$/, "").trim();
+    const firstClause = clean.split(/[,;:]/)[0].trim();
+    const words = clean.split(/\s+/);
+    const phrase = firstClause.length >= 12 && firstClause.length <= 72
+      ? firstClause
+      : `${words.slice(0, Math.min(8, words.length)).join(" ")}${words.length > 8 ? "…" : ""}`;
+    const explain = item.type === "tache2" || item.type === "questions"
+      ? "本句没有刻意堆高级结构；价值在于问题具体、语气自然，对方容易立即回答。建议把这一小段作为整体语块学习。"
+      : item.type === "tache3" || item.type === "variations"
+        ? "本句的优势是用准确动词组织完整判断，而不是堆抽象词。可整体保留骨架，再替换主题内容。"
+        : "这是母语者会使用的自然完整表达；重点不是单个难词，而是事实、细节和评价的组合方式。";
+    notes.push({ phrase, explain });
+  }
+  return notes.slice(0, 3);
+}
+
+function sentenceReplacementFormula(line, item) {
+  if (/^À mon avis,/i.test(line)) return "À mon avis, + [判断] + car/parce que + [理由]。替换观点和理由即可迁移到教育、科技、工作、环境等话题。";
+  if (/\bce qui\b/i.test(line)) return "[完整事实], ce qui + [结果/好处/困难]。ce qui 指代前面整件事。";
+  if (/\btout en\b/i.test(line)) return "[主要动作] tout en + participe présent + [同时进行的动作]。";
+  if (/\bmême si\b/i.test(line)) return "[主要立场], même si + [承认的困难或例外]。";
+  if (/\bà condition de\b/i.test(line)) return "[态度/可能性], à condition de + infinitif + [条件]。";
+  if (/\bà condition qu[’']/i.test(line)) return "[态度/可能性], à condition que + [不同主语] + subjonctif。";
+  if (/\bd[’']une part\b|\bd[’']un côté\b/i.test(line)) return "D’une part / D’un côté, + [方面A] ; d’autre part / de l’autre, + [方面B]。";
+  if (/\bpourriez-vous\b/i.test(line)) return "Pourriez-vous + [动作原形] + [具体对象/条件] ?";
+  if (/\bj[’']aimerais\b/i.test(line)) return "J’aimerais + [动作原形] / J’aimerais savoir si + [完整问题]。";
+  if (/\b(?:car|parce que|puisque)\b/i.test(line)) return "[结论或选择], car/parce que + [具体原因]。";
+  if (/\?$/.test(line)) return "[礼貌提问框架] + [具体信息] + [范围或条件] ?";
+  if (item.type === "tache3" || item.type === "variations") return "[克制立场] + [理由] + [条件/限制]；替换主题词即可迁移。";
+  return "[主语] + [准确动词] + [具体内容] + [原因、结果或目标]。";
+}
+
+function sentenceExamRole(line, item, sentenceIndex, sentenceCount) {
+  if (/\bpar exemple\b/i.test(line)) return "举例：把抽象观点落到现实场景，证明前面的判断。";
+  if (/\b(?:ainsi|c[’']est pourquoi|en conclusion|finalement)\b/i.test(line) || sentenceIndex === sentenceCount - 1) return "收束：总结本卡立场或给出最后标准，让回答有明确终点。";
+  if (/\b(?:cependant|pourtant|néanmoins|même si|tandis que|en revanche)\b/i.test(line)) return "让步/对比：承认另一面，避免回答过于绝对。";
+  if (item.type === "tache2" || item.type === "questions") {
+    if (sentenceIndex === 0) return "开启互动：礼貌切入主题并问出第一个核心信息点。";
+    return "推进互动：追问具体条件、限制或实际做法，避免对话停在表面。";
+  }
+  if (item.type === "tache3" || item.type === "variations") {
+    if (sentenceIndex === 0) return "界定立场：直接回应题目，同时给后续论证留出余地。";
+    return "发展论证：补充理由、条件或现实影响，使观点达到B2/C1所需深度。";
+  }
+  if (sentenceIndex === 0) return "直接回答：先让考官立刻听到与你本人有关的核心信息。";
+  return "补充信息：用细节、原因或目标扩展回答，并给考官留下可追问点。";
+}
+
+function sentenceImprovementSuggestion(line, level) {
+  if (/^À mon avis, on ne peut pas répondre à cette question de manière trop simple/i.test(line)) {
+    return "更凝练的C1对照：« La question mérite, à mon sens, une réponse nuancée. » 原句保留；对照句更书面、更集中。";
+  }
+  if (/^Je pense que\b/i.test(line)) return "可对照 « Il me semble que… » 或 « À mes yeux,… »，语气更克制；原句在口语中仍然自然。";
+  if (/\bbeaucoup d[’']avantages\b/i.test(line)) return "可对照 « présente plusieurs avantages concrets »，动词更准确，也比 avoir beaucoup d’avantages 更紧凑。";
+  if (/\bc[’']est important\b/i.test(line)) return "可根据语境对照 « joue un rôle essentiel » 或 « constitue un point déterminant »，表达更具体。";
+  if (level === "b2" && /\bmais\b/i.test(line) && !/\bnon seulement\b/i.test(line)) return "若需要升级衔接，可根据逻辑对照 « cependant », « en revanche » 或 « cela étant dit »；不要为了高级而机械替换。";
+  return "";
+}
+
+function renderSentenceAnalysisBlock(label, notes, extraClass = "") {
+  const safeNotes = notes.length ? notes : ["本句没有新增的高风险语法点；重点放在表达组织和自然使用。"];
+  return `<div class="sentence-analysis-block${extraClass ? ` ${extraClass}` : ""}">
+    <div class="sentence-analysis-label">${escapeHtml(label)}</div>
+    ${safeNotes.map(note => `<div class="sentence-analysis-text">${note}</div>`).join("")}
+  </div>`;
+}
+
+function renderSentenceAnalysis(item, line, cardIndex, sentenceIndex, level, sentenceCount) {
+  if (level !== "b2" && level !== "c1") return "";
+  const patterns = sentenceGoodPatterns(line, item).map(note => `<span class="sentence-analysis-term">${escapeHtml(note.phrase)}</span>：${escapeHtml(note.explain)}`);
+  const grammar = sentenceGrammarNotes(line, cardIndex, sentenceIndex, level);
+  const grammarNotes = grammar.map(rule => `<span class="sentence-analysis-term">${escapeHtml(rule.term)}</span>：${escapeHtml(rule.note)}`);
+  const errors = grammar.map(rule => escapeHtml(rule.error));
+  const suggestion = sentenceImprovementSuggestion(line, level);
+  return `<div class="sentence-analysis-panel" data-sentence-analysis-panel="${cardIndex}-${sentenceIndex}" hidden>
+    <div class="sentence-analysis-grid">
+      ${renderSentenceAnalysisBlock("句子骨架", [escapeHtml(sentenceSkeleton(line, item))])}
+      ${renderSentenceAnalysisBlock("好句型 · 为什么好", patterns)}
+      ${renderSentenceAnalysisBlock("语法注意", grammarNotes)}
+      ${renderSentenceAnalysisBlock("替换公式", [escapeHtml(sentenceReplacementFormula(line, item))])}
+      ${renderSentenceAnalysisBlock("常见错误", errors)}
+      ${renderSentenceAnalysisBlock("考场作用", [escapeHtml(sentenceExamRole(line, item, sentenceIndex, sentenceCount))])}
+      ${suggestion ? renderSentenceAnalysisBlock("更地道 / 更高级的对照建议（不修改原句）", [escapeHtml(suggestion)], "sentence-analysis-suggestion") : ""}
+    </div>
+  </div>`;
+}
+
 function analysisKey(item) {
   return `${item.type} ${item.theme} ${item.title}`
     .normalize("NFD")
@@ -4626,7 +5081,6 @@ function renderCards(options = {}) {
     return `
     <article class="card" id="card-${index}" data-card-index="${index}">
       <div class="meta">
-        <span class="pill card-index">第 ${index + 1}/${templates.length} 题</span>
         <span class="pill ${item.type === "tache3" ? "red" : item.type === "connecteurs" || item.type === "questions" || item.type === "variations" ? "gold" : "blue"}">${categoryLabels[item.type]}</span>
         <span class="pill">${item.theme}</span>
         <span class="pill">${content.label}</span>
@@ -4775,9 +5229,9 @@ async function getTtsBlob(text) {
         model_id: "eleven_multilingual_v2",
         language_code: "fr",
         voice_settings: {
-          stability: 0.62,
+          stability: 0.82,
           similarity_boost: 0.78,
-          style: 0.12,
+          style: 0.0,
           use_speaker_boost: true,
           speed: Number(speechSpeed.value)
         }
@@ -5207,7 +5661,8 @@ function legacyDownloadedFileName(text) {
 function localAudioName(item, cardIndex, sentence, sentenceIndex, level = activeLevel) {
   const titleSlug = legacyDownloadedFileName(item.title);
   const sentenceSlug = level === "c1" ? legacyDownloadedFileName(sentence) : safeFileName(sentence);
-  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=12`;
+  const cacheVersion = level === "b2" && item.title === "四段式万能论证" && sentenceIndex === 0 ? 14 : 12;
+  const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=${cacheVersion}`;
   return level === "c1" ? `audio/${fileName}` : `audio/${level}/${fileName}`;
 }
 
@@ -5234,7 +5689,6 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
     ? options.playbackToken
     : activePlaybackToken += 1;
   const loop = Boolean(options.loop);
-  const gapBetweenEntries = loop || Boolean(options.applyGap);
   if (loop) {
     stopLoopUi();
     activeLoopButton = options.button || null;
@@ -5266,7 +5720,7 @@ async function speakItem(item, cardIndex, player = audio, level = activeLevel, o
   };
   const playNext = () => {
     if (playbackToken !== activePlaybackToken) return;
-    if (!gapBetweenEntries) {
+    if (!loop) {
       playCurrent();
       return;
     }
@@ -5379,7 +5833,6 @@ async function playCardDialogue(item, cardIndex, player = audio, level = activeL
     await speakItem(item, cardIndex, target, level, {
       entriesOverride: segment.entries,
       keepControls: true,
-      applyGap: loop,
       playbackToken,
       onComplete: () => playSegment(segmentIndex + 1)
     });
@@ -5471,6 +5924,7 @@ cardsEl.addEventListener("click", async event => {
   const accentBtn = event.target.closest("[data-accent]");
   const selectSentencesBtn = event.target.closest("[data-toggle-sentences]");
   const stageBtn = event.target.closest("[data-stage-card]");
+  const sentenceAnalysisBtn = event.target.closest("[data-sentence-analysis-toggle]");
   if (teacherQuestionBtn) {
     event.preventDefault();
     event.stopPropagation();
@@ -5512,6 +5966,18 @@ cardsEl.addEventListener("click", async event => {
     event.stopPropagation();
     const cardIndex = Number(trainBtn.dataset.train);
     openTraining(cardIndex, "read", 0, captureCardScrollAnchor(cardIndex));
+    return;
+  }
+  if (sentenceAnalysisBtn) {
+    event.preventDefault();
+    event.stopPropagation();
+    const key = sentenceAnalysisBtn.dataset.sentenceAnalysisToggle;
+    const panel = cardsEl.querySelector(`[data-sentence-analysis-panel="${key}"]`);
+    if (!panel) return;
+    const willOpen = panel.hidden;
+    panel.hidden = !willOpen;
+    sentenceAnalysisBtn.setAttribute("aria-expanded", String(willOpen));
+    sentenceAnalysisBtn.textContent = willOpen ? "收起" : "展开";
     return;
   }
   if (stageBtn) {
