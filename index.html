@@ -504,45 +504,53 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
 }
 .sentence-analysis-panel {
   grid-column: 2 / -1;
-  margin-top: 2px;
-  padding: 11px 12px;
+  margin-top: 1px;
+  padding: 6px 9px;
   border: 1px solid #dfe8df;
-  border-radius: 12px;
+  border-radius: 9px;
   background: #fafcf9;
 }
 .sentence-analysis-panel[hidden] { display: none; }
 .sentence-analysis-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  column-gap: 14px;
+  row-gap: 0;
 }
 .sentence-analysis-block {
   min-width: 0;
-  padding: 9px 10px;
-  border: 1px solid #e4ebe3;
-  border-radius: 10px;
-  background: #fff;
+  padding: 3px 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
 .sentence-analysis-label {
-  margin-bottom: 5px;
+  display: inline;
+  margin-right: 5px;
   color: #31513a;
   font-size: 13px;
   font-weight: 850;
 }
+.sentence-analysis-label::after { content: "："; }
 .sentence-analysis-text {
+  display: inline;
   color: #46534a;
   font-size: 13.5px;
-  line-height: 1.55;
+  line-height: 1.45;
 }
-.sentence-analysis-text + .sentence-analysis-text { margin-top: 5px; }
+.sentence-analysis-text + .sentence-analysis-text {
+  display: block;
+  margin-top: 2px;
+}
 .sentence-analysis-term {
   color: #203d2a;
   font-weight: 760;
 }
 .sentence-analysis-suggestion {
   grid-column: 1 / -1;
-  border-color: #e7dec8;
-  background: #fffaf0;
+  margin-top: 1px;
+  padding-top: 4px;
+  border-top: 1px solid #e7dec8;
 }
 .stage-btn.is-active[data-stage-value="recite"] {
   background: #8a6a2f;
@@ -4644,21 +4652,39 @@ function sentenceGrammarNotes(line, cardIndex, sentenceIndex, level) {
     .slice(0, 4);
 }
 
-function sentenceSkeleton(line, item) {
-  if (/\bsi je comprends bien\b/i.test(line)) return "理解确认（Si je comprends bien）→ 信息复述 → 反问确认。";
-  if (/\bce qui\b/i.test(line)) return "主句陈述事实 → ce qui 指代前面整件事 → 补充结果、作用或评价。";
-  if (/\bmême si\b/i.test(line)) return "主要立场/事实 → même si 引出让步或现实困难。";
-  if (/\bà condition (?:de|que)\b/i.test(line)) return "先表达态度或可能性 → à condition de/que 补充成立条件。";
-  if (/\btout en\b/i.test(line)) return "主要动作或目标 → tout en + 现在分词 → 同时兼顾第二个目标。";
-  if (/\bd[’']une part\b|\bd[’']un côté\b/i.test(line)) return "第一方面 → 对应连接词 → 第二方面；两边保持平行。";
-  if (/\btandis que\b/i.test(line)) return "事实/观点A → tandis que → 与A形成对比的完整事实/观点B。";
-  if (/\b(?:car|parce que|puisque)\b/i.test(line)) return "先给结论、事实或偏好 → 原因连接词 → 解释为什么。";
-  if (/\b(?:afin de|pour)\s+[a-zàâäçéèêëîïôöùûüœ]+(?:er|ir|re)\b/i.test(line)) return "主要动作 → 目的结构 → 说明这样做是为了什么。";
-  if (/\b(?:pourriez-vous|serait-il possible|j’aimerais savoir|j'aimerais savoir)\b/i.test(line)) return "礼貌请求框架 → 具体动作/信息 → 必要时补充条件或范围。";
-  if (/\?$/.test(line)) return "提问入口 → 具体信息点 → 限定条件；确保对方能给出明确答案。";
-  if (item.type === "tache3" || item.type === "variations") return "观点或判断 → 关键理由/限制 → 对社会或现实层面的含义。";
-  if (item.type === "tache2" || item.type === "questions") return "沟通目的 → 具体内容 → 让对方容易回应的落点。";
-  return "个人事实或选择 → 补充细节 → 说明原因、作用或目标。";
+function sentenceSkeleton(line) {
+  const clean = line.trim().replace(/[.!?]+$/, "");
+  const quote = value => `« ${value.trim().replace(/^[,;:]\s*|\s*[,;:]$/g, "")} »`;
+  let match;
+
+  match = clean.match(/^(À mon avis|Selon moi|À mes yeux|Pour ma part),\s*(.+)$/i);
+  if (match) return `${quote(match[1])}（观点标记）→ ${quote(match[2])}（本句的核心判断）。`;
+
+  match = clean.match(/^(Si je comprends bien),\s*(.+?)(,?\s*c[’']est bien cela)?$/i);
+  if (match) return `${quote(match[1])}（确认理解）→ ${quote(match[2])}（复述本句信息）${match[3] ? ` → ${quote(match[3])}（反问确认）` : ""}。`;
+
+  match = clean.match(/^(.+?),?\s+ce qui\s+(.+)$/i);
+  if (match) return `${quote(match[1])}（主句事实）→ « ce qui »（指代前面整件事）→ ${quote(match[2])}（本句结果或评价）。`;
+
+  match = clean.match(/^(.+?)\s+(même si|à condition de|à condition que|tout en|tandis que|car|parce que|puisque)\s+(.+)$/i);
+  if (match) {
+    const role = /même si/i.test(match[2]) ? "让步" : /à condition/i.test(match[2]) ? "条件" : /tout en/i.test(match[2]) ? "同步动作" : /tandis que/i.test(match[2]) ? "对比" : "原因";
+    return `${quote(match[1])}（主句）→ ${quote(match[2])}（${role}连接）→ ${quote(match[3])}（${role}部分）。`;
+  }
+
+  match = clean.match(/^(Pourriez-vous|Pourrais-je|Serait-il possible de|J[’']aimerais savoir)\s+(.+)$/i);
+  if (match) return `${quote(match[1])}（礼貌请求）→ ${quote(match[2])}（本句要询问的具体信息）。`;
+
+  match = clean.match(/^(.+?)\s+(afin de|pour)\s+([a-zàâäçéèêëîïôöùûüœ]+(?:er|ir|re)\b.+)$/i);
+  if (match) return `${quote(match[1])}（主要动作）→ ${quote(`${match[2]} ${match[3]}`)}（本句目的）。`;
+
+  const clauses = clean.split(/\s*[;:]\s*|,\s+(?=(?:mais|donc|cependant|pourtant|néanmoins|en revanche|et)\b)/i).filter(Boolean);
+  if (clauses.length > 1) return clauses.map((clause, index) => `${quote(clause)}（${index === 0 ? "本句主干" : "本句补充"}）`).join(" → ") + "。";
+
+  match = clean.match(/^(Je|J[’']|On|Nous|Vous|Il|Elle|Ils|Elles|Ce|C[’'])\s*(.+)$/i);
+  if (match) return `${quote(match[1])}（本句主语或话题）→ ${quote(match[2])}（本句谓语及补语）。`;
+
+  return `${quote(clean)}：只分析这一句话，可按“主语或话题 → 核心动词 → 必要补语”来理解。`;
 }
 
 function sentenceGoodPatterns(line, item) {
@@ -4750,7 +4776,7 @@ function renderSentenceAnalysis(item, line, cardIndex, sentenceIndex, level, sen
   const suggestion = sentenceImprovementSuggestion(line, level);
   return `<div class="sentence-analysis-panel" data-sentence-analysis-panel="${cardIndex}-${sentenceIndex}" hidden>
     <div class="sentence-analysis-grid">
-      ${renderSentenceAnalysisBlock("句子骨架", [escapeHtml(sentenceSkeleton(line, item))])}
+      ${renderSentenceAnalysisBlock("句子骨架", [escapeHtml(sentenceSkeleton(line))])}
       ${renderSentenceAnalysisBlock("好句型 · 为什么好", patterns)}
       ${renderSentenceAnalysisBlock("语法注意", grammarNotes)}
       ${renderSentenceAnalysisBlock("替换公式", [escapeHtml(sentenceReplacementFormula(line, item))])}
