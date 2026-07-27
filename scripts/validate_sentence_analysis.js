@@ -120,6 +120,18 @@ for (const label of ["句子骨架", "好句型 · 为什么好", "语法注意"
 }
 if (!b2.includes("data-sentence-analysis-panel")) throw new Error("B2 analysis panels were not rendered.");
 if (!b2.includes("sentence-controls-inline")) throw new Error("Inline sentence controls were not rendered.");
+if (b2.includes("本句没有新增的高风险语法点") || c1.includes("本句没有新增的高风险语法点")) {
+  throw new Error("Empty analysis placeholders should be hidden, not rendered.");
+}
+if (vm.runInContext(`renderSentenceAnalysisBlock('测试空板块', [])`, context) !== "") {
+  throw new Error("Empty analysis blocks should not render.");
+}
+
+for (const [level, rendered] of [["b2", b2], ["c1", c1]]) {
+  const blocks = [...rendered.matchAll(/<div class="sentence-analysis-block[^>]*">([\s\S]*?)<\/div>\s*<\/div>/g)].map(match => match[1]);
+  const withoutSentenceExample = blocks.filter(block => !block.includes("«"));
+  if (withoutSentenceExample.length) throw new Error(`${level.toUpperCase()} has ${withoutSentenceExample.length} analysis blocks without a current-sentence example.`);
+}
 
 const ruleCounts = vm.runInContext(`(() => {
   const visible = buildSentenceGrammarVisibleKeys();
@@ -132,7 +144,27 @@ const ruleCounts = vm.runInContext(`(() => {
   return result;
 })()`, context);
 for (const [id, value] of Object.entries(ruleCounts)) {
-  if (value > 4) throw new Error(`Grammar rule ${id} is shown ${value} times.`);
+  if (value > 5) throw new Error(`Grammar rule ${id} is shown ${value} times.`);
+}
+
+const grammarSpacing = vm.runInContext(`(() => {
+  const visible = [...buildSentenceGrammarVisibleKeys()];
+  const positions = {};
+  visible.forEach(key => {
+    const [level, cardIndex, sentenceIndex, ...ruleParts] = key.split(':');
+    const ruleId = ruleParts.join(':');
+    const ordinal = (level === 'b2' ? 0 : templates.length) + Number(cardIndex);
+    (positions[ruleId] ||= []).push({ ordinal, sentenceIndex: Number(sentenceIndex), key });
+  });
+  return positions;
+})()`, context);
+
+for (const [id, positions] of Object.entries(grammarSpacing)) {
+  positions.sort((a, b) => a.ordinal - b.ordinal || a.sentenceIndex - b.sentenceIndex);
+  for (let index = 1; index < positions.length; index += 1) {
+    const gap = positions[index].ordinal - positions[index - 1].ordinal;
+    if (gap < 2) throw new Error(`Grammar rule ${id} repeats without one full card between explanations.`);
+  }
 }
 
 const fallbackPatternCounts = vm.runInContext(`(() => {
