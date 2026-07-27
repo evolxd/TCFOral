@@ -4691,7 +4691,7 @@ function sentenceSkeleton(line) {
   match = clean.match(/^(Je|J[’']|On|Nous|Vous|Il|Elle|Ils|Elles|Ce|C[’'])\s*(.+)$/i);
   if (match) return `${quote(match[1])}（本句主语或话题）→ ${quote(match[2])}（本句谓语及补语）。`;
 
-  return `${quote(clean)}：只分析这一句话，可按“主语或话题 → 核心动词 → 必要补语”来理解。`;
+  return `${quote(sentenceExample(clean, null, 62))}（本句）→ 主语或话题 → 核心动词 → 必要补语。`;
 }
 
 function sentenceGoodPatterns(line, item) {
@@ -4754,7 +4754,7 @@ function sentenceImprovementSuggestion(line, level) {
   return "";
 }
 
-function sentenceExample(line, regex = null, maxLength = 92) {
+function sentenceExample(line, regex = null, maxLength = 56) {
   const clean = line.trim().replace(/\s+/g, " ");
   if (!regex) return clean.length <= maxLength ? clean : `${clean.slice(0, maxLength).replace(/\s+\S*$/, "")}…`;
   regex.lastIndex = 0;
