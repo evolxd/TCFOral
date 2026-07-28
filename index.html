@@ -5609,8 +5609,24 @@ function tache1QuestionForCard(cardIndex, questionIndex = 0) {
 }
 
 function localTeacherQuestionAudioName(cardIndex, questionIndex, question) {
-  const fileName = `teacher-tache1-${String(cardIndex + 1).padStart(2, "0")}-${String(questionIndex + 1).padStart(2, "0")}-${safeFileName(question.fr)}.mp3?v=13`;
+  const fileName = `teacher-tache1-${String(cardIndex + 1).padStart(2, "0")}-${String(questionIndex + 1).padStart(2, "0")}-${safeFileName(question.fr)}.mp3?v=15`;
   return `audio/b2/${fileName}`;
+}
+
+function localDialogueQuestionAudioName(text) {
+  return `audio/b2/dialogue/teacher-${safeFileName(text)}.mp3?v=15`;
+}
+
+async function playLocalDialogueQuestion(text) {
+  const target = usePlayer(dialogueQuestionAudio);
+  target.pause();
+  target.src = localDialogueQuestionAudioName(text);
+  applyPlaybackRate(target);
+  await new Promise((resolve, reject) => {
+    target.onended = resolve;
+    target.onerror = () => reject(new Error("本地互动问句音频不可用"));
+    target.play().catch(reject);
+  });
 }
 
 function speakBrowserTextAndWait(text) {
@@ -6212,9 +6228,13 @@ dialoguePlay.addEventListener("click", async () => {
   dialoguePlay.disabled = true;
   dialoguePlay.textContent = "正在播放…";
   try {
-    await speakText(currentDialogueRound().question, dialogueQuestionAudio);
+    await playLocalDialogueQuestion(currentDialogueRound().question);
   } catch {
-    speakWithBrowserFrench(currentDialogueRound().question);
+    try {
+      await speakText(currentDialogueRound().question, dialogueQuestionAudio);
+    } catch {
+      speakWithBrowserFrench(currentDialogueRound().question);
+    }
   } finally {
     dialoguePlay.disabled = false;
     dialoguePlay.textContent = original;

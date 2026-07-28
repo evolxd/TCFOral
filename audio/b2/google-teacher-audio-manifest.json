@@ -1,0 +1,257 @@
+{
+  "version": 1,
+  "generatedAt": "2026-07-28T06:30:12.627Z",
+  "provider": "google-cloud-text-to-speech",
+  "voice": "fr-FR-Chirp3-HD-Despina",
+  "loudness": {
+    "integratedLufs": -18,
+    "truePeakDbtp": -1.5
+  },
+  "items": [
+    {
+      "key": "teacher:1:1",
+      "text": "Bonjour, pouvez-vous vous présenter, s'il vous plaît ?",
+      "file": "teacher-tache1-01-01-bonjour-pouvez-vous-vous-presenter-s-il-vous-plait.mp3"
+    },
+    {
+      "key": "teacher:2:1",
+      "text": "Pouvez-vous me parler de votre travail et de vos projets pour l'avenir ?",
+      "file": "teacher-tache1-02-01-pouvez-vous-me-parler-de-votre-travail-et-de-vos-projets-pour-l.mp3"
+    },
+    {
+      "key": "teacher:3:1",
+      "text": "Pouvez-vous me parler de l'endroit où vous habitez ?",
+      "file": "teacher-tache1-03-01-pouvez-vous-me-parler-de-l-endroit-ou-vous-habitez.mp3"
+    },
+    {
+      "key": "teacher:4:1",
+      "text": "Que faites-vous pendant votre temps libre ?",
+      "file": "teacher-tache1-04-01-que-faites-vous-pendant-votre-temps-libre.mp3"
+    },
+    {
+      "key": "teacher:5:1",
+      "text": "Pourquoi apprenez-vous le français ?",
+      "file": "teacher-tache1-05-01-pourquoi-apprenez-vous-le-francais.mp3"
+    },
+    {
+      "key": "teacher:6:1",
+      "text": "Préférez-vous travailler seul ou en équipe ?",
+      "file": "teacher-tache1-06-01-preferez-vous-travailler-seul-ou-en-equipe.mp3"
+    },
+    {
+      "key": "teacher:6:2",
+      "text": "Comment vous décririez-vous en quelques mots ?",
+      "file": "teacher-tache1-06-02-comment-vous-decririez-vous-en-quelques-mots.mp3"
+    },
+    {
+      "key": "teacher:6:3",
+      "text": "Que faites-vous habituellement le week-end ?",
+      "file": "teacher-tache1-06-03-que-faites-vous-habituellement-le-week-end.mp3"
+    },
+    {
+      "key": "teacher:6:4",
+      "text": "Quelle qualité est importante pour vous ?",
+      "file": "teacher-tache1-06-04-quelle-qualite-est-importante-pour-vous.mp3"
+    },
+    {
+      "key": "dialogue:1",
+      "text": "Bonjour, pouvez-vous vous présenter, s'il vous plaît ?",
+      "file": "dialogue/teacher-bonjour-pouvez-vous-vous-presenter-s-il-vous-plait.mp3"
+    },
+    {
+      "key": "dialogue:2",
+      "text": "Depuis combien de temps vivez-vous au Canada ?",
+      "file": "dialogue/teacher-depuis-combien-de-temps-vivez-vous-au-canada.mp3"
+    },
+    {
+      "key": "dialogue:3",
+      "text": "Comment vous décririez-vous en quelques mots ?",
+      "file": "dialogue/teacher-comment-vous-decririez-vous-en-quelques-mots.mp3"
+    },
+    {
+      "key": "dialogue:4",
+      "text": "Que faites-vous dans la vie ?",
+      "file": "dialogue/teacher-que-faites-vous-dans-la-vie.mp3"
+    },
+    {
+      "key": "dialogue:5",
+      "text": "Qu'est-ce que vous aimez le plus dans votre travail ?",
+      "file": "dialogue/teacher-qu-est-ce-que-vous-aimez-le-plus-dans-votre-travail.mp3"
+    },
+    {
+      "key": "dialogue:6",
+      "text": "Quelle qualité est importante dans votre métier ?",
+      "file": "dialogue/teacher-quelle-qualite-est-importante-dans-votre-metier.mp3"
+    },
+    {
+      "key": "dialogue:7",
+      "text": "Pourquoi apprenez-vous le français ?",
+      "file": "dialogue/teacher-pourquoi-apprenez-vous-le-francais.mp3"
+    },
+    {
+      "key": "dialogue:8",
+      "text": "Comment pratiquez-vous le français au quotidien ?",
+      "file": "dialogue/teacher-comment-pratiquez-vous-le-francais-au-quotidien.mp3"
+    },
+    {
+      "key": "dialogue:9",
+      "text": "Qu'est-ce qui est le plus difficile pour vous en français ?",
+      "file": "dialogue/teacher-qu-est-ce-qui-est-le-plus-difficile-pour-vous-en-francais.mp3"
+    },
+    {
+      "key": "dialogue:10",
+      "text": "À quoi ressemble une journée habituelle pour vous ?",
+      "file": "dialogue/teacher-a-quoi-ressemble-une-journee-habituelle-pour-vous.mp3"
+    },
+    {
+      "key": "dialogue:11",
+      "text": "Comment organisez-vous votre temps ?",
+      "file": "dialogue/teacher-comment-organisez-vous-votre-temps.mp3"
+    },
+    {
+      "key": "dialogue:12",
+      "text": "Y a-t-il une habitude que vous aimeriez changer ?",
+      "file": "dialogue/teacher-y-a-t-il-une-habitude-que-vous-aimeriez-changer.mp3"
+    },
+    {
+      "key": "dialogue:13",
+      "text": "Que faites-vous pendant votre temps libre ?",
+      "file": "dialogue/teacher-que-faites-vous-pendant-votre-temps-libre.mp3"
+    },
+    {
+      "key": "dialogue:14",
+      "text": "Que faites-vous habituellement le week-end ?",
+      "file": "dialogue/teacher-que-faites-vous-habituellement-le-week-end.mp3"
+    },
+    {
+      "key": "dialogue:15",
+      "text": "Préférez-vous rester chez vous ou sortir ? Pourquoi ?",
+      "file": "dialogue/teacher-preferez-vous-rester-chez-vous-ou-sortir-pourquoi.mp3"
+    },
+    {
+      "key": "dialogue:16",
+      "text": "Pouvez-vous me parler de votre famille ?",
+      "file": "dialogue/teacher-pouvez-vous-me-parler-de-votre-famille.mp3"
+    },
+    {
+      "key": "dialogue:17",
+      "text": "Qu'aimez-vous faire ensemble ?",
+      "file": "dialogue/teacher-qu-aimez-vous-faire-ensemble.mp3"
+    },
+    {
+      "key": "dialogue:18",
+      "text": "Quelle valeur familiale est importante pour vous ?",
+      "file": "dialogue/teacher-quelle-valeur-familiale-est-importante-pour-vous.mp3"
+    },
+    {
+      "key": "dialogue:19",
+      "text": "Qu'est-ce que vous aimez dans la vie au Canada ?",
+      "file": "dialogue/teacher-qu-est-ce-que-vous-aimez-dans-la-vie-au-canada.mp3"
+    },
+    {
+      "key": "dialogue:20",
+      "text": "Avez-vous rencontré des difficultés en vous installant ici ?",
+      "file": "dialogue/teacher-avez-vous-rencontre-des-difficultes-en-vous-installant-ici.mp3"
+    },
+    {
+      "key": "dialogue:21",
+      "text": "Qu'est-ce qui est différent entre le Canada et votre pays d'origine ?",
+      "file": "dialogue/teacher-qu-est-ce-qui-est-different-entre-le-canada-et-votre-pays-d-orig.mp3"
+    },
+    {
+      "key": "dialogue:22",
+      "text": "Quels sont vos projets pour l'avenir ?",
+      "file": "dialogue/teacher-quels-sont-vos-projets-pour-l-avenir.mp3"
+    },
+    {
+      "key": "dialogue:23",
+      "text": "Comment allez-vous atteindre cet objectif ?",
+      "file": "dialogue/teacher-comment-allez-vous-atteindre-cet-objectif.mp3"
+    },
+    {
+      "key": "dialogue:24",
+      "text": "Pourquoi ce projet est-il important pour vous ?",
+      "file": "dialogue/teacher-pourquoi-ce-projet-est-il-important-pour-vous.mp3"
+    },
+    {
+      "key": "dialogue:25",
+      "text": "Vous êtes plutôt une personne calme ou dynamique ?",
+      "file": "dialogue/teacher-vous-etes-plutot-une-personne-calme-ou-dynamique.mp3"
+    },
+    {
+      "key": "dialogue:26",
+      "text": "De quelle réussite personnelle êtes-vous le plus fier ?",
+      "file": "dialogue/teacher-de-quelle-reussite-personnelle-etes-vous-le-plus-fier.mp3"
+    },
+    {
+      "key": "dialogue:27",
+      "text": "Avez-vous déjà pensé à changer de métier ?",
+      "file": "dialogue/teacher-avez-vous-deja-pense-a-changer-de-metier.mp3"
+    },
+    {
+      "key": "dialogue:28",
+      "text": "Que faites-vous lorsqu'un problème imprévu arrive au travail ?",
+      "file": "dialogue/teacher-que-faites-vous-lorsqu-un-probleme-imprevu-arrive-au-travail.mp3"
+    },
+    {
+      "key": "dialogue:29",
+      "text": "Préférez-vous apprendre le français seul ou avec d'autres personnes ?",
+      "file": "dialogue/teacher-preferez-vous-apprendre-le-francais-seul-ou-avec-d-autres-person.mp3"
+    },
+    {
+      "key": "dialogue:30",
+      "text": "Dans quelle situation aimeriez-vous parler français avec plus d'aisance ?",
+      "file": "dialogue/teacher-dans-quelle-situation-aimeriez-vous-parler-francais-avec-plus-d.mp3"
+    },
+    {
+      "key": "dialogue:31",
+      "text": "Êtes-vous plutôt du matin ou du soir ?",
+      "file": "dialogue/teacher-etes-vous-plutot-du-matin-ou-du-soir.mp3"
+    },
+    {
+      "key": "dialogue:32",
+      "text": "Quelle tâche quotidienne aimez-vous le moins ?",
+      "file": "dialogue/teacher-quelle-tache-quotidienne-aimez-vous-le-moins.mp3"
+    },
+    {
+      "key": "dialogue:33",
+      "text": "Y a-t-il une nouvelle activité que vous aimeriez essayer ?",
+      "file": "dialogue/teacher-y-a-t-il-une-nouvelle-activite-que-vous-aimeriez-essayer.mp3"
+    },
+    {
+      "key": "dialogue:34",
+      "text": "Avec qui passez-vous généralement votre temps libre ?",
+      "file": "dialogue/teacher-avec-qui-passez-vous-generalement-votre-temps-libre.mp3"
+    },
+    {
+      "key": "dialogue:35",
+      "text": "Est-il facile de concilier le travail et la vie de famille ?",
+      "file": "dialogue/teacher-est-il-facile-de-concilier-le-travail-et-la-vie-de-famille.mp3"
+    },
+    {
+      "key": "dialogue:36",
+      "text": "Quelle personne vous a beaucoup influencé dans votre vie ?",
+      "file": "dialogue/teacher-quelle-personne-vous-a-beaucoup-influence-dans-votre-vie.mp3"
+    },
+    {
+      "key": "dialogue:37",
+      "text": "Quel endroit du Canada aimeriez-vous découvrir ?",
+      "file": "dialogue/teacher-quel-endroit-du-canada-aimeriez-vous-decouvrir.mp3"
+    },
+    {
+      "key": "dialogue:38",
+      "text": "Comment trouvez-vous l'hiver au Canada ?",
+      "file": "dialogue/teacher-comment-trouvez-vous-l-hiver-au-canada.mp3"
+    },
+    {
+      "key": "dialogue:39",
+      "text": "Que ferez-vous si votre projet ne se passe pas comme prévu ?",
+      "file": "dialogue/teacher-que-ferez-vous-si-votre-projet-ne-se-passe-pas-comme-prevu.mp3"
+    },
+    {
+      "key": "dialogue:40",
+      "text": "Avez-vous un rêve que vous aimeriez réaliser un jour ?",
+      "file": "dialogue/teacher-avez-vous-un-reve-que-vous-aimeriez-realiser-un-jour.mp3"
+    }
+  ]
+}
