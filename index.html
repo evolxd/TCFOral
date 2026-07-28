@@ -701,6 +701,7 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   height: 40px;
   border-radius: var(--radius);
 }
+.card-audio[hidden] { display: none; }
 .card-audio.is-tracking {
   outline: 2px solid #d8e6d8;
   outline-offset: 3px;
@@ -5142,7 +5143,7 @@ function renderCards(options = {}) {
         <button data-download="${index}">下载本卡音频</button>
         <a href="${googleTranslateUrl(content.fr)}" target="_blank" rel="noopener"><button>Google 发音</button></a>
         <span class="rate-pill" data-rate-label="${index}">x${currentPlaybackRate().toFixed(2)}</span>
-        <audio class="card-audio" data-audio="${index}" controls preload="metadata"></audio>
+        <audio class="card-audio" data-audio="${index}" preload="metadata" hidden></audio>
       </div>
       ${renderTypingPractice(index, level)}
     </article>

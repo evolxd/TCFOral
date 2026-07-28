@@ -43,9 +43,17 @@ if (!html.includes("下一步：朗读下一卡 ▶")) {
   throw new Error("The next-card button does not state that it starts reading.");
 }
 
+if (!html.includes('<audio class="card-audio" data-audio="${index}" preload="metadata" hidden></audio>')) {
+  throw new Error("The redundant native card audio player should stay hidden.");
+}
+if (!html.includes(".card-audio[hidden] { display: none; }")) {
+  throw new Error("Hidden card audio players need an explicit display rule.");
+}
+
 console.log(JSON.stringify({
   sharedGapForReadAndLoop: true,
   examinerAnswerGap: true,
   dialogueSegmentGap: true,
-  nextCardStartsReading: true
+  nextCardStartsReading: true,
+  nativeCardPlayerHidden: true
 }));
