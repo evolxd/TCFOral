@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-28T06:30:12.627Z",
+  "generatedAt": "2026-07-28T06:43:31.361Z",
   "provider": "google-cloud-text-to-speech",
   "voice": "fr-FR-Chirp3-HD-Despina",
   "loudness": {
@@ -252,6 +252,206 @@
       "key": "dialogue:40",
       "text": "Avez-vous un rêve que vous aimeriez réaliser un jour ?",
       "file": "dialogue/teacher-avez-vous-un-reve-que-vous-aimeriez-realiser-un-jour.mp3"
+    },
+    {
+      "key": "answer:1",
+      "text": "Bonjour, je m'appelle Patrick. Je viens de Chine et je vis actuellement au Canada. Je dirige une entreprise de commerce. J'apprends le français pour mieux communiquer et mieux m'intégrer au Canada.",
+      "file": "dialogue/answer-bonjour-pouvez-vous-vous-presenter-s-il-vous-plait.mp3"
+    },
+    {
+      "key": "answer:2",
+      "text": "Je vis au Canada depuis quelque temps. Au début, j'ai dû m'adapter à un nouvel environnement, mais aujourd'hui je m'y sens de plus en plus à l'aise.",
+      "file": "dialogue/answer-depuis-combien-de-temps-vivez-vous-au-canada.mp3"
+    },
+    {
+      "key": "answer:3",
+      "text": "Je dirais que je suis persévérant et adaptable. Quand j'ai un objectif important, je progresse régulièrement et j'essaie de trouver des solutions concrètes.",
+      "file": "dialogue/answer-comment-vous-decririez-vous-en-quelques-mots.mp3"
+    },
+    {
+      "key": "answer:4",
+      "text": "Je dirige une entreprise de commerce. Mon travail consiste notamment à communiquer avec différents partenaires et à prendre des décisions concrètes.",
+      "file": "dialogue/answer-que-faites-vous-dans-la-vie.mp3"
+    },
+    {
+      "key": "answer:5",
+      "text": "J'aime surtout le fait que mon travail soit varié. Chaque situation est différente, donc je dois communiquer, m'organiser et m'adapter rapidement.",
+      "file": "dialogue/answer-qu-est-ce-que-vous-aimez-le-plus-dans-votre-travail.mp3"
+    },
+    {
+      "key": "answer:6",
+      "text": "À mon avis, l'adaptabilité est essentielle. Elle permet de mieux réagir aux imprévus et de maintenir une bonne relation avec les partenaires.",
+      "file": "dialogue/answer-quelle-qualite-est-importante-dans-votre-metier.mp3"
+    },
+    {
+      "key": "answer:7",
+      "text": "J'apprends le français parce que je vis au Canada. Cette langue est utile dans la vie quotidienne et professionnelle, et elle m'aide aussi à mieux m'intégrer.",
+      "file": "dialogue/answer-pourquoi-apprenez-vous-le-francais.mp3"
+    },
+    {
+      "key": "answer:8",
+      "text": "J'écoute des phrases en français et je les répète à voix haute. J'essaie aussi de parler régulièrement afin de gagner en fluidité et en confiance.",
+      "file": "dialogue/answer-comment-pratiquez-vous-le-francais-au-quotidien.mp3"
+    },
+    {
+      "key": "answer:9",
+      "text": "Le plus difficile pour moi est de répondre spontanément. Pour progresser, je m'entraîne à écouter une question et à formuler immédiatement une réponse courte et claire.",
+      "file": "dialogue/answer-qu-est-ce-qui-est-le-plus-difficile-pour-vous-en-francais.mp3"
+    },
+    {
+      "key": "answer:10",
+      "text": "En général, je commence ma journée assez tôt. Je m'occupe de mon travail pendant la journée, puis le soir, je prends du temps pour ma famille et pour apprendre le français.",
+      "file": "dialogue/answer-a-quoi-ressemble-une-journee-habituelle-pour-vous.mp3"
+    },
+    {
+      "key": "answer:11",
+      "text": "J'essaie de définir mes priorités à l'avance. Cela me permet de rester efficace tout en gardant du temps pour ma vie personnelle.",
+      "file": "dialogue/answer-comment-organisez-vous-votre-temps.mp3"
+    },
+    {
+      "key": "answer:12",
+      "text": "J'aimerais être plus régulier dans ma pratique du français. Même quinze minutes par jour seraient plus efficaces qu'une longue séance de temps en temps.",
+      "file": "dialogue/answer-y-a-t-il-une-habitude-que-vous-aimeriez-changer.mp3"
+    },
+    {
+      "key": "answer:13",
+      "text": "Pendant mon temps libre, j'aime apprendre les langues et découvrir de nouvelles cultures. Ces activités me permettent de rester curieux et d'élargir ma façon de voir les choses.",
+      "file": "dialogue/answer-que-faites-vous-pendant-votre-temps-libre.mp3"
+    },
+    {
+      "key": "answer:14",
+      "text": "Le week-end, j'essaie de trouver un équilibre entre le repos, le temps en famille et mes projets personnels. Je réserve aussi un moment à la pratique du français.",
+      "file": "dialogue/answer-que-faites-vous-habituellement-le-week-end.mp3"
+    },
+    {
+      "key": "answer:15",
+      "text": "Cela dépend de la semaine. Après une période chargée, je préfère rester chez moi pour me reposer, mais j'aime aussi sortir pour découvrir un nouvel endroit avec ma famille.",
+      "file": "dialogue/answer-preferez-vous-rester-chez-vous-ou-sortir-pourquoi.mp3"
+    },
+    {
+      "key": "answer:16",
+      "text": "Ma famille occupe une place très importante dans ma vie. Nous essayons de passer du temps ensemble et de nous soutenir dans nos projets.",
+      "file": "dialogue/answer-pouvez-vous-me-parler-de-votre-famille.mp3"
+    },
+    {
+      "key": "answer:17",
+      "text": "Nous aimons partager un repas ou découvrir un nouvel endroit. Ce sont des moments simples, mais ils nous permettent de parler et de rester proches.",
+      "file": "dialogue/answer-qu-aimez-vous-faire-ensemble.mp3"
+    },
+    {
+      "key": "answer:18",
+      "text": "Pour moi, la communication est essentielle. Quand on parle ouvertement, il est plus facile de comprendre les besoins de chacun et d'éviter les malentendus.",
+      "file": "dialogue/answer-quelle-valeur-familiale-est-importante-pour-vous.mp3"
+    },
+    {
+      "key": "answer:19",
+      "text": "J'apprécie particulièrement la diversité culturelle du Canada. On peut rencontrer des personnes de différents horizons et apprendre à voir les choses autrement.",
+      "file": "dialogue/answer-qu-est-ce-que-vous-aimez-dans-la-vie-au-canada.mp3"
+    },
+    {
+      "key": "answer:20",
+      "text": "Oui, il faut du temps pour comprendre un nouvel environnement et de nouvelles habitudes. J'essaie de rester ouvert, de poser des questions et d'apprendre progressivement.",
+      "file": "dialogue/answer-avez-vous-rencontre-des-difficultes-en-vous-installant-ici.mp3"
+    },
+    {
+      "key": "answer:21",
+      "text": "Le rythme de vie et les habitudes de communication peuvent être différents. Je ne dirais pas qu'un système est meilleur que l'autre, mais cette différence demande une certaine adaptation.",
+      "file": "dialogue/answer-qu-est-ce-qui-est-different-entre-le-canada-et-votre-pays-d-orig.mp3"
+    },
+    {
+      "key": "answer:22",
+      "text": "À court terme, je voudrais améliorer mon français oral. À plus long terme, j'aimerais l'utiliser avec confiance dans ma vie quotidienne et professionnelle au Canada.",
+      "file": "dialogue/answer-quels-sont-vos-projets-pour-l-avenir.mp3"
+    },
+    {
+      "key": "answer:23",
+      "text": "Je vais pratiquer un peu chaque jour et travailler surtout la compréhension des questions. Je veux également enregistrer mes réponses pour repérer mes hésitations.",
+      "file": "dialogue/answer-comment-allez-vous-atteindre-cet-objectif.mp3"
+    },
+    {
+      "key": "answer:24",
+      "text": "Ce projet est important parce que la langue facilite la communication et l'intégration. Progresser en français me donnera aussi davantage d'autonomie et de confiance.",
+      "file": "dialogue/answer-pourquoi-ce-projet-est-il-important-pour-vous.mp3"
+    },
+    {
+      "key": "answer:25",
+      "text": "Je suis plutôt une personne calme, surtout lorsque je dois prendre une décision. Cela ne m'empêche pas d'être dynamique quand un projet demande de l'énergie.",
+      "file": "dialogue/answer-vous-etes-plutot-une-personne-calme-ou-dynamique.mp3"
+    },
+    {
+      "key": "answer:26",
+      "text": "Je suis fier d'avoir construit progressivement mon projet professionnel. Cette expérience m'a appris à être patient, responsable et adaptable.",
+      "file": "dialogue/answer-de-quelle-reussite-personnelle-etes-vous-le-plus-fier.mp3"
+    },
+    {
+      "key": "answer:27",
+      "text": "Oui, j'y ai déjà pensé, car il est important de rester ouvert aux nouvelles possibilités. Cependant, je préfère un changement progressif et bien préparé.",
+      "file": "dialogue/answer-avez-vous-deja-pense-a-changer-de-metier.mp3"
+    },
+    {
+      "key": "answer:28",
+      "text": "Je commence par comprendre la situation et identifier la priorité. Ensuite, je parle avec les personnes concernées afin de trouver une solution concrète.",
+      "file": "dialogue/answer-que-faites-vous-lorsqu-un-probleme-imprevu-arrive-au-travail.mp3"
+    },
+    {
+      "key": "answer:29",
+      "text": "Je préfère combiner les deux. Seul, je peux travailler à mon rythme, mais avec d'autres personnes, je développe davantage ma spontanéité.",
+      "file": "dialogue/answer-preferez-vous-apprendre-le-francais-seul-ou-avec-d-autres-person.mp3"
+    },
+    {
+      "key": "answer:30",
+      "text": "J'aimerais parler avec plus d'aisance dans les situations professionnelles. Cela me permettrait de mieux expliquer mes idées et de communiquer avec davantage de confiance.",
+      "file": "dialogue/answer-dans-quelle-situation-aimeriez-vous-parler-francais-avec-plus-d.mp3"
+    },
+    {
+      "key": "answer:31",
+      "text": "Je suis plutôt du matin, car je me concentre mieux au début de la journée. J'essaie donc de traiter les tâches importantes assez tôt.",
+      "file": "dialogue/answer-etes-vous-plutot-du-matin-ou-du-soir.mp3"
+    },
+    {
+      "key": "answer:32",
+      "text": "J'aime moins les tâches répétitives, parce qu'elles prennent du temps. Pour les gérer, j'essaie de les planifier et de les terminer sans les repousser.",
+      "file": "dialogue/answer-quelle-tache-quotidienne-aimez-vous-le-moins.mp3"
+    },
+    {
+      "key": "answer:33",
+      "text": "J'aimerais essayer une activité qui me permette de rencontrer davantage de francophones. Ce serait à la fois agréable et utile pour pratiquer la langue.",
+      "file": "dialogue/answer-y-a-t-il-une-nouvelle-activite-que-vous-aimeriez-essayer.mp3"
+    },
+    {
+      "key": "answer:34",
+      "text": "Je passe généralement mon temps libre avec ma famille. Nous aimons partager un repas, discuter ou découvrir un nouvel endroit.",
+      "file": "dialogue/answer-avec-qui-passez-vous-generalement-votre-temps-libre.mp3"
+    },
+    {
+      "key": "answer:35",
+      "text": "Ce n'est pas toujours facile, surtout pendant les périodes chargées. Pour garder un équilibre, j'essaie de bien organiser mes priorités et de réserver du temps à ma famille.",
+      "file": "dialogue/answer-est-il-facile-de-concilier-le-travail-et-la-vie-de-famille.mp3"
+    },
+    {
+      "key": "answer:36",
+      "text": "Une personne de ma famille m'a beaucoup influencé par son sens des responsabilités. Grâce à elle, j'ai appris à rester sérieux et persévérant face aux difficultés.",
+      "file": "dialogue/answer-quelle-personne-vous-a-beaucoup-influence-dans-votre-vie.mp3"
+    },
+    {
+      "key": "answer:37",
+      "text": "J'aimerais découvrir davantage de régions naturelles du Canada. Les paysages sont très variés, et ce serait une bonne occasion de mieux connaître le pays.",
+      "file": "dialogue/answer-quel-endroit-du-canada-aimeriez-vous-decouvrir.mp3"
+    },
+    {
+      "key": "answer:38",
+      "text": "L'hiver est assez long et parfois difficile, mais on s'y adapte progressivement. Je pense qu'une bonne organisation et des activités adaptées rendent cette saison plus agréable.",
+      "file": "dialogue/answer-comment-trouvez-vous-l-hiver-au-canada.mp3"
+    },
+    {
+      "key": "answer:39",
+      "text": "Je commencerai par analyser les raisons du problème. Ensuite, j'adapterai mon plan, car un objectif important demande parfois plus de temps que prévu.",
+      "file": "dialogue/answer-que-ferez-vous-si-votre-projet-ne-se-passe-pas-comme-prevu.mp3"
+    },
+    {
+      "key": "answer:40",
+      "text": "J'aimerais construire une vie stable tout en continuant à apprendre et à découvrir de nouvelles choses. Pour moi, réussir signifie progresser sans perdre l'équilibre personnel.",
+      "file": "dialogue/answer-avez-vous-un-reve-que-vous-aimeriez-realiser-un-jour.mp3"
     }
   ]
 }

@@ -863,10 +863,19 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
 }
 .dialogue-answer[hidden] { display: none; }
 .dialogue-answer-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
   margin-bottom: 8px;
   color: #8a6034;
   font-size: 12px;
   font-weight: 850;
+}
+.dialogue-answer-play {
+  min-height: 32px;
+  padding: 5px 10px;
+  font-size: 12px;
 }
 .dialogue-answer-fr { color: #263d2e; font-size: 17px; line-height: 1.6; }
 .dialogue-answer-zh { margin-top: 8px; color: var(--muted); font-size: 14px; }
@@ -1595,7 +1604,10 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
         </div>
         <div class="dialogue-coach" id="dialogueCoach"></div>
         <div class="dialogue-answer" id="dialogueAnswer" hidden>
-          <div class="dialogue-answer-label">考场短答（约20秒）· 不是唯一答案</div>
+          <div class="dialogue-answer-label">
+            <span>考场短答（约20秒）· 不是唯一答案</span>
+            <button type="button" class="dialogue-answer-play" id="dialogueAnswerPlay">▶ 朗读参考回答</button>
+          </div>
           <div class="dialogue-answer-fr" id="dialogueAnswerFr" lang="fr"></div>
           <div class="dialogue-answer-zh" id="dialogueAnswerZh"></div>
         </div>
@@ -3180,6 +3192,7 @@ const dialogueFormula = document.querySelector("#dialogueFormula");
 const dialogueAnswer = document.querySelector("#dialogueAnswer");
 const dialogueAnswerFr = document.querySelector("#dialogueAnswerFr");
 const dialogueAnswerZh = document.querySelector("#dialogueAnswerZh");
+const dialogueAnswerPlay = document.querySelector("#dialogueAnswerPlay");
 const dialoguePlay = document.querySelector("#dialoguePlay");
 const dialogueTimerStart = document.querySelector("#dialogueTimerStart");
 const dialogueRecord = document.querySelector("#dialogueRecord");
@@ -3309,6 +3322,8 @@ function renderDialogue() {
   dialogueAnswerFr.textContent = round.answer;
   dialogueAnswerZh.textContent = round.answerZh;
   dialogueAnswer.hidden = true;
+  dialogueAnswerPlay.disabled = false;
+  dialogueAnswerPlay.textContent = "▶ 朗读参考回答";
   dialogueReveal.textContent = "查看参考回答";
   dialoguePrev.disabled = !dialogueDivergentRound && dialogueRoundIndex === 0;
   dialogueNext.textContent = dialogueDivergentRound
@@ -5617,6 +5632,10 @@ function localDialogueQuestionAudioName(text) {
   return `audio/b2/dialogue/teacher-${safeFileName(text)}.mp3?v=15`;
 }
 
+function localDialogueAnswerAudioName(question) {
+  return `audio/b2/dialogue/answer-${safeFileName(question)}.mp3?v=16`;
+}
+
 async function playLocalDialogueQuestion(text) {
   const target = usePlayer(dialogueQuestionAudio);
   target.pause();
@@ -5625,6 +5644,25 @@ async function playLocalDialogueQuestion(text) {
   await new Promise((resolve, reject) => {
     target.onended = resolve;
     target.onerror = () => reject(new Error("本地互动问句音频不可用"));
+    target.play().catch(reject);
+  });
+}
+
+async function playLocalDialogueAnswer(round) {
+  const target = usePlayer(dialogueQuestionAudio);
+  target.pause();
+  target.src = localDialogueAnswerAudioName(round.question);
+  applyPlaybackRate(target);
+  await new Promise((resolve, reject) => {
+    const finish = () => {
+      target.onended = null;
+      target.onpause = null;
+      target.onerror = null;
+      resolve();
+    };
+    target.onended = finish;
+    target.onpause = finish;
+    target.onerror = () => reject(new Error("本地参考回答音频不可用"));
     target.play().catch(reject);
   });
 }
@@ -6251,6 +6289,24 @@ dialogueRecord.addEventListener("click", () => {
 dialogueReveal.addEventListener("click", () => {
   dialogueAnswer.hidden = !dialogueAnswer.hidden;
   dialogueReveal.textContent = dialogueAnswer.hidden ? "查看参考回答" : "收起参考回答";
+});
+dialogueAnswerPlay.addEventListener("click", async () => {
+  const original = dialogueAnswerPlay.textContent;
+  dialogueAnswerPlay.disabled = true;
+  dialogueAnswerPlay.textContent = "正在朗读…";
+  const round = currentDialogueRound();
+  try {
+    await playLocalDialogueAnswer(round);
+  } catch {
+    try {
+      await speakText(round.answer, dialogueQuestionAudio);
+    } catch {
+      speakWithBrowserFrench(round.answer);
+    }
+  } finally {
+    dialogueAnswerPlay.disabled = false;
+    dialogueAnswerPlay.textContent = original;
+  }
 });
 dialoguePrev.addEventListener("click", () => moveDialogue(-1));
 dialogueNext.addEventListener("click", () => moveDialogue(1));

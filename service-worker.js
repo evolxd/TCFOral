@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v62-google-despina-teachers";
+const CACHE_NAME = "tcf-oral-v63-google-despina-answers";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",
