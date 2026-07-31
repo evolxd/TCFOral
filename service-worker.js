@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v63-google-despina-answers";
+const CACHE_NAME = "tcf-oral-v64-dictation-no-autoscroll";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",

@@ -5453,15 +5453,22 @@ function clearPlaybackHighlights() {
   document.querySelectorAll(".card-audio.is-tracking").forEach(el => el.classList.remove("is-tracking"));
 }
 
+function isTypingFocused() {
+  return Boolean(document.activeElement && document.activeElement.classList.contains("typing-box"));
+}
+
 function highlightPlaybackSentence(cardIndex, sentenceIndex, player) {
   clearPlaybackHighlights();
+  const stayPut = isTypingFocused();
   const pair = cardsEl.querySelector(`[data-sentence-pair-card="${cardIndex}"][data-sentence-pair-index="${sentenceIndex}"]`);
   if (pair) {
     pair.classList.add("is-playing");
-    const rect = pair.getBoundingClientRect();
-    const isMostlyVisible = rect.top >= 96 && rect.bottom <= window.innerHeight - 70;
-    if (!isMostlyVisible) pair.scrollIntoView({ behavior: "smooth", block: "center" });
-  } else {
+    if (!stayPut) {
+      const rect = pair.getBoundingClientRect();
+      const isMostlyVisible = rect.top >= 96 && rect.bottom <= window.innerHeight - 70;
+      if (!isMostlyVisible) pair.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  } else if (!stayPut) {
     scrollToCard(cardIndex);
   }
   if (player) player.classList.add("is-tracking");
