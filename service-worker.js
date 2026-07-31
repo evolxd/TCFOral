@@ -1,4 +1,4 @@
-const CACHE_NAME = "tcf-oral-v64-dictation-no-autoscroll";
+const CACHE_NAME = "tcf-oral-v65-per-sentence-dictation";
 const CORE_ASSETS = [
   "./index.html",
   "./manifest.webmanifest",

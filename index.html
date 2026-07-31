@@ -1092,30 +1092,6 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   color: var(--sage-dark);
   font-weight: 650;
 }
-.typing-practice {
-  margin-top: 14px;
-  border: 1px solid #dde7df;
-  border-radius: 12px;
-  background: #fbfcfa;
-  padding: 14px;
-  position: relative;
-}
-.typing-head {
-  display: flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 8px;
-}
-.typing-title {
-  color: #26382b;
-  font-size: 17px;
-  font-weight: 720;
-}
-.typing-hint {
-  color: var(--muted);
-  font-size: 12px;
-}
 .typing-box {
   width: 100%;
   min-height: 118px;
@@ -1184,6 +1160,66 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
 .accent-btn:hover {
   background: var(--sage-light);
   border-color: #b9c9bb;
+}
+.sentence-typing {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  position: relative;
+}
+.sentence-typing-box {
+  flex: 1;
+  min-width: 0;
+  min-height: unset;
+  padding: 7px 10px;
+  font-size: 15px;
+  line-height: 1.4;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: white;
+  color: var(--ink);
+  outline: none;
+}
+.sentence-typing-box:focus {
+  border-color: #8aa08f;
+  box-shadow: 0 0 0 3px rgba(70, 106, 81, .12);
+}
+.sentence-typing .accent-wrap {
+  flex: none;
+  width: 1px;
+  margin-top: 0;
+}
+.sentence-typing .accent-wrap.is-open {
+  margin-bottom: 0;
+}
+.sentence-typing .accent-palette {
+  top: 100%;
+  margin-top: 6px;
+}
+.sentence-typing-clear {
+  flex: none;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: white;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+}
+.sentence-typing-result {
+  grid-column: 1 / -1;
+  margin-top: 6px;
+}
+.sentence-typing-result:empty {
+  display: none;
+}
+.sentence-typing-result .typing-line {
+  font-size: 13px;
 }
 .typing-result {
   display: grid;
@@ -1493,7 +1529,6 @@ h2 { margin: 0; font-size: 20px; line-height: 1.3; letter-spacing: 0; }
   .analysis summary { align-items: center; }
   .analysis-toggle { margin-top: 1px; }
   .card-audio { width: 100%; }
-  .typing-practice,
   .accent-wrap {
     display: none !important;
   }
@@ -3591,8 +3626,8 @@ function teacherQuestionPracticeKey(cardIndex, questionIndex, level = activeLeve
   return `tcf_teacher_question_enabled_${level}_${cardIndex}_${questionIndex}`;
 }
 
-function typingPracticeKey(cardIndex, level = activeLevel) {
-  return `tcf_typing_practice_${level}_${cardIndex}`;
+function typingPracticeKey(cardIndex, sentenceIndex, level = activeLevel) {
+  return `tcf_typing_practice_${level}_${cardIndex}_${sentenceIndex}`;
 }
 
 function sentenceMasteryKey(cardIndex, sentenceIndex, level = activeLevel) {
@@ -3702,6 +3737,8 @@ function cardMasteryStats(content, cardIndex, level = activeLevel) {
   return stats;
 }
 
+const dictationAccentChars = ["é", "è", "ê", "ë", "à", "â", "î", "ï", "ô", "ù", "û", "ü", "ç", "œ", "É", "À"];
+
 function renderBilingual(item, content, cardIndex, level = cardLevel(cardIndex)) {
   const frLines = splitFrench(content.fr);
   const questions = item.type === "tache1" ? (tache1CardQuestions[item.title] || []) : [];
@@ -3726,6 +3763,19 @@ function renderBilingual(item, content, cardIndex, level = cardLevel(cardIndex))
       </label>
       <button class="teacher-play" type="button" data-play-teacher-question="${cardIndex}" data-question-index="${index}" aria-label="播放老师问句">▶ 问句</button>
     </div>` : "";
+    const typingDraft = localStorage.getItem(typingPracticeKey(cardIndex, index, level)) || "";
+    const typingUid = `${cardIndex}-${index}`;
+    const sentenceTypingHtml = `<div class="sentence-typing">
+      <input type="text" class="typing-box sentence-typing-box" data-typing-card="${cardIndex}" data-typing-index="${index}" spellcheck="false" autocorrect="off" autocomplete="off" autocapitalize="off" lang="fr" placeholder="听写这句…" value="${escapeHtml(typingDraft)}">
+      <div class="accent-wrap" data-accent-wrap="${typingUid}">
+        <div class="accent-palette" aria-label="法语特殊字符面板">
+          <span class="accent-title">Caractères spéciaux</span>
+          ${dictationAccentChars.map(char => `<button class="accent-btn" type="button" data-accent="${char}" data-accent-target-card="${cardIndex}" data-accent-target-index="${index}">${char}</button>`).join("")}
+        </div>
+      </div>
+      <button type="button" class="sentence-typing-clear" data-clear-typing-card="${cardIndex}" data-clear-typing-index="${index}" aria-label="清空这句听写">×</button>
+    </div>
+    <div class="sentence-typing-result" data-typing-result-card="${cardIndex}" data-typing-result-index="${index}"></div>`;
     return `${questionHtml}<div class="sentence-pair${muted}${stageClass}" data-sentence-pair-card="${cardIndex}" data-sentence-pair-index="${index}">
       <input id="${sentenceId}" class="sentence-check" type="checkbox" data-sentence-card="${cardIndex}" data-sentence-index="${index}" ${checked}>
       <label class="sentence-body" for="${sentenceId}"><div class="sentence-fr">${escapeHtml(line)}</div>${zh}</label>
@@ -3740,31 +3790,9 @@ function renderBilingual(item, content, cardIndex, level = cardLevel(cardIndex))
         ${analysisToggle}
       </div>
       ${sentenceAnalysis}
+      ${sentenceTypingHtml}
     </div>`;
   }).join("")}</div>`;
-}
-
-function renderTypingPractice(cardIndex, level = cardLevel(cardIndex)) {
-  const draft = localStorage.getItem(typingPracticeKey(cardIndex, level)) || "";
-  const accents = ["é", "è", "ê", "ë", "à", "â", "î", "ï", "ô", "ù", "û", "ü", "ç", "œ", "É", "À"];
-  return `<div class="typing-practice">
-    <div class="typing-head">
-      <span class="typing-title">听写检查</span>
-      <span class="typing-hint">只检查当前勾选的句子</span>
-    </div>
-    <textarea class="typing-box" data-typing="${cardIndex}" spellcheck="false" autocorrect="off" autocomplete="off" autocapitalize="off" lang="fr" placeholder="听一句，打一遍。可以逐句换行，也可以整段输入。">${escapeHtml(draft)}</textarea>
-    <div class="accent-wrap" data-accent-wrap="${cardIndex}">
-      <div class="accent-palette" aria-label="法语特殊字符面板">
-        <span class="accent-title">Caractères spéciaux</span>
-        ${accents.map(char => `<button class="accent-btn" type="button" data-accent="${char}" data-accent-target="${cardIndex}">${char}</button>`).join("")}
-      </div>
-    </div>
-    <div class="actions">
-      <button data-check-typing="${cardIndex}">检查</button>
-      <button data-clear-typing="${cardIndex}">清空</button>
-    </div>
-    <div class="typing-result" data-typing-result="${cardIndex}"></div>
-  </div>`;
 }
 
 const trainingStageLabels = {
@@ -5159,7 +5187,6 @@ function renderCards(options = {}) {
         <span class="rate-pill" data-rate-label="${index}">x${currentPlaybackRate().toFixed(2)}</span>
         <audio class="card-audio" data-audio="${index}" controls preload="metadata"></audio>
       </div>
-      ${renderTypingPractice(index, level)}
     </article>
   `; 
   }).join("");
@@ -5546,38 +5573,31 @@ function similarityPercent(target, user) {
   return Math.max(0, Math.round((1 - distance / Math.max(a.length, b.length)) * 100));
 }
 
-function checkTypingPractice(cardIndex) {
+function checkTypingSentence(cardIndex, sentenceIndex) {
   const item = templates[cardIndex];
   const level = cardLevel(cardIndex);
-  const entries = selectedSentenceEntries(item, cardIndex, level);
-  const box = cardsEl.querySelector(`[data-typing="${cardIndex}"]`);
-  const result = cardsEl.querySelector(`[data-typing-result="${cardIndex}"]`);
-  if (!box || !result) return;
-  if (!entries.length) {
-    result.innerHTML = `<div class="typing-line bad">这张卡片没有勾选任何句子，先勾选一句再检查。</div>`;
+  const content = variantFor(item, level);
+  const target = splitFrench(content.fr)[sentenceIndex];
+  const box = cardsEl.querySelector(`[data-typing-card="${cardIndex}"][data-typing-index="${sentenceIndex}"]`);
+  const result = cardsEl.querySelector(`[data-typing-result-card="${cardIndex}"][data-typing-result-index="${sentenceIndex}"]`);
+  if (!box || !result || target == null) return;
+  const typed = box.value.trim();
+  if (!typed) {
+    result.innerHTML = "";
     return;
   }
-  const userLines = splitFrench(box.value);
-  const targetLines = entries.map(entry => entry.line);
-  const wholeScore = similarityPercent(targetLines.join(" "), userLines.join(" "));
-  const rows = targetLines.map((target, index) => {
-    const typed = userLines[index] || "";
-    const ok = normalizeDictation(target) === normalizeDictation(typed);
-    const score = similarityPercent(target, typed);
-    return `<div class="typing-line ${ok ? "good" : "bad"}">
-      <span class="typing-label">第 ${entries[index].index + 1} 句 · ${ok ? "正确" : `相似度 ${score}%`}</span>
-      <span class="typing-target">${escapeHtml(target)}</span>
-      ${ok ? "" : `<span class="typing-label">你的输入</span><span class="typing-user">${typingDiffHtml(target, typed)}</span>`}
+  const ok = normalizeDictation(target) === normalizeDictation(typed);
+  const score = similarityPercent(target, typed);
+  result.innerHTML = ok
+    ? `<div class="typing-line good"><span class="typing-label">✓ 正确</span></div>`
+    : `<div class="typing-line bad">
+      <span class="typing-label">相似度 ${score}%</span>
+      <span class="typing-user">${typingDiffHtml(target, typed)}</span>
     </div>`;
-  }).join("");
-  const extra = userLines.length > targetLines.length
-    ? `<div class="typing-line bad"><span class="typing-label">多出的内容</span><span class="typing-user">${typingDiffHtml("", userLines.slice(targetLines.length).join(" "))}</span></div>`
-    : "";
-  result.innerHTML = `<span class="typing-score">整体匹配 ${wholeScore}%</span>${rows}${extra}`;
 }
 
-function insertAccent(cardIndex, char) {
-  const box = cardsEl.querySelector(`[data-typing="${cardIndex}"]`);
+function insertAccent(cardIndex, sentenceIndex, char) {
+  const box = cardsEl.querySelector(`[data-typing-card="${cardIndex}"][data-typing-index="${sentenceIndex}"]`);
   if (!box) return;
   const start = box.selectionStart ?? box.value.length;
   const end = box.selectionEnd ?? box.value.length;
@@ -5587,9 +5607,8 @@ function insertAccent(cardIndex, char) {
   const next = start + char.length;
   box.focus();
   box.setSelectionRange(next, next);
-  localStorage.setItem(typingPracticeKey(cardIndex, cardLevel(cardIndex)), box.value);
-  const result = cardsEl.querySelector(`[data-typing-result="${cardIndex}"]`);
-  if (result && result.innerHTML.trim()) checkTypingPractice(cardIndex);
+  localStorage.setItem(typingPracticeKey(cardIndex, sentenceIndex, cardLevel(cardIndex)), box.value);
+  checkTypingSentence(cardIndex, sentenceIndex);
 }
 
 function closeAccentPalettes(except = null) {
@@ -5598,8 +5617,8 @@ function closeAccentPalettes(except = null) {
   });
 }
 
-function openAccentPalette(cardIndex) {
-  const wrap = cardsEl.querySelector(`[data-accent-wrap="${cardIndex}"]`);
+function openAccentPalette(uid) {
+  const wrap = cardsEl.querySelector(`[data-accent-wrap="${uid}"]`);
   if (!wrap) return;
   closeAccentPalettes(wrap);
   wrap.classList.add("is-open");
@@ -6020,8 +6039,7 @@ cardsEl.addEventListener("click", async event => {
   const loopBtn = event.target.closest("[data-loop]");
   const nextLoopBtn = event.target.closest("[data-next-loop]");
   const downloadBtn = event.target.closest("[data-download]");
-  const checkTypingBtn = event.target.closest("[data-check-typing]");
-  const clearTypingBtn = event.target.closest("[data-clear-typing]");
+  const clearTypingBtn = event.target.closest("[data-clear-typing-card]");
   const accentBtn = event.target.closest("[data-accent]");
   const selectSentencesBtn = event.target.closest("[data-toggle-sentences]");
   const stageBtn = event.target.closest("[data-stage-card]");
@@ -6105,7 +6123,7 @@ cardsEl.addEventListener("click", async event => {
     return;
   }
   if (accentBtn) {
-    insertAccent(Number(accentBtn.dataset.accentTarget), accentBtn.dataset.accent);
+    insertAccent(Number(accentBtn.dataset.accentTargetCard), Number(accentBtn.dataset.accentTargetIndex), accentBtn.dataset.accent);
   }
   if (speakBtn) {
     try {
@@ -6159,16 +6177,14 @@ cardsEl.addEventListener("click", async event => {
       downloadBtn.disabled = false;
     }
   }
-  if (checkTypingBtn) {
-    checkTypingPractice(Number(checkTypingBtn.dataset.checkTyping));
-  }
   if (clearTypingBtn) {
-    const index = Number(clearTypingBtn.dataset.clearTyping);
-    const box = cardsEl.querySelector(`[data-typing="${index}"]`);
-    const result = cardsEl.querySelector(`[data-typing-result="${index}"]`);
+    const index = Number(clearTypingBtn.dataset.clearTypingCard);
+    const sentenceIndex = Number(clearTypingBtn.dataset.clearTypingIndex);
+    const box = cardsEl.querySelector(`[data-typing-card="${index}"][data-typing-index="${sentenceIndex}"]`);
+    const result = cardsEl.querySelector(`[data-typing-result-card="${index}"][data-typing-result-index="${sentenceIndex}"]`);
     if (box) box.value = "";
     if (result) result.innerHTML = "";
-    localStorage.removeItem(typingPracticeKey(index, cardLevel(index)));
+    localStorage.removeItem(typingPracticeKey(index, sentenceIndex, cardLevel(index)));
   }
 });
 
@@ -6212,21 +6228,35 @@ cardsEl.addEventListener("change", event => {
     if (activePlayer) activePlayer.pause();
     stopLoopUi();
   }
-  const result = cardsEl.querySelector(`[data-typing-result="${cardIndex}"]`);
-  if (result && result.innerHTML.trim()) checkTypingPractice(cardIndex);
+  checkTypingSentence(cardIndex, sentenceIndex);
 });
 
 cardsEl.addEventListener("input", event => {
-  const box = event.target.closest("[data-typing]");
+  const box = event.target.closest("[data-typing-card]");
   if (!box) return;
-  const cardIndex = Number(box.dataset.typing);
-  localStorage.setItem(typingPracticeKey(cardIndex, cardLevel(cardIndex)), box.value);
+  const cardIndex = Number(box.dataset.typingCard);
+  const sentenceIndex = Number(box.dataset.typingIndex);
+  localStorage.setItem(typingPracticeKey(cardIndex, sentenceIndex, cardLevel(cardIndex)), box.value);
 });
 
 cardsEl.addEventListener("focusin", event => {
-  const box = event.target.closest("[data-typing]");
+  const box = event.target.closest("[data-typing-card]");
   if (!box) return;
-  openAccentPalette(Number(box.dataset.typing));
+  openAccentPalette(`${box.dataset.typingCard}-${box.dataset.typingIndex}`);
+});
+
+cardsEl.addEventListener("focusout", event => {
+  const box = event.target.closest("[data-typing-card]");
+  if (!box) return;
+  checkTypingSentence(Number(box.dataset.typingCard), Number(box.dataset.typingIndex));
+});
+
+cardsEl.addEventListener("keydown", event => {
+  if (event.key !== "Enter") return;
+  const box = event.target.closest("[data-typing-card]");
+  if (!box) return;
+  event.preventDefault();
+  box.blur();
 });
 
 trainingTabs.addEventListener("click", event => {
@@ -6389,7 +6419,7 @@ document.addEventListener("keydown", event => {
   }
 });
 document.addEventListener("click", event => {
-  if (!event.target.closest(".accent-wrap") && !event.target.closest("[data-typing]")) closeAccentPalettes();
+  if (!event.target.closest(".accent-wrap") && !event.target.closest("[data-typing-card]")) closeAccentPalettes();
 });
 window.addEventListener("scroll", saveScrollPosition, { passive: true });
 window.addEventListener("beforeunload", () => {
