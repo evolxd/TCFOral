@@ -5650,16 +5650,16 @@ function tache1QuestionForCard(cardIndex, questionIndex = 0) {
 }
 
 function localTeacherQuestionAudioName(cardIndex, questionIndex, question) {
-  const fileName = `teacher-tache1-${String(cardIndex + 1).padStart(2, "0")}-${String(questionIndex + 1).padStart(2, "0")}-${safeFileName(question.fr)}.mp3?v=15`;
+  const fileName = `teacher-tache1-${String(cardIndex + 1).padStart(2, "0")}-${String(questionIndex + 1).padStart(2, "0")}-${safeFileName(question.fr)}.mp3?v=18`;
   return `audio/b2/${fileName}`;
 }
 
 function localDialogueQuestionAudioName(text) {
-  return `audio/b2/dialogue/teacher-${safeFileName(text)}.mp3?v=15`;
+  return `audio/b2/dialogue/teacher-${safeFileName(text)}.mp3?v=18`;
 }
 
 function localDialogueAnswerAudioName(question) {
-  return `audio/b2/dialogue/answer-${safeFileName(question)}.mp3?v=16`;
+  return `audio/b2/dialogue/answer-${safeFileName(question)}.mp3?v=18`;
 }
 
 async function playLocalDialogueQuestion(text) {
@@ -5786,7 +5786,7 @@ function legacyDownloadedFileName(text) {
 function localAudioName(item, cardIndex, sentence, sentenceIndex, level = activeLevel) {
   const titleSlug = legacyDownloadedFileName(item.title);
   const sentenceSlug = level === "c1" ? legacyDownloadedFileName(sentence) : safeFileName(sentence);
-  const cacheVersion = level === "b2" && item.title === "四段式万能论证" && sentenceIndex === 0 ? 14 : 12;
+  const cacheVersion = level === "b2" ? 18 : 12;
   const fileName = `${item.type}-${String(cardIndex + 1).padStart(2, "0")}-${titleSlug}-${String(sentenceIndex + 1).padStart(2, "0")}-${sentenceSlug}.mp3?v=${cacheVersion}`;
   return level === "c1" ? `audio/${fileName}` : `audio/${level}/${fileName}`;
 }
