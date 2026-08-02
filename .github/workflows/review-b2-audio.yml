@@ -1,0 +1,38 @@
+name: Review flagged B2 audio
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/review-b2-audio.yml
+      - audit/b2_review_manifest.json
+
+permissions:
+  contents: read
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install transcription tools
+        run: pip install faster-whisper==1.2.1
+      - name: Recheck flagged audio with Whisper medium
+        run: >-
+          python scripts/audit_b2_audio.py
+          --model medium
+          --manifest audit/b2_review_manifest.json
+          --output audit-review-results
+      - name: Upload review report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: b2-audio-review
+          path: audit-review-results/
+          retention-days: 30
+          if-no-files-found: error

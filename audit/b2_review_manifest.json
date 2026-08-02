@@ -1,0 +1,292 @@
+[
+  {
+    "repo_path": "audio/b2/tache1-03-ville-quartier-logement-04-pour-moi-un-bon-quartier-doit-offrir-un-equilibre-entre-la-tranq.mp3",
+    "expected": "Pour moi, un bon quartier doit offrir un équilibre entre la tranquillité, le confort et l'accès aux services.",
+    "source": "CEO 12"
+  },
+  {
+    "repo_path": "audio/b2/tache1-05-pourquoi-le-canada-le-frana-ais-01-j-apprends-le-francais-parce-que-je-veux-mieux-communiquer-et-co.mp3",
+    "expected": "J'apprends le français parce que je veux mieux communiquer et construire un projet durable au Canada.",
+    "source": "CEO 17"
+  },
+  {
+    "repo_path": "audio/b2/tache1-06-ra-ponses-courtes-pra-tes-a-sortir-02-je-me-decrirais-comme-quelqu-un-de-perseverant-et-de-pragmatique.mp3",
+    "expected": "Je me décrirais comme quelqu'un de persévérant et de pragmatique, car dans les affaires comme dans l'apprentissage, j'accepte de progresser étape par étape.",
+    "source": "CEO 22"
+  },
+  {
+    "repo_path": "audio/b2/tache1-06-ra-ponses-courtes-pra-tes-a-sortir-04-si-je-devais-choisir-une-qualite-essentielle-je-dirais-l-adaptab.mp3",
+    "expected": "Si je devais choisir une qualité essentielle, je dirais l'adaptabilité, parce qu'elle permet de mieux réagir aux changements, aussi bien dans le commerce que dans un nouveau pays.",
+    "source": "CEO 24"
+  },
+  {
+    "repo_path": "audio/b2/tache2-07-c-e-e-a-a-03-pour-eviter-de-mal-comprendre-j-aimerais-vous-poser-quelques-que.mp3",
+    "expected": "Pour éviter de mal comprendre, j'aimerais vous poser quelques questions précises avant de prendre une décision.",
+    "source": "CEO 27"
+  },
+  {
+    "repo_path": "audio/b2/tache2-08-a-c-c-a-e-e-04-et-pour-la-vie-quotidienne-y-a-t-il-des-regles-particulieres-con.mp3",
+    "expected": "Et pour la vie quotidienne, y a-t-il des règles particulières concernant le bruit, les invités ou les espaces communs ?",
+    "source": "CEO 32"
+  },
+  {
+    "repo_path": "audio/b2/tache2-10-a-a-e-a-c-e-04-et-si-jamais-il-y-a-un-retard-ou-un-probleme-quelle-est-la-proce.mp3",
+    "expected": "Et si jamais il y a un retard ou un problème, quelle est la procédure à suivre ?",
+    "source": "CEO 42"
+  },
+  {
+    "repo_path": "audio/b2/tache2-12-c-c-a-a-a-c-a-e-c-02-y-a-t-il-quelque-chose-qu-il-aime-particulierement-ou-au-contrai.mp3",
+    "expected": "Y a-t-il quelque chose qu'il aime particulièrement, ou au contraire quelque chose qu'il vaut mieux éviter ?",
+    "source": "CEO 50"
+  },
+  {
+    "repo_path": "audio/b2/questions-28-cadeau-enfant-animal-03-en-cas-de-probleme-ou-d-imprevu-qui-dois-je-contacter-en-priorit.mp3",
+    "expected": "En cas de problème ou d'imprévu, qui dois-je contacter en priorité ?",
+    "source": "CEO 51"
+  },
+  {
+    "repo_path": "audio/b2/questions-29-relances-intelligentes-04-y-a-t-il-un-inconvenient-auquel-je-devrais-faire-attention-avant.mp3",
+    "expected": "Y a-t-il un inconvénient auquel je devrais faire attention avant de décider ?",
+    "source": "CEO 57"
+  },
+  {
+    "repo_path": "audio/b2/tache3-15-a-a-a-e-e-e-02-je-serais-plutot-favorable-a-cette-idee-a-condition-qu-on-ne-la.mp3",
+    "expected": "Je serais plutôt favorable à cette idée, à condition qu'on ne la présente pas comme une solution miracle.",
+    "source": "CEO 65"
+  },
+  {
+    "repo_path": "audio/b2/tache3-15-a-a-a-e-e-e-03-d-un-cote-cette-situation-peut-presenter-des-avantages-concrets.mp3",
+    "expected": "D'un côté, cette situation peut présenter des avantages concrets, tandis que de l'autre, elle peut engendrer des difficultés si elle est mal encadrée.",
+    "source": "CEO 66"
+  },
+  {
+    "repo_path": "audio/b2/tache3-15-a-a-a-e-e-e-05-c-est-pourquoi-je-pense-que-l-essentiel-est-de-chercher-un-equil.mp3",
+    "expected": "C'est pourquoi je pense que l'essentiel est de chercher un équilibre entre efficacité, justice et responsabilité.",
+    "source": "CEO 68"
+  },
+  {
+    "repo_path": "audio/b2/tache3-16-inta-gration-et-identita-03-concretement-une-societe-est-plus-coherente-lorsque-chacun-accep.mp3",
+    "expected": "Concrètement, une société est plus cohérente lorsque chacun accepte un cadre commun.",
+    "source": "CEO 71"
+  },
+  {
+    "repo_path": "audio/b2/tache3-16-inta-gration-et-identita-04-en-meme-temps-elle-est-aussi-plus-riche-lorsque-les-differences.mp3",
+    "expected": "En même temps, elle est aussi plus riche lorsque les différences peuvent s'exprimer sans être vues comme une menace.",
+    "source": "CEO 72"
+  },
+  {
+    "repo_path": "audio/b2/tache3-17-a-cole-et-a-galita-des-chances-03-cependant-elle-ne-peut-pas-corriger-seule-toutes-les-difficultes.mp3",
+    "expected": "Cependant, elle ne peut pas corriger seule toutes les difficultés sociales.",
+    "source": "CEO 76"
+  },
+  {
+    "repo_path": "audio/b2/tache3-18-numa-rique-et-autonomie-01-je-pense-que-la-technologie-apporte-beaucoup-d-avantages-car-ell.mp3",
+    "expected": "Je pense que la technologie apporte beaucoup d'avantages, car elle facilite l'accès à l'information et aux services.",
+    "source": "CEO 79"
+  },
+  {
+    "repo_path": "audio/b2/tache3-19-a-cologie-ra-aliste-03-cependant-ils-restent-limites-si-les-transports-les-prix-et-les.mp3",
+    "expected": "Cependant, ils restent limités si les transports, les prix et les règles collectives ne permettent pas aux gens de changer facilement.",
+    "source": "CEO 86"
+  },
+  {
+    "repo_path": "audio/b2/tache3-22-famille-moderne-03-cette-evolution-peut-parfois-creer-de-l-instabilite-parce-que-le.mp3",
+    "expected": "Cette évolution peut parfois créer de l'instabilité, parce que les repères sont moins fixes qu'avant.",
+    "source": "CEO 101"
+  },
+  {
+    "repo_path": "audio/b2/questions-23-ta-che-2-questions-de-base-a-ma-moriser-04-quels-documents-dois-je-prevoir-pour-l-inscription-ou-la-reserva.mp3",
+    "expected": "Quels documents dois-je prévoir pour l'inscription ou la réservation ?",
+    "source": "CEO 107"
+  },
+  {
+    "repo_path": "audio/b2/questions-24-logement-colocation-immeuble-03-comment-decririez-vous-l-ambiance-de-l-immeuble-ou-de-la-colocat.mp3",
+    "expected": "Comment décririez-vous l'ambiance de l'immeuble ou de la colocation ?",
+    "source": "CEO 111"
+  },
+  {
+    "repo_path": "audio/b2/questions-24-logement-colocation-immeuble-04-y-a-t-il-des-regles-particulieres-concernant-le-bruit-les-invite.mp3",
+    "expected": "Y a-t-il des règles particulières concernant le bruit, les invités ou les espaces communs ?",
+    "source": "CEO 112"
+  },
+  {
+    "repo_path": "audio/b2/questions-25-voyage-transport-location-de-voiture-03-quels-documents-sont-obligatoires-notamment-pour-l-assurance-le.mp3",
+    "expected": "Quels documents sont obligatoires, notamment pour l'assurance, le permis ou le visa ?",
+    "source": "CEO 116"
+  },
+  {
+    "repo_path": "audio/b2/questions-25-voyage-transport-location-de-voiture-04-en-cas-de-retard-d-annulation-ou-de-panne-quelle-est-la-procedur.mp3",
+    "expected": "En cas de retard, d'annulation ou de panne, quelle est la procédure à suivre ?",
+    "source": "CEO 117"
+  },
+  {
+    "repo_path": "audio/b2/questions-25-voyage-transport-location-de-voiture-05-y-a-t-il-des-conseils-pratiques-que-les-nouveaux-arrivants-oubli.mp3",
+    "expected": "Y a-t-il des conseils pratiques que les nouveaux arrivants oublient souvent ?",
+    "source": "CEO 118"
+  },
+  {
+    "repo_path": "audio/b2/questions-26-cours-clubs-associations-01-a-quel-public-cette-activite-s-adresse-t-elle-debutants-personne.mp3",
+    "expected": "À quel public cette activité s'adresse-t-elle : débutants, personnes confirmées ou adultes seulement ?",
+    "source": "CEO 119"
+  },
+  {
+    "repo_path": "audio/b2/questions-27-restaurant-hotel-rendez-vous-01-pourriez-vous-me-confirmer-les-horaires-exacts-et-la-disponibili.mp3",
+    "expected": "Pourriez-vous me confirmer les horaires exacts et la disponibilité pour la date qui m'intéresse ?",
+    "source": "CEO 124"
+  },
+  {
+    "repo_path": "audio/b2/questions-27-restaurant-hotel-rendez-vous-05-y-a-t-il-une-option-plus-adaptee-si-je-viens-avec-des-collegues.mp3",
+    "expected": "Y a-t-il une option plus adaptée si je viens avec des collègues, des enfants ou des personnes âgées ?",
+    "source": "CEO 128"
+  },
+  {
+    "repo_path": "audio/b2/questions-28-cadeau-enfant-animal-01-quelles-sont-ses-habitudes-quotidiennes-notamment-pour-les-repas.mp3",
+    "expected": "Quelles sont ses habitudes quotidiennes, notamment pour les repas, le sommeil et les loisirs ?",
+    "source": "CEO 129"
+  },
+  {
+    "repo_path": "audio/b2/variations-32-transformer-avantages-inconva-nients-05-il-faut-donc-l-evaluer-selon-ses-conditions-de-mise-en-uvre.mp3",
+    "expected": "Il faut donc l'évaluer selon ses conditions de mise en œuvre.",
+    "source": "CEO 153"
+  },
+  {
+    "repo_path": "audio/b2/variations-33-transformer-une-idee-banale-sur-la-technologie-02-elle-ameliore-l-efficacite-et-transforme-notre-rapport-a-l-infor.mp3",
+    "expected": "Elle améliore l'efficacité et transforme notre rapport à l'information.",
+    "source": "CEO 155"
+  },
+  {
+    "repo_path": "audio/b2/variations-33-transformer-une-idee-banale-sur-la-technologie-03-cependant-si-son-usage-n-est-pas-maitrise-elle-peut-affaiblir-l.mp3",
+    "expected": "Cependant, si son usage n'est pas maîtrisé, elle peut affaiblir l'attention et l'esprit critique.",
+    "source": "CEO 156"
+  },
+  {
+    "repo_path": "audio/b2/variations-34-transformer-une-ida-e-banale-sur-l-a-cole-03-cela-dit-elle-ne-peut-pas-reparer-seule-toutes-les-injustices-so.mp3",
+    "expected": "Cela dit, elle ne peut pas réparer seule toutes les injustices sociales.",
+    "source": "CEO 161"
+  },
+  {
+    "repo_path": "audio/b2/variations-34-transformer-une-ida-e-banale-sur-l-a-cole-05-l-objectif-devrait-donc-etre-de-trouver-un-equilibre-entre-savoi.mp3",
+    "expected": "L'objectif devrait donc être de trouver un équilibre entre savoirs, compétences et confiance.",
+    "source": "CEO 163"
+  },
+  {
+    "repo_path": "audio/b2/variations-35-transformer-une-question-sur-le-prix-03-ce-tarif-comprend-il-tous-les-services-ou-faut-il-prevoir-des-fr.mp3",
+    "expected": "Ce tarif comprend-il tous les services, ou faut-il prévoir des frais supplémentaires ?",
+    "source": "CEO 166"
+  },
+  {
+    "repo_path": "audio/b2/variations-36-transformer-je-suis-d-accord-02-je-la-trouve-pertinente-mais-j-y-ajouterais-une-condition-import.mp3",
+    "expected": "Je la trouve pertinente, mais j'y ajouterais une condition importante.",
+    "source": "CEO 170"
+  },
+  {
+    "repo_path": "audio/b2/variations-36-transformer-je-suis-d-accord-03-elle-est-convaincante-en-theorie-meme-si-elle-peut-rencontrer-de.mp3",
+    "expected": "Elle est convaincante en théorie, même si elle peut rencontrer des difficultés dans la pratique.",
+    "source": "CEO 171"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-depuis-combien-de-temps-vivez-vous-au-canada.mp3",
+    "expected": "Je vis au Canada depuis quelque temps. Au début, j'ai dû m'adapter à un nouvel environnement, mais aujourd'hui je m'y sens de plus en plus à l'aise.",
+    "source": "dialogue_02 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-comment-vous-decririez-vous-en-quelques-mots.mp3",
+    "expected": "Je dirais que je suis persévérant et adaptable. Quand j'ai un objectif important, je progresse régulièrement et j'essaie de trouver des solutions concrètes.",
+    "source": "dialogue_03 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-qu-est-ce-que-vous-aimez-le-plus-dans-votre-travail.mp3",
+    "expected": "J'aime surtout le fait que mon travail soit varié. Chaque situation est différente, donc je dois communiquer, m'organiser et m'adapter rapidement.",
+    "source": "dialogue_05 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/teacher-pourquoi-apprenez-vous-le-francais.mp3",
+    "expected": "Pourquoi apprenez-vous le français ?",
+    "source": "dialogue_07 teacher"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-comment-pratiquez-vous-le-francais-au-quotidien.mp3",
+    "expected": "J'écoute des phrases en français et je les répète à voix haute. J'essaie aussi de parler régulièrement afin de gagner en fluidité et en confiance.",
+    "source": "dialogue_08 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-comment-organisez-vous-votre-temps.mp3",
+    "expected": "J'essaie de définir mes priorités à l'avance. Cela me permet de rester efficace tout en gardant du temps pour ma vie personnelle.",
+    "source": "dialogue_11 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-y-a-t-il-une-habitude-que-vous-aimeriez-changer.mp3",
+    "expected": "J'aimerais être plus régulier dans ma pratique du français. Même quinze minutes par jour seraient plus efficaces qu'une longue séance de temps en temps.",
+    "source": "dialogue_12 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-que-faites-vous-pendant-votre-temps-libre.mp3",
+    "expected": "Pendant mon temps libre, j'aime apprendre les langues et découvrir de nouvelles cultures. Ces activités me permettent de rester curieux et d'élargir ma façon de voir les choses.",
+    "source": "dialogue_13 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-que-faites-vous-habituellement-le-week-end.mp3",
+    "expected": "Le week-end, j'essaie de trouver un équilibre entre le repos, le temps en famille et mes projets personnels. Je réserve aussi un moment à la pratique du français.",
+    "source": "dialogue_14 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-quelle-valeur-familiale-est-importante-pour-vous.mp3",
+    "expected": "Pour moi, la communication est essentielle. Quand on parle ouvertement, il est plus facile de comprendre les besoins de chacun et d'éviter les malentendus.",
+    "source": "dialogue_18 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-avez-vous-rencontre-des-difficultes-en-vous-installant-ici.mp3",
+    "expected": "Oui, il faut du temps pour comprendre un nouvel environnement et de nouvelles habitudes. J'essaie de rester ouvert, de poser des questions et d'apprendre progressivement.",
+    "source": "dialogue_20 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-comment-allez-vous-atteindre-cet-objectif.mp3",
+    "expected": "Je vais pratiquer un peu chaque jour et travailler surtout la compréhension des questions. Je veux également enregistrer mes réponses pour repérer mes hésitations.",
+    "source": "dialogue_23 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-vous-etes-plutot-une-personne-calme-ou-dynamique.mp3",
+    "expected": "Je suis plutôt une personne calme, surtout lorsque je dois prendre une décision. Cela ne m'empêche pas d'être dynamique quand un projet demande de l'énergie.",
+    "source": "dialogue_25 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/teacher-de-quelle-reussite-personnelle-etes-vous-le-plus-fier.mp3",
+    "expected": "De quelle réussite personnelle êtes-vous le plus fier ?",
+    "source": "dialogue_26 teacher"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-de-quelle-reussite-personnelle-etes-vous-le-plus-fier.mp3",
+    "expected": "Je suis fier d'avoir construit progressivement mon projet professionnel. Cette expérience m'a appris à être patient, responsable et adaptable.",
+    "source": "dialogue_26 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-etes-vous-plutot-du-matin-ou-du-soir.mp3",
+    "expected": "Je suis plutôt du matin, car je me concentre mieux au début de la journée. J'essaie donc de traiter les tâches importantes assez tôt.",
+    "source": "dialogue_31 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/teacher-quelle-tache-quotidienne-aimez-vous-le-moins.mp3",
+    "expected": "Quelle tâche quotidienne aimez-vous le moins ?",
+    "source": "dialogue_32 teacher"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-quelle-tache-quotidienne-aimez-vous-le-moins.mp3",
+    "expected": "J'aime moins les tâches répétitives, parce qu'elles prennent du temps. Pour les gérer, j'essaie de les planifier et de les terminer sans les repousser.",
+    "source": "dialogue_32 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-est-il-facile-de-concilier-le-travail-et-la-vie-de-famille.mp3",
+    "expected": "Ce n'est pas toujours facile, surtout pendant les périodes chargées. Pour garder un équilibre, j'essaie de bien organiser mes priorités et de réserver du temps à ma famille.",
+    "source": "dialogue_35 answer"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/teacher-que-ferez-vous-si-votre-projet-ne-se-passe-pas-comme-prevu.mp3",
+    "expected": "Que ferez-vous si votre projet ne se passe pas comme prévu ?",
+    "source": "dialogue_39 teacher"
+  },
+  {
+    "repo_path": "audio/b2/dialogue/answer-avez-vous-un-reve-que-vous-aimeriez-realiser-un-jour.mp3",
+    "expected": "J'aimerais construire une vie stable tout en continuant à apprendre et à découvrir de nouvelles choses. Pour moi, réussir signifie progresser sans perdre l'équilibre personnel.",
+    "source": "dialogue_40 answer"
+  }
+]
