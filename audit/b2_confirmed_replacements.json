@@ -1,0 +1,106 @@
+[
+  {
+    "source": "CEO 128",
+    "repo_path": "audio/b2/questions-27-restaurant-hotel-rendez-vous-05-y-a-t-il-une-option-plus-adaptee-si-je-viens-avec-des-collegues.mp3",
+    "expected": "Y a-t-il une option plus adaptée si je viens avec des collègues, des enfants ou des personnes âgées ?",
+    "transcript": "Y a-t-il une option plus adaptée si je viens avec des collègues, des enfants ou des personnes âgées ? S-E-V-S-E-C-T-I-G",
+    "missing_words": "",
+    "extra_words": "s e v s e c t i g"
+  },
+  {
+    "source": "CEO 17",
+    "repo_path": "audio/b2/tache1-05-pourquoi-le-canada-le-frana-ais-01-j-apprends-le-francais-parce-que-je-veux-mieux-communiquer-et-co.mp3",
+    "expected": "J'apprends le français parce que je veux mieux communiquer et construire un projet durable au Canada.",
+    "transcript": "J'apprends le français parce que je veux mieux communiquer et construire un projet durable et de ma thèse du borbélé au Canada.",
+    "missing_words": "",
+    "extra_words": "et de ma these du borbele"
+  },
+  {
+    "source": "CEO 129",
+    "repo_path": "audio/b2/questions-28-cadeau-enfant-animal-01-quelles-sont-ses-habitudes-quotidiennes-notamment-pour-les-repas.mp3",
+    "expected": "Quelles sont ses habitudes quotidiennes, notamment pour les repas, le sommeil et les loisirs ?",
+    "transcript": "Quelles synthes sont en renseignement ces habitudes quotidiennes, notamment pour les repas, le sommeil et les loisirs ?",
+    "missing_words": "ses",
+    "extra_words": "synthes en renseignement ces"
+  },
+  {
+    "source": "CEO 171",
+    "repo_path": "audio/b2/variations-36-transformer-je-suis-d-accord-03-elle-est-convaincante-en-theorie-meme-si-elle-peut-rencontrer-de.mp3",
+    "expected": "Elle est convaincante en théorie, même si elle peut rencontrer des difficultés dans la pratique.",
+    "transcript": "et laisser les convaincantes en théorie, même si elle peut rencontrer des difficultés dans la pratique.",
+    "missing_words": "elle est convaincante",
+    "extra_words": "et laisser les convaincantes"
+  },
+  {
+    "source": "CEO 27",
+    "repo_path": "audio/b2/tache2-07-c-e-e-a-a-03-pour-eviter-de-mal-comprendre-j-aimerais-vous-poser-quelques-que.mp3",
+    "expected": "Pour éviter de mal comprendre, j'aimerais vous poser quelques questions précises avant de prendre une décision.",
+    "transcript": "Pour éviter de mal comprendre, j'aimerais vous poser quelques questions sans élèques. Question précise avant de prendre une décision.",
+    "missing_words": "precises",
+    "extra_words": "sans eleques question precise"
+  },
+  {
+    "source": "CEO 57",
+    "repo_path": "audio/b2/questions-29-relances-intelligentes-04-y-a-t-il-un-inconvenient-auquel-je-devrais-faire-attention-avant.mp3",
+    "expected": "Y a-t-il un inconvénient auquel je devrais faire attention avant de décider ?",
+    "transcript": "Y a-t-il un inconvénient auquel je devrais faire attention avant de prendre ma décision ?",
+    "missing_words": "decider",
+    "extra_words": "prendre ma decision"
+  },
+  {
+    "source": "CEO 117",
+    "repo_path": "audio/b2/questions-25-voyage-transport-location-de-voiture-04-en-cas-de-retard-d-annulation-ou-de-panne-quelle-est-la-procedur.mp3",
+    "expected": "En cas de retard, d'annulation ou de panne, quelle est la procédure à suivre ?",
+    "transcript": "cas de retard, d'annulation ou de panne, quelle est et quelle la procédure à suivre.",
+    "missing_words": "en",
+    "extra_words": "et quelle"
+  },
+  {
+    "source": "dialogue_07 teacher",
+    "repo_path": "audio/b2/dialogue/teacher-pourquoi-apprenez-vous-le-francais.mp3",
+    "expected": "Pourquoi apprenez-vous le français ?",
+    "transcript": "Pourquoi prenez-vous le français?",
+    "missing_words": "apprenez",
+    "extra_words": "prenez"
+  },
+  {
+    "source": "CEO 101",
+    "repo_path": "audio/b2/tache3-22-famille-moderne-03-cette-evolution-peut-parfois-creer-de-l-instabilite-parce-que-le.mp3",
+    "expected": "Cette évolution peut parfois créer de l'instabilité, parce que les repères sont moins fixes qu'avant.",
+    "transcript": "Cette évolution peut parfois créer de l'instabilité parce que les repères sur ces mailles sont moins fixes qu'avant.",
+    "missing_words": "",
+    "extra_words": "sur ces mailles"
+  },
+  {
+    "source": "CEO 72",
+    "repo_path": "audio/b2/tache3-16-inta-gration-et-identita-04-en-meme-temps-elle-est-aussi-plus-riche-lorsque-les-differences.mp3",
+    "expected": "En même temps, elle est aussi plus riche lorsque les différences peuvent s'exprimer sans être vues comme une menace.",
+    "transcript": "En même temps, elle est aussi plus riche lorsque les différences peuvent être exprimées sans être vues comme une menace.",
+    "missing_words": "s exprimer",
+    "extra_words": "etre exprimees"
+  },
+  {
+    "source": "CEO 71",
+    "repo_path": "audio/b2/tache3-16-inta-gration-et-identita-03-concretement-une-societe-est-plus-coherente-lorsque-chacun-accep.mp3",
+    "expected": "Concrètement, une société est plus cohérente lorsque chacun accepte un cadre commun.",
+    "transcript": "Concrètement, une société, c'est plus cohérente lorsque chacun accepte un cadre commun.",
+    "missing_words": "",
+    "extra_words": "c"
+  },
+  {
+    "source": "CEO 161",
+    "repo_path": "audio/b2/variations-34-transformer-une-ida-e-banale-sur-l-a-cole-03-cela-dit-elle-ne-peut-pas-reparer-seule-toutes-les-injustices-so.mp3",
+    "expected": "Cela dit, elle ne peut pas réparer seule toutes les injustices sociales.",
+    "transcript": "Cela dit, elle ne peut pas réparer seule toutes les injustices nocturnes sociales.",
+    "missing_words": "",
+    "extra_words": "nocturnes"
+  },
+  {
+    "source": "dialogue_18 answer",
+    "repo_path": "audio/b2/dialogue/answer-quelle-valeur-familiale-est-importante-pour-vous.mp3",
+    "expected": "Pour moi, la communication est essentielle. Quand on parle ouvertement, il est plus facile de comprendre les besoins de chacun et d'éviter les malentendus.",
+    "transcript": "Pour moi la communication est essentielle. Quand on parle ouvertement, il est plus facile de comprendre les besoins de chacun et d'aider à éviter les malentendus.",
+    "missing_words": "",
+    "extra_words": "aider a"
+  }
+]
