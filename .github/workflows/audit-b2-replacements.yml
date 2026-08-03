@@ -1,0 +1,40 @@
+name: Audit replacement B2 audio
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [validation/b2-audio-whisper-review]
+    paths:
+      - audio/b2/**
+      - audit/b2_elevenlabs_replacement_manifest.json
+      - scripts/audit_b2_audio.py
+      - .github/workflows/audit-b2-replacements.yml
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install transcription tools
+        run: pip install faster-whisper==1.2.1
+      - name: Audit all 91 replacement files with Whisper medium
+        run: >-
+          python scripts/audit_b2_audio.py
+          --model medium
+          --manifest audit/b2_elevenlabs_replacement_manifest.json
+          --output audit-replacement-results
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: b2-replacement-audit
+          path: audit-replacement-results/
+          retention-days: 30
+          if-no-files-found: error
